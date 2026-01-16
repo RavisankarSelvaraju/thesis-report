@@ -79,6 +79,9 @@
 \newcommand{\thirdpartylogo}[1]{\def\@thirdpartylogo{#1}}
 \thirdpartylogo{}
 
+\newcommand{\thirdpartylogoTwo}[1]{\def\@thirdpartylogoTwo{#1}}
+\thirdpartylogoTwo{}
+
 \newcommand*{\supervisors}[1]{\gdef\@supervisors{#1}%
 }
 \newcommand*{\@supervisors}{\texttt{\string\supervisors} currently
@@ -138,23 +141,59 @@ not set. Please fix this.}
 
     \begin{minipage}{0.475\textwidth}
         \centering
-	   \includegraphics[height=1.3cm]{images/Logo-HBRS-cyan.png}
+	   \includegraphics[height=1.3cm]{media/logos/Logo-HBRS-cyan.png}
     \end{minipage}
     \begin{minipage}{0.475\textwidth}
         \centering
-	   \includegraphics[height=1.3cm]{images/b-it.pdf}
+	   \includegraphics[height=1.3cm]{media/logos/b-it.pdf}
     \end{minipage}
-    \centering
-    \vfill
-    \ifx\@thirdpartylogo\@empty
-    \relax
-    \else
-    \begin{minipage}{0.4\textwidth}
-        \centering
-	   \includegraphics[height=1.3cm]{\@thirdpartylogo}
-    \end{minipage}
+    % \centering
+    % \vfill
+    % \ifx\@thirdpartylogo\@empty
+    % \relax
+    % \else
+    % \begin{minipage}{0.4\textwidth}
+    %     \centering
+	%    \includegraphics[height=1.3cm]{\@thirdpartylogo}
+    % \end{minipage}
 
-    \fi%
+    % \fi%
+    
+
+% Render up to two third-party logos if provided. If neither is set, do nothing.
+\ifx\@thirdpartylogo\@empty
+    \ifx\@thirdpartylogoTwo\@empty
+        \relax
+    \else
+        % Only second logo provided
+        \centering
+        \vfill
+        \begin{minipage}{0.4\textwidth}
+                \centering
+                \includegraphics[height=1.3cm]{\@thirdpartylogoTwo}
+        \end{minipage}
+    \fi
+\else
+    \ifx\@thirdpartylogoTwo\@empty
+        % Only first logo provided
+        \centering
+        \vfill
+        \begin{minipage}{0.4\textwidth}
+                \centering
+                \includegraphics[height=1.3cm]{\@thirdpartylogo}
+        \end{minipage}
+    \else
+        % Both logos provided: show side-by-side
+        \centering
+        \vfill
+        \begin{minipage}{\textwidth}
+            \centering
+            \begin{minipage}{0.5\textwidth}\centering\includegraphics[height=1.3cm]{\@thirdpartylogo}\end{minipage}\hfill
+            \begin{minipage}{0.5\textwidth}\centering\includegraphics[height=1.3cm]{\@thirdpartylogoTwo}\end{minipage}
+        \end{minipage}
+    \fi
+\fi%
+
 
 \vfill
 {\Large\@project\unskip\strut\par}
@@ -177,7 +216,16 @@ Supervised by\par
 }
 \vfill
 
-{\large \@date\par}
+{\large \@date}
+\vfill
+\hrulefill
+\scriptsize{
+\par
+\raggedright
+$^1$ University of Bremen, Bremen\\
+$^2$ Robotics Innovation Center, German Research Center for Artificial Intelligence (DFKI), Bremen\par
+}
+
 \end{titlepage}
 \restoregeometry
 }

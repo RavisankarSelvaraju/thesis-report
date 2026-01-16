@@ -7,13 +7,36 @@
 %
 
 \documentclass[thesis]{mas_report}
-% \documentclass[rnd]{mas_report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{todonotes}  
+\usepackage{svg}
+\usepackage{url} % allow breakable typeset URLs with \url{}
+\usepackage[acronym]{glossaries}
+
+
+% *****************************************************
+% ADD YOUR ACRONYMS HERE
+% *****************************************************
+
+\newacronym{pc}{PC}{Potential Contact}
+\newacronym{pcv}{PCV}{Potential Contact Velocity}
+\newacronym{rw}{RW}{Rimless Wheel}
+\newacronym{rwr}{RWR}{Rimless Wheeled Rover}
+\newacronym{inekf}{InEKF}{Invariant Extended Kalman Filter}
+
+% *****************************************************
+
+
 
 % ****************************************************
 % THIS INFORMATION SHOULD BE UPDATED FOR YOUR REPORT
 % ****************************************************
-\author{Your Name}
-\title{Project title}
+\author{Ravisankar Selvaraju}
+\title{Improving Odometry in Rimless Wheeled Rover using Sensor Fusion}
 
 % Please note that the \phdsupervisor command is optional, and is usually
 % used when your research is done in the context of a PhD project.
@@ -24,15 +47,15 @@
 % \phdsupervisor{PhD Student}
 % \phdproject{Title of PhD}
 
-\supervisors{%
-First supervisor\\
-Second Supervisor\\
-Third Supervisor
-% \thephdsupervisor
-}
-\date{Month 20XX}
+\supervisors{Prof. Dr. Sebastian Houben\\Prof. Dr.-Ing. Udo Frese\footnotemark[1]\\M. Sc. Raúl Domínguez\footnotemark[2]\\Dr.-Ing. Christoph Hertzberg\footnotemark[2]}
 
-% \thirdpartylogo{path/to/your/image}
+\date{\ifcase\month\or
+January\or February\or March\or April\or May\or June\or
+July\or August\or September\or October\or November\or December\fi~\the\year}
+
+
+\thirdpartylogoTwo{media/logos/dfki_Logo_vz.png}
+\thirdpartylogo{media/logos/UniBremen_Logo_Web_RGB.png}
 
 % Uncomment this to update the pdf metadata
 % \subject{LaTeX testing}
@@ -106,7 +129,9 @@ Third Supervisor
 %-------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %-------------------------------------------------------------------------------
-\bibliographystyle{IEEEtran}
-\bibliography{bibliography} % Use the bibliography.bib file as the source of references
+\nocite{*}
+
+\bibliographystyle{unsrt} % Use the plainnat bibliography style % Using unsrt for ordering the reference numerically in the content
+\bibliography{bibliography.bib} % Use the bibliography.bib file as the source of references
 
 \end{document}
