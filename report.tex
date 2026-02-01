@@ -28,24 +28,13 @@
 \newacronym{rwr}{RWR}{Rimless Wheeled Rover}
 \newacronym{inekf}{InEKF}{Invariant Extended Kalman Filter}
 
-% *****************************************************
-
-
-
 % ****************************************************
 % THIS INFORMATION SHOULD BE UPDATED FOR YOUR REPORT
 % ****************************************************
+
 \author{Ravisankar Selvaraju}
 \title{Improving Odometry in Rimless Wheeled Rover using Sensor Fusion}
 
-% Please note that the \phdsupervisor command is optional, and is usually
-% used when your research is done in the context of a PhD project.
-% The command updates the report copyright to include your supervisor; if, on the other hand, the \phdsupervisor is not used or is empty, the copyright includes only the student.
-% If this is not the case, you can always manually include your supervisors' name.
-% If you have questions on whether this applies to your project, get in touch with your supervisor!
-% After filling \phdsupervisor, you can use \thephdsupervisor in the report, e.g. in the title or to specifiy joint work. Make sure you spell it correctly!
-% \phdsupervisor{PhD Student}
-% \phdproject{Title of PhD}
 
 \supervisors{Prof. Dr. Sebastian Houben\\Prof. Dr.-Ing. Udo Frese\footnotemark[1]\\M. Sc. Raúl Domínguez\footnotemark[2]\\Dr.-Ing. Christoph Hertzberg\footnotemark[2]}
 
@@ -59,21 +48,9 @@ July\or August\or September\or October\or November\or December\fi~\the\year}
 
 % Uncomment this to update the pdf metadata
 % \subject{LaTeX testing}
-% \keywords{key1; key2; key3}
+\keywords{InEKF; odometry; sensor fusion; rimless wheeled rover;}
 
-
-% If someone other than you has made direct, substantial contributions to your work, you must declare that here!
-% If you have questions about authorship criteria, please discuss this with your supervisor(s).
-% Uncomment this and edit as necessary:
-% \jointwork{%
-%   \begin{authorship}
-%     \caitem{\thephdsupervisor}{Conceptualization and supervision}
-%     \caitem{\theauthor, \thephdsupervisor}{Dataset collection with X Robot, Training of ML algorithm,}
-%     \caitem{\theauthor, Student2}{Data collection and postprocessing for experiment X}
-%   \end{authorship}
-% }
-
-
+%-------------------------------------------------------------------------------
 \begin{document}
 \frontmatter
 
@@ -111,11 +88,12 @@ July\or August\or September\or October\or November\or December\fi~\the\year}
 \pagestyle{mainmatter}
 
 \subfile{chapters/ch01_introduction}
-\subfile{chapters/ch02_stateoftheart}
-\subfile{chapters/ch03_methodology}
-\subfile{chapters/ch04_solution}
-\subfile{chapters/ch05_evaluation_and_results}
-\subfile{chapters/ch06_conclusion}
+\subfile{chapters/ch02_background}
+\subfile{chapters/ch03_stateoftheart}
+\subfile{chapters/ch04_methodology}
+\subfile{chapters/ch05_solution}
+\subfile{chapters/ch06_evaluation_and_results}
+\subfile{chapters/ch07_conclusion}
 
 %-------------------------------------------------------------------------------
 %	APPENDICES

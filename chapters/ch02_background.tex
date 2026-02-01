@@ -1,0 +1,71 @@
+%!TEX root = ../report.tex
+\documentclass[report.tex]{subfiles}
+\begin{document}
+    \chapter{Background}
+    \todo[inline]{Change the chapter title if necessary}
+    
+    \subsection{Odometry} \label{subsection:odometry}
+        \fromproposal{
+        The process of estimating a robot's current pose based on its sensor data, such as wheel encoder and Inertial Measurement Unit (IMU), is called odometry. This can be calculated using the rover's proprioceptive sensors, such as wheel encoders and IMU, as well as exteroceptive sensors like cameras and LiDARs. In situations like an underground cave, tunnels, and space exploration, Odometry plays a vital role in tracking the movements of mobile rovers when external positioning systems like GPS (Global Positioning System) and other motion capture systems might not be available. The use of an exteroceptive sensor can improve the state estimation; nevertheless, a reliable proprioceptive sensor-based state estimation provides a better starting point for odometry, which can then later be fused with other sources of odometry.
+        
+        %base line odometry 
+        The current implementation\footnote{Baseline odometry on Coyote: \url{https://github.com/rock-slam/slam-odometry/blob/master/src/Odometry.hpp}} of baseline odometry in DFKI's rimless wheeled rovers is a combination of both wheel and inertial odometry. The linear motion is calculated from the wheel odometry based on a simplified wheel model, which doesn't consider the spoked geometry and contact position of the rimless wheel's spokes. The attitude/orientation changes are calculated from the inertial odometry. 
+
+        % base line odometry limitations
+        The baseline odometry suffers from the disadvantages of orientation drift over time from the inertial odometry and error due to unaccounted slippage from the wheel odometry. These limitations motivate us to consider sensor fusion techniques to improve the quality of odometry and reduce the error from individual odometry sources. 
+        }
+          
+    \subsection{Rimless wheeled rover}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.5\linewidth]{media/images/Coyote3_field_test.jpg}
+        \caption{Coyote 3 rimless wheeled rover with SIMA arm in a rocky terrain}
+        \label{fig:coyote3_sima}
+    \end{figure}
+
+    \fromproposal{    
+    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the RIC (Robotic Innovation Center) of DFKI (German Research Center for Artificial Intelligence) to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure \ref{fig:coyote3_sima}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can overcome challenging obstacles effectively. These rovers, when travelling autonomously, need to keep track of their pose to navigate effectively. 
+
+    Given that the rimless wheeled rover can travel in diverse terrain, the odometry calculation to track the robot's pose is more challenging than in other terrains. One of the challenging points is to achieve an odometry that works well in different types of terrain. Since the contact behaviours differ based on the shape and texture of materials on the terrain, it is vital to improve the odometry of rimless wheeled rovers for effective navigation on diverse terrains.
+    }
+    \subsection{Sensor fusion}
+
+    \fromproposal{
+    One of the well-known solutions to deal with the unreliability of single sensor-based pose estimation is to use sensor fusion techniques. These techniques fuse sensor data from different sensors to get a reliable estimate of the rover's pose. The use of sensor fusion techniques is studied in traditional wheeled  \cite{Brossard2019, Das2021,Liu2020, Xiaobo2024} and legged \cite{DeLen2020} based locomotion in the literature.
+
+    As mentioned in the subsection \ref{subsection:odometry}, the baseline odometry does not perform true sensor fusion of wheel and inertial odometry. Instead, it simply combines selected components from each odometry. The proposed approach uses an Extended Kalman filter (EKF) to fuse the inertial odometry data and wheel odometry data. The key improvement this thesis aims at is to include slip detection and elimination during the sensor fusion process so that error-prone wheel odometry data will not be used in the final pose estimation.
+
+    Since the primary advantage of rimless wheels is to traverse challenging terrain, it is vital to study the effects of sensor fusion techniques in improving the rimless wheeled rover's odometry. 
+    % While kinematics, dynamics and control strategies are well studied in literature for traditional wheeled rovers, these aspects remain an open area of research for rimless wheeled systems.
+
+    }
+    
+    \todo{Include details of state estimator/ InEKF, equations, explanations and working of state observer}
+    
+    \subsection{Slippage}
+
+    \fromproposal{
+    A traditional or rimless wheeled mobile rover in motion experiences two types of slippage at the wheels: Longitudinal slippage (slip) and lateral slip (skid). Slip happens in the direction of motion of wheels, and skid happens perpendicular to the motion of the wheel \cite{naveedTutorial2023}. Unlike traditional wheeled systems, slip in \gls{rwr} is more similar to legged robots. Wheeled systems have continuous contact with the surface, making the slip continuous, but in the \gls{rw} system, slip happens only during contact phases when the spokes touch the terrain.
+
+    Slip can happen due to various reasons. Firstly, when the friction coefficient of the surface is low, the contact points/contact surface of the spokes lose grip. Secondly, when the surface is deformable under stress, like sand terrain, and the wheel contact points exert stress exceeding the terrain's maximum shear strength, deformation occurs, resulting in slip \cite{Ojeda2006}. Finally, when the angular velocity of the wheels is high, causing a higher tangential force at the contact points, it exceeds static friction, leading to slip. 
+
+    Slip can be computed as the ratio of the difference between the wheel’s linear velocity $v_\text{wheel}$ (calculated as the product of angular velocity $\omega$ and wheel radius $r$) and the body’s linear velocity $v_\text{body}$, to the wheel’s linear velocity \cite{Xiaobo2024}.
+
+    $$
+    \text{Slip} = \frac{v_{\text{wheel}} - v_{\text{body}}}{v_{\text{wheel}}} \text{ , }  
+    \text{where } v_{\text{wheel}} = \omega \cdot r
+    $$
+
+
+    % The amount of slip is a unit less quantity which can be expressed as percentage slip when multiplied by 100. The value of percentage slip can vary based on several factors such as shape and material of the contact surface, angular velocity of the wheels, mass of the rover, gravity and inclination of the terrain. The slippage in autonomous rovers can lead to various issues such as unintentional rover motion, improper control, and in severe case, tipping over of the rover and collision with the environment.
+
+    One of the systems whose performance is directly affected by slippage is the wheel odometry. Since the wheel odometry does not have the knowledge that slip has happened, it calculates the slippage as the rover's motion. This makes the wheel odometry unreliable in slippery conditions \cite{Brossard2019}. The survey paper \cite{Gonzalez2018} by Gonzalez and Lagnemma provide a comprehensive analysis of significant slip-related incidents in planetary exploration. This paper also presents some common slippage estimation approaches, such as Exteroceptive-based solutions, Proprioceptive-based solutions, Model-based solutions and Kalman filter-based solutions. 
+    }
+    
+    \subsection{InEKF library and its update modalities}
+    
+    \todo[inline]{write about the current measurement function and update methods used to update the state in the InEKF library}
+    \todo{write about the prediction step and how IMU data is used there}
+        
+\end{document}

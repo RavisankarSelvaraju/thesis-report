@@ -97,6 +97,34 @@ not set. Please fix this.}
 }
 \phdproject{}
 
+% === Draft / proposal helpers ===
+
+\newif\ifdraft
+\drafttrue   % comment this line for final version
+
+\definecolor{proposalcolor}{RGB}{150,90,180}
+
+\newcommand{\fromproposal}[1]{%
+  \ifdraft
+    {\color{proposalcolor}#1}%
+    \todo[inline, color=proposalcolor!20]{Source: proposal}%
+  \else
+    #1%
+  \fi
+}
+
+\newcommand{\fromslides}[1]{%
+  \ifdraft
+    {\color{proposalcolor}#1}%
+    \todo[inline, color=proposalcolor!20]{Source: Slides}%
+  \else
+    #1%
+  \fi
+}
+    
+% ================================
+
+
 % PDF Metadata
 \newcommand*{\keywords}[1]{\def\@keywords{#1}}
 \keywords{}

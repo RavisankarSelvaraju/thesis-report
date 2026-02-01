@@ -2,20 +2,38 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
     \chapter{Introduction}
+    
+    \fromproposal{Reliable state estimation is vital for efficient operation of \gls{rwr} in unstructured and planetary environments. Traditional dead-reckoning-based odometry approaches are prone to drift and slippage-related errors. This interoceptive sensor-based state estimation is critical in scenarios where the use of visual data for odometry is limited due to computational power constraints and environmental conditions \cite{Agostinho2022}. The availability of reliable proprioceptive odometry enables the possibility of sensor fusion with visual and other forms of odometry. Relying on a single source of odometry is susceptible to errors, so using sensor fusion techniques can improve the quality of odometry. The introduction section is organised by dividing the project title into multiple parts. Each part explains a specific aspect of the topic, making it easier for the reader to understand. }
 
-    \lipsum[1-5]
     \section{Motivation}
+    
+    \fromproposal{Mobile robots in general need to estimate their location relative to either their previous location or some landmarks in the environment for an effective autonomous navigation task. Proprioceptive sensor-based odometry estimation is effective in scenarios where external positioning systems are unavailable. However, this form of odometry suffers from sensor drift over time and wheel slippage. In order to combat these issues, sensor fusion techniques are commonly employed.}
+    
     \subsection{...}
-
-    \lipsum[6-10]
+    
+    \fromslides{Rimless Wheeled Rovers (RWR) are used in planetary exploration and search operations in tunnels 
+    Can climb obstacles and operate in variety of terrain
+    Efficiency and traversability [1] 
+    Reliable odometry is crucial for autonomous systems in unstructured environment in the absence of GPS [2]
+    Odometry is the foundation for tasks such as SLAM and Trajectory following 
+    }
 
     \subsection{...}
 
 
     \section{Challenges and Difficulties}
+    
+    \fromslides{Baseline Odometry in Coyote rover 
+    Decoupled odometry: Wheel Odometry for translation, IMU for rotation
+    Wheel odometry ignores RW geometry and contacts 
+    IMU based orientation suffers from drift overtime
+    Unaccounted slippage leads to translational errors
+    Higher risk of slippage in sand, loose rock and inclined terrain
+    }
+        
+    
     \subsection{...}
 
-    \lipsum[11-15]
 
     \subsection{...}
 
@@ -24,9 +42,21 @@
 
 
     \section{Problem Statement}
+    
+    \fromproposal{
+    Based on the literature survey and the limitations discussed, a new approach of using \gls{pcv} based odometry using \gls{inekf} framework is proposed. This proposed approach will be compared with the baseline odometry to evaluate the performance of sensor fusion in \gls{rwr}. The \gls{inekf} implementation is developed by Ross Hartley \cite{Hartley2018ContactAidedInEKF} and is available as open-source\footnote{InEKF implementation: \url{https://github.com/RossHartley/invariant-ekf}}.
+
+    On top of the \gls{inekf} implementation, a slip filtering mechanism will be integrated into the state estimation process to discard the erroneous wheel speed measurement data when slippage events occur. The literature proposes various methods for slip modelling, such as using wheel motor current measurements \cite{Ojeda2006} or offline analysis of recorded data to estimate terrain slip parameters \cite{Yamauchi2017}. However, these slip modelling and estimation techniques have not been tested on rimless wheeled rovers. Consequently, the baseline odometry model implemented in our rimless wheeled rover currently does not include a slippage model or account for slip in any way.
+
+    Finally, the prospect of using the \gls{inekf} framework to estimate the \gls{pc} will be explored. The \gls{pc} can be inferred by the \gls{pcv} estimated using IMU data and the wheel velocity data. When the \gls{pcv} vector direction from the IMU estimate and the wheel velocity measurement match, then that spoke can be considered as a \gls{pc}.
+    
+    A simple block diagram showcasing the proposed approach is shown in Figure The proposed approach will be tested in simulation on inclined terrains and in real-world scenarios with sand and loose rocks inside DFKI’s multifunction hall. The evaluation will compare the estimation error of standard odometry against the proposed \gls{inekf} framework using metrics like MSE and max error per distance in percentage. 
+
+    A possible Key Performance Indicator (KPI) could be errors (m) per unit distance(m). This quantitative measure can assess the performance of the proposed approach, and the objective is to keep the KPI as low as possible for the SLAM system to work. This demonstrates that an improved odometry can lead to better performance of SLAM.
+    }
+
     \subsection{...}
 
-    \lipsum[21-30]
 
     \subsection{...}
 

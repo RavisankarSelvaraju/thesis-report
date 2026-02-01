@@ -1,0 +1,64 @@
+%!TEX root = ../report.tex
+\documentclass[report.tex]{subfiles}
+\begin{document}
+    \chapter{State of the Art}
+
+    \fromproposal{
+    Mobile robots in general need to estimate their location relative to either their previous location or some landmarks in the environment for an effective autonomous navigation task. Proprioceptive sensor-based odometry estimation is effective in scenarios where external positioning systems are unavailable. However, this form of odometry suffers from sensor drift over time and wheel slippage. In order to combat these issues, sensor fusion techniques are commonly employed. This section discusses the previous works which attempted to solve this problem.
+    
+    % The rimless wheeled rover is mainly developed to be operated in planetary conditions. One of the prominent planetary conditions is the terrain type. The effects of slippery terrain in planetary exploration are discussed in \cite{Bussmann2018}. The survey \cite{Gonzalez2018} by Gonzalez and Lagnemma on "Slippage estimation and compensation for planetary exploration rovers" gives a comprehensive understanding of the need to study slippage in mobile rovers in planetary exploration. 
+    }
+    
+    \section{Wheel Inertial Odometry Fusion}
+
+    \fromproposal{
+    The estimation of a rover's pose relies on the fusion of wheel odometry and inertial odometry data, a technique explored across numerous studies with various approaches. One common approach involves Kalman Filter-based sensor fusion for integrating Inertial Measurement Unit (IMU) and wheel odometry data \cite{Yousuf2016, Das2021}. This method aims to improve the accuracy of robot state estimation. For instance, combining filtered robot state information with GPS data through a weighted fusion technique has demonstrated enhanced accuracy in both indoor and outdoor scenarios \cite{Yousuf2016}. This highlights how strong proprioceptive odometry contributes to overall robot state estimation.
+
+    To address challenges such as IMU drift and wheel slippage, robust Kalman filters and EKF have been proposed, leading to increased accuracy of rover localisation even under wheel slip conditions \cite{Das2021}. In contrast, our approach actively estimates and compensates slip-related wheel odometry data to improve the accuracy.
+
+
+    An Error State Kalman filter has also been proposed in \cite{Xiaobo2024}, which fuses the IMU data and wheel encoder data to improve the pose estimation accuracy. Furthermore, Unscented Kalman Filters (UKF) have been proposed for slip-aware motion estimation \cite{Liu2020, Zarei2024}. One such approach integrates the innovation (the difference between actual and estimated state) over time during the update step to enhance estimation accuracy. In this method, the robot's state is initially estimated using encoder data processed through Instantaneous Center of Rotation (ICR) kinematics, which is then fused with inertial odometry for improved accuracy. However, a limitation of this specific method is its reliance on the ICR kinematics assumption that wheels on the same side have identical angular velocities, which may not hold true under varying slip conditions \cite{Liu2020}.
+
+    Another application of the UKF involves a novel track-to-track multi-sensor fusion algorithm that fuses IMU and wheel encoder data. This proposed fusion algorithm has been shown to generate consistent estimates compared to stand-alone odometry methods in simulated environments \cite{Zarei2024}.}
+
+    \section{Slippage estimation}
+    \fromproposal{
+
+    Estimating and compensating for slip is very important for getting accurate odometry. Many methods try to handle this by modelling slip using terrain parameters, ground truth data from motion tracking systems or other approaches.
+
+    One of the methods discussed tracked vehicles, modelling slip on loose ground during straight and turning moves. This uses slip ratio for straight paths and slip angle for turns. The slip model details for this method are estimated using a regression model pre-trained on offline data from motion capture systems. \cite{Yamauchi2017}. This method cannot be used for an unknown environment without collecting offline data to train the regression model. 
+
+    Collecting ground truth data in an unknown environment is not always possible; another approach proposed a slip-aware wheel odometry using a slip parameter method \cite{Bussmann2018}. This method does not need actual position or speed data, which makes it good for places where external positioning systems are not available. However, this method assumes that a slip happens on all wheels at the same time on loose soil, and this might not be true in real traversal situations.
+
+    Another method to estimate slip relies on current measurements from the wheel motors. \cite{Ojeda2006} This technique is based on terrain parameters, which are automatically tuned as the rover travels over a terrain. This eliminates the need for ground truth data collection. Additionally, the paper explains the unreliability of odometry in sandy and off-road conditions due to a higher frequency of slippage occurrences. 
+
+    A unique idea of discarding wheel odometry data in the Error State Kalman Filter (ESKF) based fusion process when slip is detected is presented in \cite{Xiaobo2024}. This effectively eliminates the erroneous wheel odometry data and reduces the pose estimation error drastically. This idea of discarding erroneous wheel odometry data in the fusion process is closely related to the proposed approach of this project.}
+
+    \section{Learning-based slip estimation}
+    \fromproposal{
+    
+    Learning-based methods offer robust solutions for slip detection and odometry improvement. One approach uses a Support Vector Machine (SVM) classifier to identify if a robot is immobilised due to wheel slipping \cite{Iagnemma2009}. This SVM leverages wheel speed and inertial measurements to categorise robot states like "immobilized," "normal," or "unknown." The classification relies on a feature vector that includes variances of roll rate, pitch rate, and z-axis acceleration, along with the mean of wheel angular acceleration. This SVM-based detection can be combined with a model-based slip detection using an Extended Kalman Filter (EKF). Fusing both methods can enhance accuracy by reducing false negatives.
+
+    Beyond classification, unsupervised learning methods, such as Self-Organising Maps, K-means clustering, and auto-encoding, can also categorise slip \cite{Kruger2019}. These techniques utilise data from IMUs, encoders, and motor currents, avoiding the computational intensity and speed constraints associated with visual data. One of the notable works in \gls{rwr} odometry is presented in the thesis by Javier Hidalgo-Carrió \cite{Hidalgo-javier_2018}. This work uses Gaussian Processes (GP) to learn an odometry error model which predicts the slippage error. This error model is then used to correct the odometry and subsequently improve the SLAM performance.
+
+    Another data-driven method for slippage compensation integrates Visual-Inertial-Wheel-Odometry (VIWO) \cite{Reginald2025}. This involves using Gaussian process regression and Long Short-Term Memory (LSTM) networks to compensate for slips in wheel odometry. The compensated wheel odometry is then fused with inertial and visual odometry using a multi-state constraint Kalman filter (MSCKF). A feature confidence estimator further refines pose estimation by ensuring only reliable data is used.
+
+    Finally, Gaussian process-based learning can fuse wheel encoder data and IMU data \cite{Brossard2019}. An Extended Kalman Filter then integrates the learned model's output with IMU data. This approach has demonstrated improved performance over traditional EKF methods without learning methods. This method could be implemented as a continuation of this thesis. }
+    
+    \section{Limitations of previous work}
+    
+    \fromproposal{
+    Although several methods have been proposed for odometry fusion and slip estimation, they still exhibit certain limitations. The previous works related to \gls{rwr} odometry are limited, and many of the previous works on sensor fusion for odometry assume continuous wheel-ground contact. This limits the use of such approaches in \gls{rwr}. Many of the works rely on external systems like motion capture systems or offline data collection for terrain modelling and parameter tuning. These approaches are impractical for real-world applications in unknown or extraterrestrial terrains where such systems are not available \cite{Yamauchi2017}.
+
+    Sensor fusion methods that combine wheel odometry with IMU data often do not handle wheel slippage explicitly. When slippage occurs, the fused estimate can become inaccurate and erroneous wheel odometry data is included without correction \cite{Yousuf2016,Mikov2019}. Some approaches attempt to improve accuracy by discarding odometry samples during slippage \cite{Xiaobo2024}, but this requires reliable slippage detection, which is still a challenging task under varying terrain conditions.
+
+    Several learning-based methods, such as those using SVM, CNN, or LSTM networks, have also been proposed for slip estimation and correction \cite{Iagnemma2009,Valente2019,Reginald2025,Kruger2019}. While these approaches show promising results, they often require large amounts of labelled training data and vehicle- or terrain-specific models. This reduces their adaptability across different platforms or terrain types and increases the development time and effort.
+    
+    In addition, some proposed methods rely on simplified assumptions such as equal angular velocities for wheels on the same side \cite{Liu2020} or simultaneous slippage across all wheels \cite{Bussmann2018}. These assumptions do not hold in practical scenarios where the terrain is uneven or when slip conditions vary from wheel to wheel. 
+
+    Moreover, the increased complexity introduced by advanced filtering techniques like robust Kalman filters, Error State Kalman Filters, or multimodel architectures can hinder real-time performance, especially on resource-constrained robotic platforms \cite{Brossard2019,Das2021,Iagnemma2009,Reginald2025,Kruger2019}. Finally, several works validate their methods only in simulation or on publicly available datasets, without demonstrating performance in real-world conditions. This lack of validation under realistic operating environments raises concerns about their practical implementations \cite{Zarei2024, Valente2019}.
+
+    Based on the above-discussed limitations, a new approach to improve the odometry of \gls{rwr} is discussed in the following section. }
+        
+    
+\end{document}
