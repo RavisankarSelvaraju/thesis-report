@@ -77,18 +77,17 @@
     
     These following notations follow the monogram notations introduced in MIT notes on manipulation by Russ Tedrake \cite{BOOK-MIT-manipulationNotes}.
     
-    $p^{A}$ Position of Point A 
-    ${}^{W}p_{}^{A}$ Position of Point A measured from Point W 
-    ${}^{W}p_{F}^{A}$ Position of Point A measured from Point W represented in frame F
+    \begin{flushleft}
+        
+        ${}^{}p^{A}$ Position of Point A \\
+        ${}^{W}p_{}^{A}$ Position of Point A measured from Point W \\
+        ${}^{W}p_{F}^{A}$ Position of Point A measured from Point W represented in frame F \\
+        $T_{F}^{A}$ Pose of frame or point A represented in frame F \\
+        $R_{F}^{A}$ Rotation matrix of frame or point A represented in frame F \\
+        
+    \end{flushleft}
     
-    Here, A is target(frame or point) and W is measured from (frame or point) and F is expressed in (frame). 
-
-
-    $T_{world}^{body}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame" 
-    
-    $\boldsymbol{\xi}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame"
-    
-    The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. 
+    Here, A is target(frame or point) and W is measured from (frame or point) and F is expressed in (frame). $T_{world}^{body}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame". $\boldsymbol{\xi}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame". The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. 
     
     \subsection{Twists}
     
@@ -119,15 +118,9 @@
     
     Twist can be represented in two ways based on the reference frame: Body twist and spatial twist. The body twist is represented in the body frame attached to the moving rigid body and the spatial twist is represented in the fixed world reference frame. Both twists represent the same physical quantity i.e., the Instantaneous motion of the rigid body. 
     
-    Let's assume, we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will the velocity experienced by a point of the rigid body at the origin of body frame by the motion of the rigid body. The spatial twist or twist of world frame will be the velocity experienced by a point of the rigid body at the origin of world frame by the motion of the rigid body.
+    Let's assume, we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will the velocity experienced by a point of the rigid body at the origin of body frame by the motion of the rigid body. The spatial twist or twist of world frame will be the velocity experienced by a point of the rigid body at the origin of world frame by the motion of the rigid body. For more clear understanding, we take the example of a place flying above a person/observer. The plane is the Rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer sees?" The twist transformation is done using Adjoint transformation. This Adjoint operation expressed as below, This adjoint representation of the Transformation matrix handles the rotation and the lever arm effect of the translation when transforming the twist from one frame to another frame.
     
-    For more clear understanding, we take the example of a place flying above a person/observer. The plane is the Rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer sees?"
-    
-    The twist transformation is done using Adjoint transformation. 
-    
-    This Adjoint operation expressed as below 
-    
-    For a transformation matrix $T_{world}^{body}$
+    For a transformation matrix $T_{world}^{body}$ and a twist $\boldsymbol{\xi}_{body}$ represented in the body frame,  
     
     \begin{equation}
     T_{world}^{body} = \begin{bmatrix} R_{world}^{body} & p_{world}^{body} \\ 0 & 1 \end{bmatrix}
