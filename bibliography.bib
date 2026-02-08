@@ -238,8 +238,9 @@ doi = {10.1109/ACCESS.2022.3188990}
   month={Jun}
   }
   
+% software and datasheet references
   
-@misc{IMU-datasheet,
+@misc{DT-IMU-datasheet,
   author = {{Movella}},
   title  = {General Information — MTi-680G RTK GNSS/INS},
   howpublished = {\url{https://mtidocs.movella.com/general-information-3$mti-680-g-rtk-gnss-ins}},
@@ -247,7 +248,7 @@ doi = {10.1109/ACCESS.2022.3188990}
   note   = {Accessed 01-02-2026},
 }
 
-@misc{rockrobotics,
+@misc{SW-rockrobotics,
   author = {{Rock Core Team}},
   title  = {rock-robotics.org},
   howpublished = {\url{https://www.rock-robotics.org/}},
@@ -255,10 +256,61 @@ doi = {10.1109/ACCESS.2022.3188990}
   note   = {Accessed 01-02-2026},
 }
 
-@misc{inekf-github,
+@misc{REPO-inekf-github,
   author = {{Hartley, Ross}},
   title  = {Invariant EKF: C++ Library for Aided Inertial Navigation},
   howpublished = {\url{https://github.com/RossHartley/invariant-ekf}},
   year   = {2026},
   note   = {Accessed 01-02-2026},
+}
+
+@misc{REPO-orocos-KDL-github,
+  author = {Orocos},
+  title = {{GitHub - orocos orocos\_kinematics\_dynamics: Orocos Kinematics and Dynamics C++ library}},
+  howpublished = {\url{https://github.com/orocos/orocos_kinematics_dynamics}},
+  year = {2026},
+  note = {Accessed 08-02-2026},
+}
+
+
+% Book references
+
+@book{BOOK-RigidBodyDynamicsAlgorithms,
+author = {Featherstone, Roy},
+title = {Rigid Body Dynamics Algorithms},
+year = {2016},
+isbn = {1489978682},
+publisher = {Springer Publishing Company, Incorporated},
+abstract = {Rigid Body Dynamics Algorithms presents the subject of computational rigid-body dynamics through the medium of spatial 6D vector notation. It explains how to model a rigid-body system and how to analyze it, and it presents the most comprehensive collection of the best rigid-bodydynamics algorithms to be found in a single source. The use of spatial vector notation greatly reduces the volume of algebra which allows systems to be described using fewer equations and fewer quantities. It also allows problems to be solved in fewer steps, and solutions to be expressed more succinctly. In addition algorithms are explained simply and clearly, and are expressed in a compact form. The use of spatial vector notation facilitates the implementation of dynamics algorithms on a computer: shorter, simpler code that is easier to write, understand and debug, with no loss of efficiency.}
+}
+
+@book{BOOK-ModernRobotics,
+author = {Lynch, Kevin M. and Park, Frank C.},
+title = {Modern Robotics: Mechanics, Planning, and Control},
+year = {2017},
+isbn = {1107156300},
+publisher = {Cambridge University Press},
+address = {USA},
+edition = {1st},
+abstract = {This introduction to robotics offers a distinct and unified perspective of the mechanics, planning and control of robots. Ideal for self-learning, or for courses, as it assumes only freshman-level physics, ordinary differential equations, linear algebra and a little bit of computing background. Modern Robotics presents the state-of-the-art, screw-theoretic techniques capturing the most salient physical features of a robot in an intuitive geometrical way. With numerous exercises at the end of each chapter, accompanying software written to reinforce the concepts in the book and video lectures aimed at changing the classroom experience, this is the go-to textbook for learning about this fascinating subject.}
+}
+
+@book{BOOK-MathematicalIntroductionToRoboticManipulation,
+author = {Murray, Richard M. and Sastry, S. Shankar and Zexiang, Li},
+title = {A  Mathematical Introduction to Robotic Manipulation},
+year = {1994},
+isbn = {0849379814},
+publisher = {CRC Press, Inc.},
+address = {USA},
+edition = {1st}
+}
+
+@book{BOOK-MIT-manipulationNotes,
+  title        = "Robotic Manipulation",
+  subtitle     = "Perception, Planning, and Control",
+  howpublished = "Course Notes for MIT 6.421",
+  author       = "Tedrake, Russ",
+  publisher    = "Massachusetts Institute of Technology",
+  year         = 2024,
+  url          = "http://manipulation.mit.edu",
 }

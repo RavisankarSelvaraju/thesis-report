@@ -3,11 +3,11 @@
 \begin{document}
     \chapter{Solution}
 
-    
-
     \section{Proposed algorithm}
         
-        The proposed apporach modifies the existing InEKF library by adding the 
+        The proposed approach modifies the existing InEKF library by adding a new update method that uses Potential Contact Velocity vector as a measurement to correct the filter state. As discussed in the background chapter, the PCV vector is calculated using the wheel encoder measurements and compared against the PCV calculated from the filter state. The difference between these two sources of information is used to get the innovation/residual for the update/correction step of the filter. 
+        
+        
     
 
     \section{Implementation details}

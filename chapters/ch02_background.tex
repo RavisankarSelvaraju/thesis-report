@@ -29,6 +29,7 @@
 
     Given that the rimless wheeled rover can travel in diverse terrain, the odometry calculation to track the robot's pose is more challenging than in other terrains. One of the challenging points is to achieve an odometry that works well in different types of terrain. Since the contact behaviours differ based on the shape and texture of materials on the terrain, it is vital to improve the odometry of rimless wheeled rovers for effective navigation on diverse terrains.
     }
+    
     \subsection{Sensor fusion}
 
     \fromproposal{
@@ -67,5 +68,85 @@
     
     \todo[inline]{write about the current measurement function and update methods used to update the state in the InEKF library}
     \todo{write about the prediction step and how IMU data is used there}
+    
+    \subsection{PCV}
+    
+    PCV 
+    
+    \subsection{Notations}
+    
+    These following notations follow the monogram notations introduced in MIT notes on manipulation by Russ Tedrake \cite{BOOK-MIT-manipulationNotes}.
+    
+    $p^{A}$ Position of Point A 
+    ${}^{W}p_{}^{A}$ Position of Point A measured from Point W 
+    ${}^{W}p_{F}^{A}$ Position of Point A measured from Point W represented in frame F
+    
+    Here, A is target(frame or point) and W is measured from (frame or point) and F is expressed in (frame). 
+
+
+    $T_{world}^{body}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame" 
+    
+    $\boldsymbol{\xi}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame"
+    
+    The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. 
+    
+    \subsection{Twists}
+    
+    Twists or Spatial velocity capture the Instantaneous motion of a rigid body in 3D space, and it merges the linear and angular velocities into a single entity \cite{BOOK-ModernRobotics}. The mathematical representation of a twist can vary depending on the source. Another interpretation of twist expresses the screw motion of the body, which is stated by the screw theory. \cite{BOOK-MathematicalIntroductionToRoboticManipulation} Pg: 46 Definition: 2.2. The book "Modern Robotics" by Lynch and Park \cite{BOOK-ModernRobotics} uses the twist convention that orders the angular velocity first and then the linear velocity in the vector \ref{MR_twist_representation}
+    
+    \begin{equation}
+    \boldsymbol{\xi} = \begin{bmatrix} \boldsymbol{\omega} \\ \mathbf{v} \end{bmatrix} \in \mathbb{R}^6
+    \label{MR_twist_representation}
+    \end{equation}
+
         
+    The "Rigid Body Dynamics" book \cite{BOOK-RigidBodyDynamicsAlgorithms} by Roy Featherstone uses the spatial velocity which orders the linear velocity first and then the angular velocity \ref{RBD_twist_representation}. This convention is also followed in the Kinematics and Dynamics Library (KDL) \cite{REPO-orocos-KDL-github}. 
+    
+    \begin{equation}
+    \boldsymbol{\xi} = \begin{bmatrix} \mathbf{v} \\ \boldsymbol{\omega} \end{bmatrix} \in \mathbb{R}^6
+    \label{RBD_twist_representation}
+    \end{equation}
+    
+    \begin{flushleft}
+        Where \\
+        $\boldsymbol{\omega}$ is Angular velocity \\
+        $\mathbf{v}$ is Linear velocity
+    \end{flushleft}
+
+    Since, the proposed approach, we plan to use the KDL library to transformation of Twists, we will follow the spatial velocity \ref{RBD_twist_representation} convention by ordering the linear velocity first and then the angular velocity in the Twist vector. 
+    
+    \subsubsection*{Transforming Twists}
+    
+    Twist can be represented in two ways based on the reference frame: Body twist and spatial twist. The body twist is represented in the body frame attached to the moving rigid body and the spatial twist is represented in the fixed world reference frame. Both twists represent the same physical quantity i.e., the Instantaneous motion of the rigid body. 
+    
+    Let's assume, we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will the velocity experienced by a point of the rigid body at the origin of body frame by the motion of the rigid body. The spatial twist or twist of world frame will be the velocity experienced by a point of the rigid body at the origin of world frame by the motion of the rigid body.
+    
+    For more clear understanding, we take the example of a place flying above a person/observer. The plane is the Rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer sees?"
+    
+    The twist transformation is done using Adjoint transformation. 
+    
+    This Adjoint operation expressed as below 
+    
+    For a transformation matrix $T_{world}^{body}$
+    
+    \begin{equation}
+    T_{world}^{body} = \begin{bmatrix} R_{world}^{body} & p_{world}^{body} \\ 0 & 1 \end{bmatrix}
+    \label{Transformation_of_Body_to_world}
+    \end{equation}
+    
+    The Adjoint transformation for the transformation matrix \ref{Transformation_of_Body_to_world} is given by the equation \ref{Adjoint_transformation_equation}
+    
+    \begin{equation}
+    \text{Ad}_{T_{world}^{body}} = \begin{bmatrix} R_{world}^{body} & 0 \\ [p_{world}^{body}]_\times R_{world}^{body} & R_{world}^{body} \end{bmatrix}
+    \label{Adjoint_transformation_equation}
+    \end{equation}
+    
+    If we need to transform a twist of the body frame represented in the body frame $\boldsymbol{\xi}_{body}$ to the twist of body frame represented in the world frame $\boldsymbol{\xi}_{world}$, we can use the following equation \ref{Twist_transformation_equation}
+    
+    \begin{equation}
+    \boldsymbol{\xi}_{body}^{world} = \text{Ad}_{T_{world}^{body}} \boldsymbol{\xi}_{body}^{body}
+    \label{Twist_transformation_equation}
+    \end{equation}
+    
+    
 \end{document}
