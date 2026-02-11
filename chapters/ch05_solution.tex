@@ -6,11 +6,31 @@
     \section{Proposed algorithm}
         
         The proposed approach modifies the existing InEKF library by adding a new update method that uses Potential Contact Velocity vector as a measurement to correct the filter state. As discussed in the background chapter, the PCV vector is calculated using the wheel encoder measurements and compared against the PCV calculated from the filter state. The difference between these two sources of information is used to get the innovation/residual for the update/correction step of the filter. 
-        
-        
-    
 
     \section{Implementation details}
     
+    \subsection{Filter update step implementation}
+    
+        This section describes the implementation details related to the update step of the \gls{inekf}. The update step, as discussed in the methodology chapter \ref{chap:methodology}, utilizes the \gls{pcv} as the measurement. Firstly, we use the state vector of the \gls{inekf} to calculate the expected \gls{pcv}, and we use the   wheel velocities(Rotational speed of the wheels) to calculate the measured \gls{pcv}. The following subsection will discuss the design and implementation choices used in the above-mentioned calculations.
+    
+    \subsection{Expected Potential Contact Velocity Calculation}
+        
+        The filter state consists of $[R, V, P, acc_bias, gyro bias]$, the expected \gls{pcv} need to be calculated with this information. All the calculation we do related to the \gls{inekf} is body centric. \todo[inline]{need confirmation}. In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
+        
+        This calculation can be done step by step by using below-mentioned equation,
+    
+        $pcv = V_{body}^{body} * (\omega_{body}^{body} x {}^{pc}r_{body}^{body})$
+    
+    \subsection{Measured Potential Contact Velocity Calculation}
+    
+    
+    
+    \subsection{Fixed Wheel Frames}
+    
+    The fixed wheel frames are added as a \todo[inline]{this is wrong, need to be fixed }link in the URDF to connect the body of the rover to the rotating wheel frames. The fixed wheel frames are at the same position as the rotating wheel frame, but the orientation of the fixed wheel frame are fixed with respect to the body frame. The fixed wheel frames act as the motor frame of the wheel providing a reference frame to get the position vectors of the rotating wheel spokes. These position vector data is then used to calculate the \gls{pcv} of the wheel. The calculated position vectors are then used in the following calculation to find the PCV using the formula, 
+    
+    $pcv = omege_wheel x pos_spoke_in_wheel$
+    
+    The \gls{pcv} vector will be perpendicular to the spoke and point in the direction of rotation of the wheel. This is the only purpose of the fixed wheel frames. The proper orientation of the fixed wheel frames is not yet decided/understood. This is still WIP
     
 \end{document}

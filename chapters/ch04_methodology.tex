@@ -1,7 +1,7 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Methodology}
+    \chapter{Methodology} \label{chap:methodology}
 
     This chapter contains information on the how part of the problem statement. What techniques are used to estimate the odometry using InEKF-pcv
         
@@ -9,9 +9,9 @@
         
     \begin{itemize}
         \item We have a rimless wheeled rover named coyote which has four wheel joints and a bogie joint between body and the rear axle. \todo[inline]{add the make and model of wheel encoder}
-        \item A Mti680(G) \cite{IMU-datasheet} series IMU is used to get the linear acceleration and angular rotation of the robot body
+        \item A Mti680(G) \cite{DT-IMU-datasheet} series IMU is used to get the linear acceleration and angular rotation of the robot body
         \item The Motion capture for ground truth data is done by VICON system 
-        \item The ROCK framework by DFKI \cite{rockrobotics} is used to run the Invariant extended Kalman filter library \cite{inekf-github} by RossHartley 
+        \item The ROCK framework by DFKI \cite{SW-rockrobotics} is used to run the Invariant extended Kalman filter library \cite{REPO-inekf-github} by RossHartley 
         \item The MARS simulator is used for running simulated experiments and the development of the proposed approach 
         \item Multi function hall and the crater hall at DFKI is used to run real world experiments
         \item \todo[inline]{add the cpu specs of the coyote rover}

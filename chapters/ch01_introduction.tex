@@ -3,7 +3,7 @@
 \begin{document}
     \chapter{Introduction}
     
-    \fromproposal{Reliable state estimation is vital for efficient operation of \gls{rwr} in unstructured and planetary environments. Traditional dead-reckoning-based odometry approaches are prone to drift and slippage-related errors. This interoceptive sensor-based state estimation is critical in scenarios where the use of visual data for odometry is limited due to computational power constraints and environmental conditions \cite{Agostinho2022}. The availability of reliable proprioceptive odometry enables the possibility of sensor fusion with visual and other forms of odometry. Relying on a single source of odometry is susceptible to errors, so using sensor fusion techniques can improve the quality of odometry. The introduction section is organised by dividing the project title into multiple parts. Each part explains a specific aspect of the topic, making it easier for the reader to understand. }
+    \fromproposal{Reliable state estimation is vital for efficient operation of \gls{rwr} in unstructured and planetary environments. Traditional dead-reckoning-based odometry approaches are prone to drift and slippage-related errors. This interoceptive sensor-based state estimation is critical in scenarios where the use of visual data for odometry is limited due to computational power constraints and environmental conditions cite→Agostinho2022. The availability of reliable proprioceptive odometry enables the possibility of sensor fusion with visual and other forms of odometry. Relying on a single source of odometry is susceptible to errors, so using sensor fusion techniques can improve the quality of odometry. The introduction section is organised by dividing the project title into multiple parts. Each part explains a specific aspect of the topic, making it easier for the reader to understand. }
 
     \section{Motivation}
     
@@ -50,16 +50,10 @@
 
     Finally, the prospect of using the \gls{inekf} framework to estimate the \gls{pc} will be explored. The \gls{pc} can be inferred by the \gls{pcv} estimated using IMU data and the wheel velocity data. When the \gls{pcv} vector direction from the IMU estimate and the wheel velocity measurement match, then that spoke can be considered as a \gls{pc}.
     
-    A simple block diagram showcasing the proposed approach is shown in Figure The proposed approach will be tested in simulation on inclined terrains and in real-world scenarios with sand and loose rocks inside DFKI’s multifunction hall. The evaluation will compare the estimation error of standard odometry against the proposed \gls{inekf} framework using metrics like MSE and max error per distance in percentage. 
+    A simple block diagram showcasing the proposed approach is shown. The proposed approach will be tested in simulation on inclined terrains and in real-world scenarios with sand and loose rocks inside DFKI's multifunction hall. The evaluation will compare the estimation error of standard odometry against the proposed \gls{inekf} framework using metrics like MSE and max error per distance in percentage. 
 
     A possible Key Performance Indicator (KPI) could be errors (m) per unit distance(m). This quantitative measure can assess the performance of the proposed approach, and the objective is to keep the KPI as low as possible for the SLAM system to work. This demonstrates that an improved odometry can lead to better performance of SLAM.
     }
 
-    \subsection{...}
 
-
-    \subsection{...}
-
-
-    \subsection{...}
 \end{document}
