@@ -1,10 +1,10 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Background}
+    \chapter{Background} \label{chap:background}
     \todo[inline]{Change the chapter title if necessary}
     
-    \subsection{Odometry} \label{subsection:odometry}
+    \subsection{Odometry} \label{subsec:backgroundOdometry}
         \fromproposal{
         The process of estimating a robot's current pose based on its sensor data, such as wheel encoder and Inertial Measurement Unit (IMU), is called odometry. This can be calculated using the rover's proprioceptive sensors, such as wheel encoders and IMU, as well as exteroceptive sensors like cameras and LiDARs. In situations like an underground cave, tunnels, and space exploration, Odometry plays a vital role in tracking the movements of mobile rovers when external positioning systems like GPS (Global Positioning System) and other motion capture systems might not be available. The use of an exteroceptive sensor can improve the state estimation; nevertheless, a reliable proprioceptive sensor-based state estimation provides a better starting point for odometry, which can then later be fused with other sources of odometry.
         
@@ -35,7 +35,7 @@
     \fromproposal{
     One of the well-known solutions to deal with the unreliability of single sensor-based pose estimation is to use sensor fusion techniques. These techniques fuse sensor data from different sensors to get a reliable estimate of the rover's pose. The use of sensor fusion techniques is studied in traditional wheeled  \cite{Brossard2019, Das2021,Liu2020, Xiaobo2024} and legged \cite{DeLen2020} based locomotion in the literature.
 
-    As mentioned in the subsection \ref{subsection:odometry}, the baseline odometry does not perform true sensor fusion of wheel and inertial odometry. Instead, it simply combines selected components from each odometry. The proposed approach uses an Extended Kalman filter (EKF) to fuse the inertial odometry data and wheel odometry data. The key improvement this thesis aims at is to include slip detection and elimination during the sensor fusion process so that error-prone wheel odometry data will not be used in the final pose estimation.
+    As mentioned in the subsection \ref{subsec:backgroundOdometry}, the baseline odometry does not perform true sensor fusion of wheel and inertial odometry. Instead, it simply combines selected components from each odometry. The proposed approach uses an Extended Kalman filter (EKF) to fuse the inertial odometry data and wheel odometry data. The key improvement this thesis aims at is to include slip detection and elimination during the sensor fusion process so that error-prone wheel odometry data will not be used in the final pose estimation.
 
     Since the primary advantage of rimless wheels is to traverse challenging terrain, it is vital to study the effects of sensor fusion techniques in improving the rimless wheeled rover's odometry. 
     % While kinematics, dynamics and control strategies are well studied in literature for traditional wheeled rovers, these aspects remain an open area of research for rimless wheeled systems.
@@ -73,37 +73,41 @@
     
     PCV 
     
-    \subsection{Notations}
+    \subsection{Notations} \label{subsec:notations}
     
-    These following notations follow the monogram notations introduced in MIT notes on manipulation by Russ Tedrake \cite{BOOK-MIT-manipulationNotes}.
+    These following notations follow the widely accepted representation mentioned/used in \cite{BOOK-ModernRobotics} and \cite{BOOK-RigidBodyDynamicsAlgorithms}. This method of representation keep the source frame of the variable at the bottom and the target frame or reference frame at the top of the variable. We will follow the same notation convention throughout this thesis implementation and report. This subsection will present some examples on how this notation will be used and interpreted. 
     
     \begin{flushleft}
         
-        ${}^{}p^{A}$ Position of Point A \\
-        ${}^{W}p_{}^{A}$ Position of Point A measured from Point W \\
-        ${}^{W}p_{F}^{A}$ Position of Point A measured from Point W represented in frame F \\
-        $T_{F}^{A}$ Pose of frame or point A represented in frame F \\
-        $R_{F}^{A}$ Rotation matrix of frame or point A represented in frame F \\
+        ${}^{}p_{A}^{} - $ Position of Point A \\
+        ${}^{}p_{A}^{F} - $ Position of Point A represented in Frame F \\
         
+        $v_{A}^{} - $ Velocity of Frame or point A  \\
+        $v_{A}^{F} - $ Velocity of Frame or point A represented in Frame F \\
+
+        $R_{A}^{F} - $ Rotation of Frame A represented in Frame F \\
+        $T_{A}^{F} - $ Pose of Frame A represented in Frame F or Transformation matrix that converts a point in Frame A to Frame F\\
+        $ \xi_{A}^{F} - $ Twist of moving Frame or point A represented in Frame F \\
+                
     \end{flushleft}
     
-    Here, A is target(frame or point) and W is measured from (frame or point) and F is expressed in (frame). $T_{world}^{body}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame". $\boldsymbol{\xi}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame". The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. 
+    Here, A is source(frame or point) and F is expressed in (frame). $T_{body}^{world}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame". $\boldsymbol{\xi}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame". The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. 
     
-    \subsection{Twists}
+    \subsection{Twists} \label{subsec:twists}
     
-    Twists or Spatial velocity capture the Instantaneous motion of a rigid body in 3D space, and it merges the linear and angular velocities into a single entity \cite{BOOK-ModernRobotics}. The mathematical representation of a twist can vary depending on the source. Another interpretation of twist expresses the screw motion of the body, which is stated by the screw theory. \cite{BOOK-MathematicalIntroductionToRoboticManipulation} Pg: 46 Definition: 2.2. The book "Modern Robotics" by Lynch and Park \cite{BOOK-ModernRobotics} uses the twist convention that orders the angular velocity first and then the linear velocity in the vector \ref{MR_twist_representation}
+    Twists or Spatial velocity capture the Instantaneous motion of a rigid body in 3D space, and it merges the linear and angular velocities into a single entity \cite{BOOK-ModernRobotics}. The mathematical representation of a twist can vary depending on the source. Another interpretation of twist expresses the screw motion of the body, which is stated by the screw theory. \cite{BOOK-MathematicalIntroductionToRoboticManipulation} Pg: 46 Definition: 2.2. The book "Modern Robotics" by Lynch and Park \cite{BOOK-ModernRobotics} uses the twist convention that orders the angular velocity first and then the linear velocity in the vector \ref{eq:MRTwistRepresentation}
     
     \begin{equation}
     \boldsymbol{\xi} = \begin{bmatrix} \boldsymbol{\omega} \\ \mathbf{v} \end{bmatrix} \in \mathbb{R}^6
-    \label{MR_twist_representation}
+    \label{eq:MRTwistRepresentation}
     \end{equation}
 
         
-    The "Rigid Body Dynamics" book \cite{BOOK-RigidBodyDynamicsAlgorithms} by Roy Featherstone uses the spatial velocity which orders the linear velocity first and then the angular velocity \ref{RBD_twist_representation}. This convention is also followed in the Kinematics and Dynamics Library (KDL) \cite{REPO-orocos-KDL-github}. 
+    The "Rigid Body Dynamics" book \cite{BOOK-RigidBodyDynamicsAlgorithms} by Roy Featherstone uses the spatial velocity which orders the linear velocity first and then the angular velocity \ref{eq:RBDTwistRepresentation}. This convention is also followed in the Kinematics and Dynamics Library (KDL) \cite{REPO-orocos-KDL-github}. 
     
     \begin{equation}
     \boldsymbol{\xi} = \begin{bmatrix} \mathbf{v} \\ \boldsymbol{\omega} \end{bmatrix} \in \mathbb{R}^6
-    \label{RBD_twist_representation}
+    \label{eq:RBDTwistRepresentation}
     \end{equation}
     
     \begin{flushleft}
@@ -112,7 +116,7 @@
         $\mathbf{v}$ is Linear velocity
     \end{flushleft}
 
-    Since, the proposed approach, we plan to use the KDL library to transformation of Twists, we will follow the spatial velocity \ref{RBD_twist_representation} convention by ordering the linear velocity first and then the angular velocity in the Twist vector. 
+    Since, the proposed approach, we plan to use the KDL library to transformation of Twists, we will follow the spatial velocity \ref{eq:RBDTwistRepresentation} convention by ordering the linear velocity first and then the angular velocity in the Twist vector. 
     
     \subsubsection*{Transforming Twists}
     
@@ -120,25 +124,26 @@
     
     Let's assume, we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will the velocity experienced by a point of the rigid body at the origin of body frame by the motion of the rigid body. The spatial twist or twist of world frame will be the velocity experienced by a point of the rigid body at the origin of world frame by the motion of the rigid body. For more clear understanding, we take the example of a place flying above a person/observer. The plane is the Rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer sees?" The twist transformation is done using Adjoint transformation. This Adjoint operation expressed as below, This adjoint representation of the Transformation matrix handles the rotation and the lever arm effect of the translation when transforming the twist from one frame to another frame.
     
-    For a transformation matrix $T_{world}^{body}$ and a twist $\boldsymbol{\xi}_{body}$ represented in the body frame,  
+    For a transformation matrix $T_{body}^{world}$ and a twist $\boldsymbol{\xi}_{body}^{body}$ represented in the body frame,  
     
     \begin{equation}
-    T_{world}^{body} = \begin{bmatrix} R_{world}^{body} & p_{world}^{body} \\ 0 & 1 \end{bmatrix}
-    \label{Transformation_of_Body_to_world}
+    T_{body}^{world} = \begin{bmatrix} R_{body}^{world} & p_{body}^{world} \\ 0 & 1 \end{bmatrix}
+    \label{eq:TransformationOfBodyToWorld}
     \end{equation}
     
-    The Adjoint transformation for the transformation matrix \ref{Transformation_of_Body_to_world} is given by the equation \ref{Adjoint_transformation_equation}
+    The Adjoint transformation for the transformation matrix \ref{TransformationOfBodyToWorld} is given by the equation \ref{AdjointTransformationEquation}
     
     \begin{equation}
-    \text{Ad}_{T_{world}^{body}} = \begin{bmatrix} R_{world}^{body} & 0 \\ [p_{world}^{body}]_\times R_{world}^{body} & R_{world}^{body} \end{bmatrix}
-    \label{Adjoint_transformation_equation}
+    \text{Ad}_{T_{body}^{world}} = \begin{bmatrix} R_{body}^{world} & 0 \\ [p_{body}^{world}]_\times R_{body}^{world} & R_{body}^{world} \end{bmatrix}
+    \label{eq:AdjointTransformationEquation}
     \end{equation}
     
-    If we need to transform a twist of the body frame represented in the body frame $\boldsymbol{\xi}_{body}$ to the twist of body frame represented in the world frame $\boldsymbol{\xi}_{world}$, we can use the following equation \ref{Twist_transformation_equation}
+    If we need to transform a twist of the body frame represented in the body frame $\boldsymbol{\xi}_{body}^{body}$ to the twist of body frame represented in the world frame $\boldsymbol{\xi}_{body}^{world}$, we can use the following equation \ref{TwistTransformationEquation}. 
+    If we want to change the frame of representation then, the rotation between frame need to be included in the transformation matrix, but if only the reference point of twist need to be changed only the position vector need to be changed.
     
     \begin{equation}
-    \boldsymbol{\xi}_{body}^{world} = \text{Ad}_{T_{world}^{body}} \boldsymbol{\xi}_{body}^{body}
-    \label{Twist_transformation_equation}
+        \boldsymbol{\xi}_{body}^{world} = \text{Ad}_{T_{body}^{world}} \boldsymbol{\xi}_{body}^{body}
+    \label{eq:TwistTransformationEquation}
     \end{equation}
     
     

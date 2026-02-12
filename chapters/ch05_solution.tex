@@ -17,9 +17,31 @@
         
         The filter state consists of $[R, V, P, acc_bias, gyro bias]$, the expected \gls{pcv} need to be calculated with this information. All the calculation we do related to the \gls{inekf} is body centric. \todo[inline]{need confirmation}. In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
         
-        This calculation can be done step by step by using below-mentioned equation,
+        This calculation can be done step by step by using equation \ref{eq:ExpectedPCVCalculation}. This operation can also be done using \gls{kdl} using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implementation version of the twist transformation is provided in \ref{eq:ExpectedPCVCalculationTwist}
     
-        $pcv = V_{body}^{body} * (\omega_{body}^{body} x {}^{pc}r_{body}^{body})$
+        \begin{equation}
+            v_{pc}^{body} = v_{body}^{body} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body})
+            \label{eq:ExpectedPCVCalculation}
+        \end{equation}
+        
+        Where, 
+        
+        \begin{equation}
+            \begin{bmatrix}
+            \boldsymbol{\omega}_{pc}^{body} \
+            \mathbf{v}_{pc}^{body}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            I & 0 \\
+            \left[\,\mathbf{p}_{pc}^{body}\,\right]_\times & I
+            \end{bmatrix}
+            \begin{bmatrix}
+            \boldsymbol{\omega}_{body}^{body} \\
+            \mathbf{v}_{body}^{body}
+            \end{bmatrix}
+            \label{eq:ExpectedPCVCalculationTwist}            
+        \end{equation}
     
     \subsection{Measured Potential Contact Velocity Calculation}
     
