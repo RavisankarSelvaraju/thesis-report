@@ -11,11 +11,11 @@
     
     \subsection{Filter update step implementation}
     
-        This section describes the implementation details related to the update step of the \gls{inekf}. The update step, as discussed in the methodology chapter \ref{chap:methodology}, utilizes the \gls{pcv} as the measurement. Firstly, we use the state vector of the \gls{inekf} to calculate the expected \gls{pcv}, and we use the   wheel velocities(Rotational speed of the wheels) to calculate the measured \gls{pcv}. The following subsection will discuss the design and implementation choices used in the above-mentioned calculations.
+        This section describes the implementation details related to the update step of the \gls{inekf}. The update step, as discussed in the methodology chapter \ref{chap:methodology}, utilizes the \gls{pcv} as the measurement. Firstly, we use the state vector of the \gls{inekf} to calculate the expected \gls{pcv}, and we use the wheel velocities(Rotational speed of the wheels) to calculate the measured \gls{pcv}. The following subsection will discuss the design and implementation choices used in the above-mentioned calculations.
     
     \subsection{Expected Potential Contact Velocity Calculation}
         
-        The filter state consists of $[R, V, P, acc_bias, gyro bias]$, the expected \gls{pcv} need to be calculated with this information. All the calculation we do related to the \gls{inekf} is body centric. \todo[inline]{need confirmation}. In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
+        The filter state consists of $[R, V, P, acc\_bias, gyro\_bias]$, the expected \gls{pcv} need to be calculated with this information. All the calculations we do related to the \gls{inekf} are  body centric calculations. In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
         
         This calculation can be done step by step by using equation \ref{eq:ExpectedPCVCalculation}. This operation can also be done using \gls{kdl} using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implementation version of the twist transformation is provided in \ref{eq:ExpectedPCVCalculationTwist}
     
@@ -23,12 +23,10 @@
             v_{pc}^{body} = v_{body}^{body} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body})
             \label{eq:ExpectedPCVCalculation}
         \end{equation}
-        
-        Where, 
-        
+                
         \begin{equation}
             \begin{bmatrix}
-            \boldsymbol{\omega}_{pc}^{body} \
+            \boldsymbol{\omega}_{pc}^{body} \\
             \mathbf{v}_{pc}^{body}
             \end{bmatrix}
             =
@@ -44,15 +42,99 @@
         \end{equation}
     
     \subsection{Measured Potential Contact Velocity Calculation}
-    
-    
-    
+        
     \subsection{Fixed Wheel Frames}
     
-    The fixed wheel frames are added as a \todo[inline]{this is wrong, need to be fixed }link in the URDF to connect the body of the rover to the rotating wheel frames. The fixed wheel frames are at the same position as the rotating wheel frame, but the orientation of the fixed wheel frame are fixed with respect to the body frame. The fixed wheel frames act as the motor frame of the wheel providing a reference frame to get the position vectors of the rotating wheel spokes. These position vector data is then used to calculate the \gls{pcv} of the wheel. The calculated position vectors are then used in the following calculation to find the PCV using the formula, 
+    The fixed wheel frames are added in the robot URDF model at the location of motors. This fixed wheel frames have the same pose as the initial pose of the rotating wheel frame. The fixed wheel frames are added to get the position vector to the spoke of the wheel from the center of the wheel. These position vectors are later used to calculate the measured \gls{pcv}. This is by performing a cross product of wheel's angular velocity vector (the vector form of rotation speed) and the position vector of \gls{pc}. The \gls{pcv} vector will be perpendicular to the spoke and point in the direction of rotation of the wheel. This is the only purpose of the fixed wheel frames. The calculation of the measured \gls{pcv} is shown in equation \ref{eq:MeasuredPCVCalculation}.
     
-    $pcv = omege_wheel x pos_spoke_in_wheel$
+    \begin{equation}
+        v_{pc}^{wheel} = \omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel}
+        \label{eq:MeasuredPCVCalculation}
+    \end{equation}
     
-    The \gls{pcv} vector will be perpendicular to the spoke and point in the direction of rotation of the wheel. This is the only purpose of the fixed wheel frames. The proper orientation of the fixed wheel frames is not yet decided/understood. This is still WIP
+    
+    \subsection{Jacobian}
+    
+        The Jacobian matrix is calculated by taking the partial derivatives of the measurement function with respect to the state variables.
+        The current measurement function, as shown in the equation \ref{eq:MeasurementFunction}. The error variables are {$\delta R$, $\delta V$, $\delta P$, $\delta acc\_bias$, $\delta gyro\_bias$}. When the measurement function is partially differentiated with the error variables, the Jacobian matrix is obtained. 
+        
+        \begin{equation}
+            h(x) = - (v_body^{body} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body}))
+            \label{eq:MeasurementFunction}
+        \end{equation}
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+            \frac{\partial h}{\partial \delta R} & \frac{\partial h}{\partial \delta V} & \frac{\partial h}{\partial \delta P} & \frac{\partial h}{\partial \delta acc\_bias} & \frac{\partial h}{\partial \delta gyro\_bias}
+            \end{bmatrix}
+            \label{eq:JacobianMatrix}
+        \end{equation}
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+                \mathbf{0} & -\mathbf{I} & \mathbf{0} & \mathbf{0} & -[r_{pc}^{body}]_\times
+            \end{bmatrix}
+            \label{eq:JacobianMatrixFinal}      
+        \end{equation}
+       
+
+    \subsection{Slip elimination}
+    
+    The slippage is discussed in detail in the background chapter \ref{subsec:backgroundSlippage}
+
+    \subsubsection{Derivation of the Gyro Bias Jacobian}
+    
+    The measurement function for the contact point velocity in the body frame is given by:
+    \begin{equation}
+        h(x) = - (v + (\omega \times r_{pc}))
+        \label{eq:h_x_base}
+    \end{equation}
+    
+    To find the Jacobian with respect to the gyro bias error $\delta b_g$, we first express the true angular velocity $\omega$ in terms of the IMU measurement $\omega_{imu}$ and the bias
+      $b_g$:
+    \begin{equation}
+        \omega = \omega_{imu} - b_g
+    \end{equation}
+
+    In the EKF formulation, the true bias is decomposed into the current estimate $\hat{b}_g$ and the error state $\delta b_g$:
+    \begin{equation}
+        b_g = \hat{b}_g + \delta b_g
+    \end{equation}
+
+    Substituting this into the expression for $\omega$:
+    \begin{equation}
+        \omega = \omega_{imu} - (\hat{b}_g + \delta b_g) = (\omega_{imu} - \hat{b}_g) - \delta b_g
+    \end{equation}
+
+    Let $\hat{\omega} = \omega_{imu} - \hat{b}_g$ represent our estimated angular velocity. We can now substitute $\omega = \hat{\omega} - \delta b_g$ back into the measurement function \ref{eq:h_x_base}:
+    \begin{equation}
+        h(x) = - (v + ((\hat{\omega} - \delta b_g) \times r_{pc}))
+    \end{equation}
+
+    Expanding the cross product using the distributive property:
+    \begin{equation}
+        h(x) = -v - (\hat{\omega} \times r_{pc}) + (\delta b_g \times r_{pc})
+    \end{equation}
+
+    To isolate the error term $\delta b_g$ on the right side of the cross product, we apply the anti-commutative property ($A \times B = -B \times A$):
+    \begin{equation}
+        h(x) = -v - (\hat{\omega} \times r_{pc}) - (r_{pc} \times \delta b_g)
+    \end{equation}
+
+    We then convert the cross product into a matrix-vector multiplication using the skew-symmetric matrix notation $[r_{pc}]_\times$:
+    \begin{equation}
+        h(x) = -v - (\hat{\omega} \times r_{pc}) - [r_{pc}]_\times \delta b_g
+    \end{equation}
+
+    The Jacobian block for the gyro bias is the partial derivative of $h(x)$ with respect to the error state $\delta b_g$:
+    \begin{equation}
+        H_{b_g} = \frac{\partial h(x)}{\partial \delta b_g} = \frac{\partial}{\partial \delta b_g} \left( -v - (\hat{\omega} \times r_{pc}) - [r_{pc}]_\times \delta b_g \right)
+    \end{equation}
+
+    Since the first two terms do not depend on $\delta b_g$, the derivative simplifies to:
+    \begin{equation}
+        H_{b_g} = -[r_{pc}]_\times
+    \end{equation}
+
     
 \end{document}
