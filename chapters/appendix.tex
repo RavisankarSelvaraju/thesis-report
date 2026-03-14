@@ -4,7 +4,26 @@
 
     \chapter{Design Details}
     Your first appendix
+    
+    \section{measurement jacobian derivation}\label{appendix:MeasurementJacobianDerivation}
 
+    The equation \ref{eq:MeasurementJacobian-2} contains five partial derivatives, each corresponding to one of the error state variables. This section provides the detailed derivation of each partial derivative so that the resulting measurement jacobian will be the one shown in equation \ref{eq:MeasurementJacobian-3}.
+    
+    \subsection{Rotation matrix}
+        The orientation of the body is not related to the velocity at the point of contact, the rotation matrix block of measurement jacobian will be $0_{3\times3}$
+    \subsection{Velocity}
+        When the measurement function is differentiated with respect to the body velocity,
+        
+    $$\frac{\partial h}{\partial v_{body}^{body}} = - \frac{\partial v_{body}^{body}}{\partial v_{body}^{body}} - \frac{\partial (\omega_{body}^{body} \times r_{pc}^{body})}{\partial v_{body}^{body}} = -I - 0 = -I_{3\times3}$$
+
+
+    \subsection{Position}
+        Since the position of body does not affect the velocity at the point of contact, this block will also be $0_{3\times3}$
+    \subsection{Accelerometer bias}
+        The acceleration term is not included in the measurement equation, this block will also be $0_{3\times3}$
+    \subsection{Gyroscope bias}
+    
+    \todo[inline]{Provide the gyro bias estimation calculation}
     \chapter{Parameters}
     Your second chapter appendix
 
