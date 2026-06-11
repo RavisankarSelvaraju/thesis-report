@@ -3,14 +3,12 @@
 \begin{document}
     \chapter{Introduction}
 
-    For any mobile robot, a reliable estimate of its pose within its environment is crucial for the navigational autonomy. In general, the mobile robots estimate their current state relative to its previous state. This process of incremental motion estimation using the proprioceptive sensors such as \gls{imu} and wheel joint encoders is called dead-reckoning. The proprioceptive 
-
+    For any mobile robot, a reliable estimate of its pose relative to its environment is crucial for the navigational autonomy. In general, the mobile robots estimate their current state relative to its previous state. This process of incremental motion estimation using the proprioceptive sensors such as \gls{imu} and wheel joint encoders is called dead-reckoning based odometry. In robot platforms with limited onboard computational power, this method of odometry plays a key role due to its simplicity and computational efficiency \cite{Agostinho2022}. This approach is vital where positioning systems like \gls{gps}/\gls{gnss} in outdoor and Motion capture system in indoor are unavailable. Relying on a single source of odometry is susceptible to sensor drift over time and wheel slip related errors. To solve this problem, sensor fusion techniques are often employed. The availability of reliable proprioceptive odometry also enables the possibility of sensor fusion with visual and other forms of odometry when available.
     
-    \fromproposal{Reliable state estimation is vital for efficient operation of \gls{rwr} in unstructured and planetary environments. Traditional dead-reckoning-based odometry approaches are prone to drift and slippage-related errors. This interoceptive sensor-based state estimation is critical in scenarios where the use of visual data for odometry is limited due to computational power constraints and environmental conditions cite→Agostinho2022. The availability of reliable proprioceptive odometry enables the possibility of sensor fusion with visual and other forms of odometry. Relying on a single source of odometry is susceptible to errors, so using sensor fusion techniques can improve the quality of odometry. The introduction section is organised by dividing the project title into multiple parts. Each part explains a specific aspect of the topic, making it easier for the reader to understand. }
+    This introduction chapter provides the motivation, the current challenges for this project, and an outline of this project report.
 
     \section{Motivation}
     
-    \fromproposal{Mobile robots in general need to estimate their location relative to either their previous location or some landmarks in the environment for an effective autonomous navigation task. Proprioceptive sensor-based odometry estimation is effective in scenarios where external positioning systems are unavailable. However, this form of odometry suffers from sensor drift over time and wheel slippage. In order to combat these issues, sensor fusion techniques are commonly employed.}
     
     \subsection{...}
     
