@@ -1,7 +1,7 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Introduction}
+    \chapter{Introduction} \label{chap:introduction}
 
     For any mobile robot, a reliable estimate of its pose relative to its environment is crucial for autonomous navigation. In general, mobile robots estimate their pose based on the incremental motion calculated using proprioceptive sensors such as \gls{imu} and wheel encoders. This pose estimation technique is called dead-reckoning based odometry. In robotic platforms with limited onboard computational power, this method of odometry is particularly important due to its simplicity and computational efficiency \cite{Agostinho2022}. This approach is vital in scenarios where positioning systems like \gls{gps}/\gls{gnss} and Motion capture systems are unavailable. The odometry estimate based on a single source of odometry is susceptible to sensor drift over time and wheel slip related errors.
     
@@ -15,21 +15,28 @@
     
     In harsh environment conditions like underground cave exploration, search and rescue missions in a collapse-prone building and space exploration mission, the \gls{rwr} is a suitable candidate. Such conditions often deny the possibility of external state estimation methods like \gls{gps} or Motion Capture Systems. In such scenarios, the importance of a reliable pose estimation based on proprioceptive sensors is paramount.
     
-    The current baseline odometry in \gls{rwr} does not explicitly account for slip-related error in such harsh environments. The  rotation of the wheels during slippage is also considered robot motion. This flaw makes this odometry less reliable in slippery terrain like loose sand and inclined surfaces. Baseline odometry also ignores the hybrid nature of the \gls{rw} and assumes a circular wheel model with an effective wheel radius. This assumption fails to include the varying geometry of the \gls{rw} and the dynamics of making and breaking contacts. The use of only \gls{imu} data causes sensor drift in the orientation estimation and the use of Wheel encoder data causes the slip related errors to be included in the translation estimation in the baseline odometry. Hence, a reliable slip-aware odometry for the \gls{rwr} in varied terrain conditions remains a challenging problem. 
+    The current baseline odometry in \gls{rwr} does not explicitly account for slip-related error in such harsh environments. The rotation of the wheels during slippage is also considered robot motion. This flaw makes this odometry less reliable in slippery terrain like loose sand and inclined surfaces. Baseline odometry also ignores the hybrid nature of the \gls{rw} and assumes a circular wheel model with an effective wheel radius. This assumption fails to include the varying geometry of the \gls{rw} and the dynamics of making and breaking contacts. The use of only \gls{imu} data causes sensor drift in the orientation estimation and the use of Wheel encoder data causes the slip related errors to be included in the translation estimation in the baseline odometry. Hence, a reliable slip-aware odometry for the \gls{rwr} in varied terrain conditions remains a challenging problem. 
     
-
-    \section{Challenges and Difficulties}
-
-    \fromslides{Baseline Odometry in Coyote rover 
-    Decoupled odometry: Wheel Odometry for translation, IMU for rotation
-    Wheel odometry ignores RW geometry and contacts 
-    IMU based orientation suffers from drift overtime
-    Unaccounted slippage leads to translational errors
-    Higher risk of slippage in sand, loose rock and inclined terrain
-    }
+    \section{Contributions}
+    
+    This thesis aims to improve the pose estimation for the Coyote~3 \gls{rwr} system. An \gls{inekf} based sensor fusion framework is developed to fuse the \gls{imu} sensor data and the wheel encoder data to estimate the pose of the rover. This framework estimates the rover state using \gls{imu} data and corrects this estimation by using the wheel measurements. When inconsistency between these two sources of information occurs, the filter rejects the wheel measurements based on the filter's innovation uncertainty, thereby rejecting the measurement update. The contact state of the wheel spokes can be probabilistically inferred from the innovation uncertainty.
         
+    \section{Report Outline}
 
-    \section{Report Overview}
+    The project structure is as follows:
 
+    % make the chapter title, relevent to the thesis content and not be generic
+    
+    \begin{itemize}
+        \item[] Chapter \ref{chap:background} presents the background details relevant for this project 
+        \item[] Chapter \ref{chap:SOTA} presents the relevant methods and techniques collected from the literature survey 
+        \item[] Chapter \ref{chap:problem_statement} discusses the problem presented in this project.
+        \item[] Chapter \ref{chap:methodology} provides details on how the problem is tackled in this project.
+        \item[] Chapter \ref{chap:solution} presents the solution and implementation details for the discussed methodology.
+        \item[] Chapter \ref{chap:experimentandevaluation} presents the experimental setup and evaluation techniques used to evaluate the proposed solution.
+        \item[] Chapter \ref{chap:resultsanddiscussion} presents the results and discusses the results of the project.  
+        \item[] Chapter \ref{chap:conclusionandfuturework}
+    
+    \end{itemize}
 
 \end{document}
