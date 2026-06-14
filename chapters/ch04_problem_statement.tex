@@ -1,0 +1,22 @@
+%!TEX root = ../report.tex
+\documentclass[report.tex]{subfiles}
+\begin{document}
+    \chapter{Methodology} \label{chap:methodology}
+
+
+    \section{Problem Statement}
+    
+    \fromproposal{
+    Based on the literature survey and the limitations discussed, a new approach of using \gls{pcv} based odometry using \gls{inekf} framework is proposed. This proposed approach will be compared with the baseline odometry to evaluate the performance of sensor fusion in \gls{rwr}. The \gls{inekf} implementation is developed by Ross Hartley \cite{Hartley2018ContactAidedInEKF} and is available as open-source\footnote{InEKF implementation: \url{https://github.com/RossHartley/invariant-ekf}}.
+
+    On top of the \gls{inekf} implementation, a slip filtering mechanism will be integrated into the state estimation process to discard the erroneous wheel speed measurement data when slippage events occur. The literature proposes various methods for slip modelling, such as using wheel motor current measurements \cite{Ojeda2006} or offline analysis of recorded data to estimate terrain slip parameters \cite{Yamauchi2017}. However, these slip modelling and estimation techniques have not been tested on rimless wheeled rovers. Consequently, the baseline odometry model implemented in our rimless wheeled rover currently does not include a slippage model or account for slip in any way.
+
+    Finally, the prospect of using the \gls{inekf} framework to estimate the \gls{pc} will be explored. The \gls{pc} can be inferred by the \gls{pcv} estimated using IMU data and the wheel velocity data. When the \gls{pcv} vector direction from the IMU estimate and the wheel velocity measurement match, then that spoke can be considered as a \gls{pc}.
+    
+    A simple block diagram showcasing the proposed approach is shown. The proposed approach will be tested in simulation on inclined terrains and in real-world scenarios with sand and loose rocks inside DFKI's multifunction hall. The evaluation will compare the estimation error of standard odometry against the proposed \gls{inekf} framework using metrics like MSE and max error per distance in percentage. 
+
+    A possible Key Performance Indicator (KPI) could be errors (m) per unit distance(m). This quantitative measure can assess the performance of the proposed approach, and the objective is to keep the KPI as low as possible for the SLAM system to work. This demonstrates that an improved odometry can lead to better performance of SLAM.
+    }
+    
+    
+\end{document}
