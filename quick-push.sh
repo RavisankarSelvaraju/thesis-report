@@ -1,3 +1,11 @@
+#!/bin/bash
+
 git add -A
-git commit -m"[quick-commit] update" 
-git push 
+
+if [ "$#" -gt 0 ]; then
+    git commit -m "[quick-commit] $*"
+else
+    git commit -m "[quick-commit] update"
+fi
+
+git push
