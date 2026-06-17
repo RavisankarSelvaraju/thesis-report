@@ -5,20 +5,42 @@
 
     This chapter contains information on the how part of the problem statement. What techniques are used to estimate the odometry using InEKF-pcv
         
-    \section{Proposed algorithm}
+    \section{Proposed approach}
     
-    The proposed approach modifies the existing InEKF library by adding a new update method that uses Potential Contact Velocity vector as a measurement to correct the filter state. As discussed in the background chapter, the PCV vector is calculated using the wheel encoder measurements and compared against the PCV calculated from the filter state. The difference between these two sources of information is used to get the innovation/residual for the update/correction step of the filter. 
+    The proposed algorithm for odometry estimation is based on fusion of \gls{imu} data and the wheel encoder data. For the fusion process, the \gls{pcv} vector is calculated. The \gls{pcv} is calculated in two forms. The \gls{pcv} vector, calculated from the filter state vector after the prediction step of the \gls{inekf} is called predicted PCV. In the update step, the \gls{pcv} vector is derived from the wheel encoder measurement called measured PCV. Within the \gls{inekf}, the predicted and measured \gls{pcv} vectors are used to calculate the residual, also known as innovation.
+    
+    \section{Invariant Extended Kalman Filter}
+    
+    The background details relevant to the understanding of the \gls{inekf} is provided in the background chapter \ref{chap:background}. In this section, the reason behind the \gls{inekf} choice for odometry estimation in \gls{rwr} is discussed.
+    
+    \todo[inline]{need to get a better understanding of why Inekf is better here, and explain here}
+    The \gls{inekf} is symmetry precerving observer, meaning the rotation matrix in the state vector is handelled as a whole. 
+    
+    
+    The following subsections will provide details on the state vector, the prediction step, the update step, the measurement function and its corresponding jacobian.
+    
+    \subsection{Filter State Vector}
+    
+    The filter state is constructed as shown in the equation \ref{eq:stateVector}. 
+    \begin{equation}
+        X = [R, V, P, b_a, b_g]
+        \label{eq:stateVector}
+    \end{equation}
+    Where, $R$ is the Rotation matrix, that represents the rotation of body in world. $V$ is the velocity of body in world, $P$ is the position of body in world, $b_a$ is the acceleration bias, $b_g$ is the gyro bias. 
+    
+    \subsection{Propagation step} \label{subsec:inekfPropagationStep}
+    The \gls{imu} data is used to propagate the state from current time $t$ to the next time step $t+\delta t$. The filter state is propagated in time using a state transition matrix and a noise matrix. \todo[inline]{This is very vague, elaborate after adding the content to the background} The propagation step in the \gls{inekf} is left unchanged, the original implementation provided in the \gls{inekf} library \cite{REPO-inekf-github}.
+    The propagation step is out of scope for this thesis and the existing implementation is used. 
+    
+    \subsection{Update step} \label{subsec:inekfUpdateStep}
 
+    The update step is the focus of this thesis, where the predicted \gls{pcv} and measured \gls{pcv} are calculated. This subsection explains the steps to calculate the predicted and measured \gls{pcv}.
     
-    \subsection{Filter update step implementation}
+    \subsubsection{Predicted \gls{pcv}}
     
-        This section describes the implementation details related to the update step of the \gls{inekf}. The update step, as discussed in the methodology chapter \ref{chap:methodology}, utilizes the \gls{pcv} as the measurement. Firstly, we use the state vector of the \gls{inekf} to calculate the expected \gls{pcv}, and we use the wheel velocities(Rotational speed of the wheels) to calculate the measured \gls{pcv}. The following subsection will discuss the design and implementation choices used in the above-mentioned calculations.
+    The predicted \gls{pcv} can be calculated from the state vector \ref{eq:stateVector} after the \gls{inekf} propagation step. All the calculations related to the \gls{inekf} are body centric calculations. \todo[inline]{What does body centric calculation mean? Elaborate here} In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
     
-    \subsection{Expected Potential Contact Velocity Calculation}
-        
-        The filter state consists of $[R, V, P, acc\_bias, gyro\_bias]$, the expected \gls{pcv} need to be calculated with this information. All the calculations we do related to the \gls{inekf} are  body centric calculations. In order to calculate the velocity of a point in a rigid body relative to the body frame, we need to represent the velocity of body frame at the point we need the velocity at. In our case, our robot model has a body frame, which is located at the center of the rover, and we need to calculate the velocity of the \gls{pc} relative to the body frame. 
-        
-        This calculation can be done step by step by using equation \ref{eq:ExpectedPCVCalculation}. This operation can also be done using \gls{kdl} using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implementation version of the twist transformation is provided in \ref{eq:ExpectedPCVCalculationTwist}
+    This calculation can be done using the equation \ref{eq:ExpectedPCVCalculation}. This operation can also be done using the \gls{kdl} library using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implemented version of the twist transformation is provided in the equation \ref{eq:ExpectedPCVCalculationTwist}
     
         \begin{equation}
             v_{pc}^{body} = v_{body}^{body} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body})
@@ -41,7 +63,12 @@
             \end{bmatrix}
             \label{eq:ExpectedPCVCalculationTwist}            
         \end{equation}
+        
+    % The calculated $v_{pc}^{body}$ represents the velocity of the point(s) that is in contact with the ground.
     
+    \subsubsection{Measured \gls{pcv}}        
+
+        
     \subsection{Measured Potential Contact Velocity Calculation}
         
     \subsection{Fixed Wheel Frames}
@@ -52,6 +79,11 @@
         v_{pc}^{wheel} = \omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel}
         \label{eq:MeasuredPCVCalculation}
     \end{equation}
+    
+    
+    \subsection{Measurement function} \label{subsec:inekfMeasurementFunction}
+    
+    \subsection{Measurement Jacobian} \label{subsec:inekfMeasurementJacobian}
     
     
     \subsection{Measurement Jacobian}
