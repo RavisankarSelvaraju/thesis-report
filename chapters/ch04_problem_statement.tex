@@ -1,10 +1,9 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Methodology} \label{chap:problem_statement}
-
-
-    \section{Problem Statement}
+    \chapter{Problem Statement} \label{chap:problem_statement}
+   
+    This section describes the problems and limitation of the baseline odometry estimation in the Coyote~3 system, the issues with wheel slip in soft and complaint terrain and contact estimation in the rough and inclined terrain.
     
     \fromproposal{
     Based on the literature survey and the limitations discussed, a new approach of using \gls{pcv} based odometry using \gls{inekf} framework is proposed. This proposed approach will be compared with the baseline odometry to evaluate the performance of sensor fusion in \gls{rwr}. The \gls{inekf} implementation is developed by Ross Hartley \cite{Hartley2018ContactAidedInEKF} and is available as open-source\footnote{InEKF implementation: \url{https://github.com/RossHartley/invariant-ekf}}.
@@ -17,6 +16,5 @@
 
     A possible Key Performance Indicator (KPI) could be errors (m) per unit distance(m). This quantitative measure can assess the performance of the proposed approach, and the objective is to keep the KPI as low as possible for the SLAM system to work. This demonstrates that an improved odometry can lead to better performance of SLAM.
     }
-    
     
 \end{document}
