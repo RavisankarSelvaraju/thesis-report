@@ -7,6 +7,7 @@
 \glossaryentry{RWR?\glossentry{rwr}|setentrycounter[]{page}"\glsnumberformat}{xii}
 \glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{xii}
 \glossaryentry{KDL?\glossentry{kdl}|setentrycounter[]{page}"\glsnumberformat}{xii}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{xii}
 \glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{1}
 \glossaryentry{GPS?\glossentry{gps}|setentrycounter[]{page}"\glsnumberformat}{1}
 \glossaryentry{GNSS?\glossentry{gnss}|setentrycounter[]{page}"\glsnumberformat}{1}
@@ -80,5 +81,8 @@
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{18}
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{19}
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{19}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{19}
+\glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{19}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{19}
 \glossaryentry{KDL?\glossentry{kdl}|setentrycounter[]{page}"\glsnumberformat}{21}
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{22}

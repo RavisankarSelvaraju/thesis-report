@@ -27,7 +27,7 @@
     
     \section{Measurement Update Step}
     
-    This section presents the core methodology of the proposed approach. For the fusion process, the \gls{pcv} vector is calculated. This is the velocity of a wheel spoke tip expressed in the body frame in a \gls{rwr} system. The \gls{pcv} can also be referred to as spoke-tip velocity or contact velocity. The term "Potential" comes from the possibility that any one of the spokes in a wheel can be in contact depending on the terrain. The \gls{pcv} is calculated in two forms. The \gls{pcv} vector, calculated from the filter state vector, after the prediction step of the \gls{inekf} is called predicted PCV. In the update step, the \gls{pcv} vector is calculated from the wheel encoder measurements called measured PCV. Within the \gls{inekf}, the predicted and measured \gls{pcv} vectors are used to calculate the residual, also known as the innovation.
+    This section presents the core methodology of the proposed approach. For the fusion process, the \gls{pcv} vector is calculated. This is the velocity of a wheel spoke tip expressed in the body frame in a \gls{rwr} system. The \gls{pcv} can also be referred to as spoke-tip velocity or contact velocity. The term "Potential" comes from the possibility that any one of the spokes in a wheel can be in contact depending on the terrain. The \gls{pcv} is calculated in two forms. The \gls{pcv} vector, calculated from the filter state vector, after the prediction step of the \gls{inekf} is called predicted \gls{pcv}. In the update step, the \gls{pcv} vector is calculated from the wheel encoder measurements called measured \gls{pcv}. Within the \gls{inekf}, the predicted and measured \gls{pcv} vectors are used to calculate the residual, also known as the innovation.
     
     \subsection{Predicted Potential Contact Velocity} \label{subsec:predictedPCV}
     
@@ -49,6 +49,16 @@
         v_{pc}^{wheel} = \omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel}
         \label{eq:MeasuredPCVCalculation}
     \end{equation}
-    
-    
+        
+    \subsection{Residual Calculation} \label{subsec:residual}
+        
+        The residual, also referred to as the innovation is calculated from the difference between the measured and the predicted \gls{pcv}. Once both quantities are expressed in the body frame, the difference is calculated to be used in the \gls{inekf}. The implementation details are provided in Chapter~\ref{chap:implementation}.
+        
+        \begin{equation}
+         r_{pcv} =  {v_{measured}}_{pc}^{body} - {v_{predicted}}_{pc}^{body} 
+        \label{eq:pcvResidual}
+        \end{equation}
+        
+        If the $r_{pcv}$ is small, the wheel measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel measurements are inconsistent with the filter's prediction. This could mean wheel measurements may be affected by some form of error such as wheel slip, an inconsistent contact assumption or noise in wheel measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
+
 \end{document}

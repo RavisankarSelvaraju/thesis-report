@@ -5,8 +5,6 @@
 
 ## Methodology
 
-\subsection{Residual / Innovation}
-Explain that the difference between measured PCV and predicted PCV forms the residual used in the filter update.
 
 \section{Measurement Model and Jacobian}
 Present the measurement function.
