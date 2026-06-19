@@ -5,18 +5,6 @@
 
 ## Methodology
 
-
-\section{Potential Contact Velocity Measurement}
-This is the core methodology section.
-
-\subsection{Predicted PCV}
-Explain how PCV is predicted from the filter state.
-Define the velocity of a potential contact point using body velocity, angular velocity, and the contact point position.
-
-\subsection{Measured PCV}
-Explain how PCV is derived from wheel encoder measurements.
-Define the relation between wheel angular velocity and spoke/contact-point velocity.
-
 \subsection{Residual / Innovation}
 Explain that the difference between measured PCV and predicted PCV forms the residual used in the filter update.
 
@@ -40,9 +28,12 @@ Mention assumptions such as:
 known kinematic model, known spoke geometry, encoder reliability except during slip, approximate contact model, and dependency on covariance tuning.
 
 
-
-
-
 ## Implementation chapter
 - include the noise parameter units and how those parameters can be taken from the IMU data sheet
+  
+  
+  
+  
+## Possible questions:
+- how the noise of wheel encoders modelled? is it used anywhere? should that not play a role somewhere?
 - 

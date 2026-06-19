@@ -15,12 +15,17 @@
 \usepackage{todonotes}  
 \usepackage{svg}
 \usepackage{url} % allow breakable typeset URLs with \url{}
-\usepackage[acronym]{glossaries}
+\usepackage[acronym,nomain,nonumberlist]{glossaries}
+\usepackage{etoolbox}
 
 
 % *****************************************************
 % ADD YOUR ACRONYMS HERE
 % *****************************************************
+
+\makeglossaries
+
+\preto\chapter{\glsresetall}
 
 \newacronym{pc}{PC}{Potential Contact}
 \newacronym{imu}{IMU}{Inertial Measurement Unit}
@@ -29,7 +34,7 @@
 \newacronym{pcv}{PCV}{Potential Contact Velocity}
 \newacronym{rw}{RW}{Rimless Wheel}
 \newacronym{rwr}{RWR}{Rimless Wheeled Rover}
-\newacronym{inekf}{Invariant EKF}{Invariant Extended Kalman Filter}
+\newacronym{inekf}{InEKF}{Invariant Extended Kalman Filter}
 \newacronym{kdl}{KDL}{Kinematics and Dynamics Library}
 
 % ****************************************************
@@ -77,6 +82,8 @@ July\or August\or September\or October\or November\or December\fi~\the\year}
 
 \tableofcontents
 
+\glsaddall[types=\acronymtype]
+\printglossary[type=\acronymtype,title={List of Acronyms}]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Uncomment one or both of the following two lines if you want to have
