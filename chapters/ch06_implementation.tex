@@ -18,4 +18,36 @@
 
     \end{itemize} 
     
+    
+    
+    \subsection {Predicted PCV}
+    
+    This operation can also be done using the \gls{kdl} library using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implemented version of the twist transformation is provided in the equation \ref{eq:ExpectedPCVCalculationTwist}
+    
+                
+        \begin{equation}
+            \begin{bmatrix}
+            \boldsymbol{\omega}_{pc}^{body} \\
+            \mathbf{v}_{pc}^{body}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            I & 0 \\
+            \left[\,\mathbf{p}_{pc}^{body}\,\right]_\times & I
+            \end{bmatrix}
+            \begin{bmatrix}
+            \boldsymbol{\omega}_{body}^{body} \\
+            \mathbf{v}_{body}^{body}
+            \end{bmatrix}
+            \label{eq:ExpectedPCVCalculationTwist}            
+        \end{equation}
+        
+
+            \subsection{Fixed Wheel Frames}
+    
+            The fixed wheel frames are added in the robot URDF model at the location of motors. This fixed wheel frames have the same pose as the initial pose of the rotating wheel frame. The fixed wheel frames are added to get the position vector to the spoke of the wheel from the center of the wheel. These position vectors are later used to calculate the measured \gls{pcv}. This is the only purpose of the fixed wheel frames. 
+    
+
+    
+    
 \end{document}

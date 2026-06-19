@@ -1,0 +1,84 @@
+%!TEX root = ../report.tex
+\documentclass[report.tex]{subfiles}
+\begin{document}
+    \chapter{Methodology} \label{chap:methodology}
+
+    This chapter contains information on the how part of the problem statement. What techniques are used to estimate the odometry using InEKF-pcv
+        
+    The following subsections will provide details on the state vector, the prediction step, the update step, the measurement function and its corresponding jacobian.
+       
+    \subsubsection{Predicted \gls{pcv}}
+    
+
+    % The calculated $v_{pc}^{body}$ represents the velocity of the point(s) that is in contact with the ground.
+    
+    \subsubsection{Measured \gls{pcv}}        
+
+        
+    \subsection{Measured Potential Contact Velocity Calculation}
+        
+
+    
+    \subsection{Measurement function} 
+    
+    \subsection{Measurement Jacobian} \label{subsec:inekfMeasurementJacobian}
+    
+    
+    \subsection{Measurement Jacobian}
+    
+        The measurement jacobian $H$ is the partial derivative of the measurement function $h$ with respect to the error state $\xi$ variables at the state $\hat{X}$ as shown in equation \ref{eq:MeasurementJacobian-1}. The measurement jacobian linearizes the measurement function at the current state. The measurement function $h(x)$ is given by the equation \ref{eq:MeasurementFunction}. Measurement jacobian for this measurement function is obtained by taking the partial derivative of the measurement function with respect to the error state variables \ref{eq:ErrorStateVector}. The measurement jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
+    
+        \begin{equation}
+            h(x) = - (R_{world}^{body} * v_{body}^{world} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body}))
+            \label{eq:MeasurementFunction}
+        \end{equation}
+        
+        \begin{equation}
+            \xi = \begin{bmatrix}
+            \delta R \\
+            \delta V \\
+            \delta P \\
+            \delta acc\_bias \\
+            \delta gyro\_bias
+            \end{bmatrix}
+            \label{eq:ErrorStateVector}
+        \end{equation}
+        
+        \begin{equation}
+            H = \frac{\partial h}{\partial \xi}\bigg|_{\hat{X}}
+            \label{eq:MeasurementJacobian-1}
+        \end{equation}
+        where, $\xi$ is the left invariant error state, $\hat{X}$ is the current state estimate, and $h$ is the measurement function. 
+        
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+            \frac{\partial h}{\partial \delta R} & \frac{\partial h}{\partial \delta V} & \frac{\partial h}{\partial \delta P} & \frac{\partial h}{\partial \delta acc\_bias} & \frac{\partial h}{\partial \delta gyro\_bias}
+            \end{bmatrix}
+            \label{eq:MeasurementJacobian-2}
+        \end{equation}
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+                -[R_{world}^{body} * v_{body}^{world}]_\times & -\mathbf{I} & \mathbf{0} & \mathbf{0} & -[r_{pc}^{body}]_\times
+            \end{bmatrix}
+            \label{eq:MeasurementJacobian-3}      
+        \end{equation}
+       
+        The evaluation of equation \ref{eq:MeasurementJacobian-2} to get the result in equation \ref{eq:MeasurementJacobian-3} is discussed in detail in the appendix \ref{appendix:MeasurementJacobianDerivation}.
+
+    \subsection{Slip elimination}
+    
+    The slippage is discussed in detail in the background chapter \ref{subsec:backgroundSlippage}
+    
+    \subsection{Contact estimation}
+    
+    The design of rimless wheel, being a hybrid between wheeled and legged systems have the swing phase and the contact phase. Estimating which spoke is currently is in contact for a given wheel is a vital information for the Contact Velocity Odometry estimation. There is a traditional way of estimating the contact spoke by using the assumption that the spoke that is close to the ground is in contact. This can be calculated by calculating the robot kinematics, using the joint positions of the wheel. The pose of each spoke with respect to the body frame can be calculated and the spoke in contact can be estimated. This assumption works well in a flat, solid terrain but on an inclined or rough terrain with obstacles, this assumption does not hold. 
+    
+    The use of Kalman filter for odometry estimation provides an opportunity to use its framework to estimate the feet that are in contact.
+    In order to understand the contact estimation process, one must understand the Kalman filter framework implemented in this thesis and explained in \ref{subsec:inekf_implementation} \todo[inline]{Write a subsection on InEKF implementation}. The Kalman filter calculates the term innovation, in the case of this thesis, the innovation is calculated as the difference between the velocity of spoke from the filter's prediction and the velocity of the spoke 
+    
+    
+
+    
+\end{document}
