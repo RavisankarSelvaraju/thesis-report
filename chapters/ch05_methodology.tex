@@ -19,7 +19,7 @@
         X = [R, V, P, b_a, b_g]
         \label{eq:stateVector}
     \end{equation}
-    where, $R$ is the rotation matrix, that represents the orientation of the body frame with respect to the world frame. $V$ is the velocity of body in world, $P$ is the position of body in world, $b_a$ is the accelerometer bias, $b_g$ is the gyroscope bias. 
+    where, $R$ is the rotation matrix, that represents the orientation of the body frame with respect to the world frame. $V$ is the velocity vector of the body frame in the world frame, $P$ is the position vector of the body frame in the world frame, $b_a$ is the accelerometer bias, $b_g$ is the gyroscope bias. 
     
     \subsection{Propagation step}
     
@@ -31,34 +31,92 @@
     
     \subsection{Predicted Potential Contact Velocity} \label{subsec:predictedPCV}
     
-    The predicted \gls{pcv} is calculated after the propagation step of the \gls{inekf}. The vector quantities used in the predicted \gls{pcv} calculation are represented in the body frame of the rover. This is done to ensure the consistency between predicted and measured \gls{pcv}.
-    The predicted \gls{pcv} calculation can be done using the Equation~\ref{eq:ExpectedPCVCalculation}.
-    
+    The predicted \gls{pcv} is calculated after the propagation step of the \gls{inekf}. The vector quantities used in the predicted \gls{pcv} calculation are expressed in the body frame of the rover. This is done to ensure the consistency between predicted and measured \gls{pcv}.
+    The velocity of a \gls{pc} fixed to the rover can be calculated with Equation~\ref{eq:velocityOfaPointInRigidBody}. This equation is not used to calculate the predicted \gls{pcv}. The negated form of this equation is used to calculate the predicted \gls{pcv} as shown in Equation~\ref{eq:measurementFunction}.
+        
     \begin{equation}
-        v_{pc}^{body} = v_{body}^{body} + (\omega_{body}^{body} \times r_{pc}^{body})
-        \label{eq:ExpectedPCVCalculation}
+        v_{pc,rigid}^{body} = ([R_{body}^{world}]^T  v_{body}^{world} + (\omega_{body}^{body} \times r_{pc}^{body}))
+        \label{eq:velocityOfaPointInRigidBody}
     \end{equation}
     
-    where, $r_{pc}^{body}$, is the straight line distance of the \gls{pc} from the body frame of the rover represented in the body frame, $\omega_{body}^{body}$ 
-            
+    \begin{equation}
+        v_{pc, predicted}^{body} = -([R_{body}^{world}]^T  v_{body}^{world} + (\omega_{body}^{body} \times r_{pc}^{body}))
+        \label{eq:measurementFunction}
+    \end{equation}
+    
+    where $r_{pc}^{body}$, is the position vector of the \gls{pc} from the body frame of the rover expressed in the body frame, $\omega_{body}^{body}$ is the angular velocity of the body expressed in the body frame. $v_{body}^{world}$ represents the linear velocity of the body frame expressed in the world frame. $R_{body}^{world}$ is the orientation of the body frame expressed in the world frame and $[R_{body}^{world}]^T$ transforms the $v_{body}^{world}$ to the $v_{body}^{body}$. The $R_{body}^{world}$ and the $v_{body}^{world}$ are part of the filter's state vector \ref{eq:stateVector}.
+    
+    The $v_{pc, rigid}^{body}$ is the velocity of a point on the rover moving through the world expressed in the body frame. This quantity is calculated in Equation~\ref{eq:velocityOfaPointInRigidBody}. The negation of this equation represents the velocity with which the world is moving under the rover, also referred to as the measurement function $h(x)$. This quantity is calculated using the Equation~\ref{eq:measurementFunction}. 
+    
+    To understand this negation, we should look at an example. Imagine we have rover that is moving forward with a velocity of $+2 m/s$, for the sake of simplicity, our imaginary rover does not have rotational velocity. According to rigid body kinematics, the velocity of a point attached to the rover will also be $+2 m/s$. From the rover's body frame of reference, the forward motion of the body will be seen as the ground moving backwards under the rover. Mathematically, this can be represented by the negation of Equation~\ref{eq:velocityOfaPointInRigidBody}, resulting in the velocity of the ground moving under the point of contact to be $-2 m/s$. This shift in perspective is done to compare the predicted and the measured \gls{pcv}
+        
+    
     \subsection{Measured Potential Contact Velocity} \label{subsec:measuredPCV}
     
-    The measured \gls{pcv} is calculated using the wheel's angular velocity expressed as a vector and the position vector of \gls{pc}. The position vector is calculated from the wheel center to the tip of the spoke. The measured \gls{pcv} vector is perpendicular to the position vector and points in the direction of rotation of the wheel. The calculation of the measured \gls{pcv} is shown in Equation~\ref{eq:MeasuredPCVCalculation}. In the Equation~\ref{eq:MeasuredPCVCalculation}, all the quantities used are expressed in the wheel frame. The measured \gls{pcv} vector is transformed to the body frame to be consistent with the predicted \gls{pcv} and before the residual calculation.
+    The measured \gls{pcv} is calculated using the wheel's angular velocity expressed as a vector and the position vector of \gls{pc}. The position vector is calculated from the wheel center to the tip of the spoke. The measured \gls{pcv} vector is perpendicular to the position vector and points in the direction of rotation of the wheel. The calculation of the measured \gls{pcv} is shown in Equation~\ref{eq:MeasuredPCVCalculation}. The measured \gls{pcv} vector is transformed to the body frame to be consistent with the predicted \gls{pcv} and before the residual calculation.
     
     \begin{equation}
-        v_{pc}^{wheel} = \omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel}
+        v_{pc, measured}^{body} = R_{wheel}^{body} (\omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel})
         \label{eq:MeasuredPCVCalculation}
     \end{equation}
-        
+    
+    From, the rover's body frame of reference, $v_{pc, measured}^{body}$ represents the velocity of the ground moving under the point of contact. This is the same quantity as the $v_{pc, predicted}^{body}$, so the difference between them can be calculated as the residual.
+      
     \subsection{Residual Calculation} \label{subsec:residual}
-        
-        The residual, also referred to as the innovation is calculated from the difference between the measured and the predicted \gls{pcv}. Once both quantities are expressed in the body frame, the difference is calculated to be used in the \gls{inekf}. The implementation details are provided in Chapter~\ref{chap:implementation}.
+    
+    The residual, also referred to as the innovation is calculated as the difference between the measured and the predicted \gls{pcv} when both quantities are expressed in the body frame of reference. The residual is used in the \gls{inekf} to update the state vector. The implementation details are provided in Chapter~\ref{chap:implementation}.
+    
+    \begin{equation}
+        r_{pcv} =  {v}_{pc, measured}^{body} - {v}_{pc, predicted}^{body} 
+    \label{eq:pcvResidual}
+    \end{equation}
+    
+    If the $r_{pcv}$ is small, the wheel measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel measurements are inconsistent with the filter's prediction. This could mean wheel measurements may be affected by errors such as wheel slip, an inconsistent contact assumption or noise in wheel measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
+
+    \section{Measurement Model and Jacobian}
+    
+    
+    \todo[inline]{NOT FINISHED BELOW, ITS COFFEE PASTA}
+    
+    The measurement model, also referred to as the measurement function $h(x)$, is given by Equation~\ref{eq:measurementFunction}. The $h(x)$ corresponds to the predicted \gls{pcv} which is used by \gls{inekf} to calculate the predicted measurement from its state vector that can be compared to a measured \gls{pcv} derived from the wheel measurements. The $h(x)$ is also used to derive the measurement Jacobian. 
+    
+    The measurement Jacobian $H$ is the partial derivative of the measurement function $h$ with respect to the error state $\xi$ variables at the state $\hat{X}$ as shown in equation \ref{eq:MeasurementJacobian-1}. The measurement jacobian linearizes the measurement function at the current state. Measurement jacobian for this measurement function is obtained by taking the partial derivative of the measurement function with respect to the error state variables \ref{eq:ErrorStateVector}. The measurement jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
+
         
         \begin{equation}
-         r_{pcv} =  {v_{measured}}_{pc}^{body} - {v_{predicted}}_{pc}^{body} 
-        \label{eq:pcvResidual}
+            \xi = \begin{bmatrix}
+            \delta R \\
+            \delta V \\
+            \delta P \\
+            \delta acc\_bias \\
+            \delta gyro\_bias
+            \end{bmatrix}
+            \label{eq:ErrorStateVector}
         \end{equation}
         
-        If the $r_{pcv}$ is small, the wheel measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel measurements are inconsistent with the filter's prediction. This could mean wheel measurements may be affected by some form of error such as wheel slip, an inconsistent contact assumption or noise in wheel measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
+        \begin{equation}
+            H = \frac{\partial h}{\partial \xi}\bigg|_{\hat{X}}
+            \label{eq:MeasurementJacobian-1}
+        \end{equation}
+        where, $\xi$ is the left invariant error state, $\hat{X}$ is the current state estimate, and $h$ is the measurement function. 
+        
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+            \frac{\partial h}{\partial \delta R} & \frac{\partial h}{\partial \delta V} & \frac{\partial h}{\partial \delta P} & \frac{\partial h}{\partial \delta acc\_bias} & \frac{\partial h}{\partial \delta gyro\_bias}
+            \end{bmatrix}
+            \label{eq:MeasurementJacobian-2}
+        \end{equation}
+        
+        \begin{equation}
+            H = \begin{bmatrix}
+                -[R_{world}^{body} * v_{body}^{world}]_\times & -\mathbf{I} & \mathbf{0} & \mathbf{0} & -[r_{pc}^{body}]_\times
+            \end{bmatrix}
+            \label{eq:MeasurementJacobian-3}      
+        \end{equation}
+       
+        The evaluation of equation \ref{eq:MeasurementJacobian-2} to get the result in equation \ref{eq:MeasurementJacobian-3} is discussed in detail in the appendix \ref{appendix:MeasurementJacobianDerivation}.
 
+    
+    
 \end{document}

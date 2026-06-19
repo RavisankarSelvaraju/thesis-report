@@ -26,12 +26,8 @@
     
     \subsection{Measurement Jacobian}
     
-        The measurement jacobian $H$ is the partial derivative of the measurement function $h$ with respect to the error state $\xi$ variables at the state $\hat{X}$ as shown in equation \ref{eq:MeasurementJacobian-1}. The measurement jacobian linearizes the measurement function at the current state. The measurement function $h(x)$ is given by the equation \ref{eq:MeasurementFunction}. Measurement jacobian for this measurement function is obtained by taking the partial derivative of the measurement function with respect to the error state variables \ref{eq:ErrorStateVector}. The measurement jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
-    
-        \begin{equation}
-            h(x) = - (R_{world}^{body} * v_{body}^{world} + (\omega_{body}^{body} \times {}^{}r_{pc}^{body}))
-            \label{eq:MeasurementFunction}
-        \end{equation}
+        The measurement jacobian $H$ is the partial derivative of the measurement function $h$ with respect to the error state $\xi$ variables at the state $\hat{X}$ as shown in equation \ref{eq:MeasurementJacobian-1}. The measurement jacobian linearizes the measurement function at the current state. Measurement jacobian for this measurement function is obtained by taking the partial derivative of the measurement function with respect to the error state variables \ref{eq:ErrorStateVector}. The measurement jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
+
         
         \begin{equation}
             \xi = \begin{bmatrix}
