@@ -58,6 +58,7 @@
 \glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{17}
 \glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{17}
 \glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{17}
+\glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{17}
 \glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{18}
 \glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{18}
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{18}
@@ -92,5 +93,15 @@
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{20}
 \glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{20}
 \glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{20}
-\glossaryentry{KDL?\glossentry{kdl}|setentrycounter[]{page}"\glsnumberformat}{21}
-\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{22}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{20}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{InEKF?\glossentry{inekf}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{MD?\glossentry{md}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{21}
+\glossaryentry{KDL?\glossentry{kdl}|setentrycounter[]{page}"\glsnumberformat}{23}
+\glossaryentry{PCV?\glossentry{pcv}|setentrycounter[]{page}"\glsnumberformat}{24}

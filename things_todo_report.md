@@ -6,11 +6,6 @@
 ## Methodology
 
 
-\section{Measurement Model and Jacobian}
-Present the measurement function.
-Present or reference the analytical Jacobian.
-Mention that the analytical Jacobian is numerically verified.
-
 \section{Slip-Aware Measurement Rejection}
 Explain the idea of rejecting inconsistent wheel measurements.
 Describe the use of innovation uncertainty / Mahalanobis distance at concept level.
