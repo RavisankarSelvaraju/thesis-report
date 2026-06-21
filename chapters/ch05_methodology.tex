@@ -63,7 +63,7 @@
       
     \subsection{Residual Calculation} \label{subsec:residual}
     
-    The residual, also referred to as the innovation is calculated as the difference between the measured and the predicted \gls{pcv} when both quantities are expressed in the body frame of reference. The residual is used in the \gls{inekf} to update the state vector. The implementation details are provided in Chapter~\ref{chap:implementation}.
+    The residual, also referred to as the innovation is calculated as the difference between the measured and the predicted \gls{pcv}. Both quantities are expressed in the body frame of reference before comparison. The residual is used in the \gls{inekf} to update the state vector. The implementation details are provided in Chapter~\ref{chap:implementation}.
     
     \begin{equation}
         r_{pcv} =  {v}_{pc, measured}^{body} - {v}_{pc, predicted}^{body} 
@@ -120,9 +120,11 @@
        
         \section{Slip-aware Measurement Rejection}
         
-        The measured \gls{pcv}, calculated from the wheel encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the wheel encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. 
+        The measured \gls{pcv}, calculated from the wheel encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
         
-        This inconsistency can be calculated using the \gls{md}. The \gls{md} measures residual between a measurement and its predicted values weighted by the inverse residual covariance \cite{SITE-mathworks-mahalanobis}. The residual calculated in Section~\ref{subsec:residual} is used to calculate the \gls{md}. When the squared \gls{md} is higher than a threshold value (details are provided in the Chapter~\ref{chap:implementation})\todo[inline]{Include the chi2 threshold in the implementation chapter} then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent wheel encoder measurements from a slip event to be used \cite{chang2014MahalanobisFormula}.
+        In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the wheel encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. This inconsistency can be calculated using the \gls{md}. 
+        
+        The \gls{md} measures residual between a measurement and its predicted values weighted by the inverse residual covariance \cite{SITE-mathworks-mahalanobis}. The residual calculated in Section~\ref{subsec:residual} is used to calculate the \gls{md}. When the squared \gls{md} is higher than a threshold value (details are provided in the Implementation Chapter~\ref{chap:implementation})\todo[inline]{Include the chi2 threshold in the implementation chapter} then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent wheel encoder measurements from a slip event \cite{chang2014MahalanobisFormula}.
         
         \begin{equation}
         S = HPH^T + R
@@ -136,12 +138,23 @@
         
         where $S$ is the residual or innovation covariance, $H$ is the measurement Jacobian calculated in the previous section, $P$ is the state covariance estimated by the filter, $R$ is the measurement noise covariance, and $r$ is the residual.
         
-        \section{Contact estimation}
+        \section{Contact Estimation}
         
-        The design of rimless wheel, being a hybrid between wheeled and legged systems have the swing phase and the contact phase. Estimating which spoke is currently is in contact for a given wheel is a vital information for the Contact Velocity Odometry estimation. There is a traditional way of estimating the contact spoke by using the assumption that the spoke that is close to the ground is in contact. This can be calculated by calculating the robot kinematics, using the joint positions of the wheel. The pose of each spoke with respect to the body frame can be calculated and the spoke in contact can be estimated. This assumption works well in a flat, solid terrain but on an inclined or rough terrain with obstacles, this assumption does not hold. 
+        The residual consistency measure used in the slip-aware measurement rejection is also used to estimate which spoke of a wheel is in contact. The rimless wheel design, being a hybrid between wheeled and legged systems, the motion can be described as the combination of the swing phase and the contact phase. Estimating which spoke tip is currently in contact for a given wheel is vital information for the Contact Velocity Odometry estimation. The contact estimation can be done using two methods, the lowest foot method and \gls{md} method. 
         
-        The use of Kalman filter for odometry estimation provides an opportunity to use its framework to estimate the feet that are in contact.
-        In order to understand the contact estimation process, one must understand the Kalman filter framework implemented in this thesis and explained in \ref{subsec:inekf_implementation}\todo[inline]{Write a subsection on InEKF implementation}. The Kalman filter calculates the term innovation, in the case of this thesis, the innovation is calculated as the difference between the velocity of spoke from the filter's prediction and the velocity of the spoke 
+        \subsection{Lowest Foot based Contact Estimation}
+        
+        A geometrical way of estimating the contact spoke is by using the assumption that the spoke tip that has the lowest vertical position is in contact. This can be calculated using the robot kinematics and the joint positions of the wheel. The pose of each spoke with respect to the body frame can be calculated and the spoke in contact can be estimated. The \gls{rw} is constructed with five spokes so, geometrically there could be either be one spoke in contact or two. The lowest foot assumption can estimate only one foot as contact. For multi contact spoke estimation, we assumed a region of vertical position, if the spoke tip is within this region, then it is estimated as in contact. This assumption works well in a flat, solid terrain but on an inclined or rough terrain with obstacles, this assumption does not hold.
+                
+              
+        \subsection{Mahalanobis Distance based Contact Estimation}
+        
+        The use of \gls{inekf} for odometry estimation provides an opportunity to use its framework to estimate the feet that are in contact. With the \gls{md} squared calculated in the previous section, the contact spokes can be estimated by calculating the \gls{md} squared value for each spoke and selecting the spoke with the lowest \gls{md} squared as the spoke in contact. This is based on the fact that, the spoke with lowest \gls{md} squared value's predicted and measured \gls{pcv} will be consistent compared to the other spokes with higher \gls{md} squared value. This method can also be used to estimate multiple contact spokes by selecting the spokes with \gls{md} squared value below a certain threshold.   
+        
+        \todo[inline]{Finish this chapter}
+        In order to understand the contact estimation process, one must understand the Kalman filter framework implemented in this thesis and explained in Section~\ref{subsec:inekf_implementation}\todo[inline]{Write a subsection on InEKF implementation}. 
+        
+        The Kalman filter calculates the term innovation, in the case of this thesis, the innovation is calculated as the measured \gls{pcv} minus the predicted \gls{pcv}. 
     
     
     
