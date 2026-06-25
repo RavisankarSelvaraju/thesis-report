@@ -3,39 +3,40 @@
 \begin{document}
     \chapter{Methodology} \label{chap:methodology}
     
-    This chapter provides details on the proposed approach to the odometry estimation problem mentioned in the problem statement Chapter~\ref{chap:problem_statement}. The details of \gls{inekf}-based odometry, the proposed measurement update step for the \gls{inekf}, the Mahalanobis-distance-based measurement rejection, the contact spoke estimation, and the limitations of the proposed approach are presented in this chapter. The overview of the approach is explained in Section~\ref{sec:approach_overview}.
-    
+    This chapter provides details on the proposed approach to improve the odometry estimation in the coyote~3 rover system. The details of \gls{inekf}-based odometry, the proposed measurement update step for the \gls{inekf}, the Mahalanobis-distance-based measurement rejection, the contact spoke estimation, and an overview of the proposed approach are presented in this chapter. 
     
     \section{Overview of the Proposed Approach} \label{sec:approach_overview}
     
-    
-    \todo[inline]{USE the image with the coordinate frame here}
-
     \begin{figure}[!h]
-        \includegraphics[width=\linewidth]{media/plots/thesis_proposed_approach.png}
-        \caption{Overview of the proposed approach for Contact Velocity Odometry estimation}
+        \begin{center}
+        \includegraphics[width=0.8\linewidth]{media/plots/thesis_proposed_approach.png}
+        \caption{Flow diagram to present an overview of the proposed approach.}
         \label{fig:proposedApproachOverviewFlowDiagram}
+        \end{center}
     \end{figure}
     
-    \todo[inline]{Flow diagram need to be explained}
-
+    \todo[inline]{Make this flow diagram standard and use the caption to link to different section that is show in the chart and that is explained below}
     
     \begin{figure}[!h]
-        \includegraphics[width=\linewidth]{media/plots/approach_explanation_image.png}
-        \caption{Predicted and Measured PCV overlaid on a wheel}
+        \begin{center}
+        \includegraphics[width=0.8\linewidth]{media/plots/approach_explanation_plot.png}
+        \caption{Predicted and Measured PCV overlaid on the Front Left wheel of the Coyote~3 rover.}
         \label{fig:approachPCVexplanation}
+        \end{center}
     \end{figure}
     
-    The proposed approach uses IMU data to propagate the filter state and wheel encoder data to construct the measured PCV. This section explains the intuition behind the proposed approach. The predicted \gls{pcv} vector is calculated for every spoke of each wheel. To simplify the explanation, only one wheel and its spokes are considered here.
+    The proposed approach uses \gls{imu} data to propagate the filter state and joint encoder data to construct the measured PCV. This section explains the intuition behind the proposed approach. The predicted \gls{pcv} vector is calculated for every spoke of each wheel. To simplify the explanation, only one wheel and its spokes are considered here. Figure~\ref{fig:proposedApproachOverviewFlowDiagram} presents a flow diagram, providing an outline of the proposed approach, the simplified calculation blocks inside the \gls{inekf}, the data flow from sensors and kinematics into the \gls{inekf} and the inconsistent wheel measurement rejection approach.
     
     Let us take a scenario where the rover moves forward while rotating slightly on its yaw (vertical) axis, so the trajectory from the top-view looks like a part of a circle. During this motion, we need to estimate the position and orientation of the rover in the world frame. The origin of the world frame, also referred to as the odometry frame, usually lies at the location where the rover starts its motion.
     
-    The \gls{inekf} estimates the pose of the rover and other elements in its state vector \ref{eq:stateVector}. To estimate these elements, the filter uses the \gls{imu} data to propagate the state vector elements forward in time. Let us define this propagated state $\hat{X}^{-}_{k+1}$ at the time step $k+1$. Let the current state be $X_{k}$ and the current time step be $k$. This propagation of state is done using an inertial motion model driven by the \gls{imu} measurement. This motion model uses the bias corrected gyroscope and accelerometer values to update the orientation, position and velocity of the rover. Since, this predicted state is calculated only with \gls{imu} driven motion model, it accumulates error due to sensor drift. This error needs to be corrected by an independent measurement source. In the proposed approach the correction is done using the wheel encoder measurements.
+    The \gls{inekf} estimates the pose of the rover and other elements in its state vector \ref{eq:stateVector}. To estimate these elements, the filter uses the \gls{imu} data to propagate the state vector elements forward in time. Let us define this propagated state $\hat{X}^{-}_{k+1}$ at the time step $k+1$. Let the current state be $X_{k}$ and the current time step be $k$. This propagation of state is done using an inertial motion model driven by the \gls{imu} measurement. This motion model uses the bias corrected gyroscope and accelerometer values to update the orientation, position and velocity of the rover. Since, this predicted state is calculated only with \gls{imu} driven motion model, it accumulates error due to sensor drift. This error needs to be corrected by an independent measurement source. In the proposed approach the correction is done using the joint encoder measurements.
+    
+    Figure~\ref{fig:approachPCVexplanation} presents the front left wheel of the Coyote~3 rover and the body frame coordinate system. The wheel is rotation in the clock-wise direction resulting in rover moving forward. The purpose of this figure is to show the predicted and measured \gls{pcv} vectors expressed in body frame so that it may improve the understanding of the following explanations. 
     
     Using the predicted state $\hat{X}^{-}_{k+1}$, the velocity of each spoke tip can be calculated in the body frame. The details of the predicted \gls{pcv} are provided in Section~\ref{subsec:predictedPCV}.
-    To understand the predicted \gls{pcv}, we calculate the velocity that each spoke tip would have due to the predicted body linear velocity, the bias-corrected body angular velocity from \gls{imu}, and the spoke-tip position relative to the body frame. This calculation generates a velocity vector for each spoke tip of the selected wheel, shown as red arrows in Figure~\ref{fig:approachPCVexplanation}.  \todo[inline]{Modify the description of velocity vectors when the image is updated}
+    To understand the predicted \gls{pcv}, we calculate the velocity that each spoke tip would have due to the predicted body linear velocity, the bias-corrected body angular velocity from \gls{imu}, and the spoke-tip position relative to the body frame. This calculation generates a velocity vector for each spoke tip of the selected wheel, shown as red arrows in Figure~\ref{fig:approachPCVexplanation}. 
     
-    To correct the predicted state $\hat{X}^{-}_{k+1}$, the measured \gls{pcv} is calculated using the wheel encoder measurements. The details of the measured \gls{pcv} are provided in Section~\ref{subsec:measuredPCV}. Similar to the predicted \gls{pcv}, we calculate the measured \gls{pcv} for all the spokes of a wheel. The measured \gls{pcv} is calculated from the wheel angular velocity about its rotation axis and the position vector from the wheel center to the spoke tip. The resulting measured \gls{pcv} points along the direction of wheel rotation and is perpendicular to the position vector from the wheel center to the spoke tip. These vectors are shown as the green arrow in Figure~\ref{fig:approachPCVexplanation}. This measured \gls{pcv} is initially expressed in the wheel frame and later transformed into the body frame.
+    To correct the predicted state $\hat{X}^{-}_{k+1}$, the measured \gls{pcv} is calculated using the joint encoder measurements. The details of the measured \gls{pcv} are provided in Section~\ref{subsec:measuredPCV}. Similar to the predicted \gls{pcv}, we calculate the measured \gls{pcv} for all the spokes of a wheel. The measured \gls{pcv} is calculated from the wheel angular velocity about its rotation axis and the position vector from the wheel center to the spoke tip. The resulting measured \gls{pcv} points along the direction of wheel rotation and is perpendicular to the position vector from the wheel center to the spoke tip. These vectors are shown as the green arrow in Figure~\ref{fig:approachPCVexplanation}. This measured \gls{pcv} is initially expressed in the wheel frame and later transformed into the body frame.
         
     Once both the predicted and measured \gls{pcv} are calculated, the spokes assumed to be in contact need to be selected and used to update the state vector. This can be done in two ways as explained in Section~\ref{sec:ContactEstimation}. The proposed approach uses the \gls{lf} method to select the spokes that are used in the filter update step. These selected spoke are used to calculate the residual as discussed in Section~\ref{subsec:residual}. After the residual is calculated, the covariance of the residual is calculated using Equation~\ref{eq:innovationCovariance}. This covariance is then used to calculate the squared Mahalanobis distance. This distance represents how surprised the filter is to receive the measured \gls{pcv}. 
     
@@ -43,23 +44,18 @@
     
     The calculated \gls{md} is also used to estimate the spokes that are likely to be in contact. The spoke with the lowest \gls{md} is selected to be most likely in contact. This can be seen in Figure~\ref{fig:approachPCVexplanation}, where the spoke estimated to be in contact with the ground has the predicted and measured \gls{pcv} vectors that are consistent with each other. This is reflected by a low residual and a low \gls{md} value. The other spokes that have inconsistent predicted and measured \gls{pcv} vectors have higher residuals and higher \gls{md} values. The contact estimation is explained in detail in Section~\ref{subsec:mahala-based-contact-estimation}. 
     
-    In the implemented filter update, the \gls{lf} method is used to select the contact spokes. The \gls{md} is then used to reject inconsistent spoke measurements before the update. In addition, the \gls{md} values can also be used as an alternative contact estimation measure, as explained in Section~\ref{subsec:mahala-based-contact-estimation}.
-    
-    
+    In the implemented filter update, the \gls{lf} method is used to select the contact spokes. The \gls{md} is then used to reject inconsistent spoke measurements before the update. In addition, the \gls{md} values based contact estimation is a possible alternative, as explained in Section~\ref{subsec:mahala-based-contact-estimation}.
     
     \section{Invariant EKF based Odometry}
     
-    The \gls{inekf} is an extension of the Extended Kalman Filter whose state evolve on Lie groups. In the \gls{inekf}, the estimation error is defined as an invariant error formulation, such as left or right invariant error rather than Euclidean vector subtraction. The details on the \gls{inekf} and the invariant error are explained in Chapter~\ref{chap:background}. 
+    The \gls{inekf} is an extension of the Extended Kalman Filter whose state evolve on Lie groups. In the \gls{inekf}, the estimation error is defined as an invariant error formulation, such as left or right invariant error rather than Euclidean vector subtraction. The details on the \gls{inekf} and the invariant error are explained in Chapter~\ref{chap:background}. The proposed approach for odometry estimation in \gls{rwr} uses the proprioceptive sensors available on the rover. The \gls{imu} and the joint encoders are used in the fusion process. Kalman filters operate in two steps: the propagation step and the correction step. In this thesis, we use the \gls{imu} data for the propagation step and the joint encoder data is used to construct the measurement used in the correction step. The \gls{inekf} estimates the pose of the rover's body frame with respect to the world frame, the velocity of the rover and the \gls{imu} biases. The filter's state vector and the details on the propagation step are provided in the following subsections.
     
     % This makes the estimation error independent of the frame of reference. The invariance property of the \gls{inekf} is explained in Chapter~\ref{chap:background}. 
         
     % The advantage of using \gls{inekf} over standard EKF is that the \gls{inekf} has better convergence properties.
     
     % \todo[inline]{The invariance part needs to be explained, and the explanation related to Lie group and their advantage should also be explained with reference }
-    
-    
-    The proposed approach for odometry estimation in \gls{rwr} uses the proprioceptive sensors available on the rover. The \gls{imu} and the wheel encoders are used in the fusion process. Kalman filters operate in two steps: the propagation step and the correction step. In this thesis, we use the \gls{imu} data for the propagation step and the wheel encoder data is used to construct the measurement used in the correction step. The \gls{inekf} estimates the pose of the rover's body frame with respect to the world frame, the velocity of the rover and the \gls{imu} biases. The filter's state vector and the details on the propagation step are provided in the following subsections.
-
+        
     \subsection{Filter State Vector}    
     The state vector $X$ contains the quantities that need to be estimated by the filter. In this work, the state vector contains position, orientation, velocity and \gls{imu} sensor biases. These quantities are required to estimate the rover motion. The filter state is constructed as shown in the Equation~\ref{eq:stateVector}. 
     
@@ -75,7 +71,7 @@
     
     \section{Measurement Update Step}
     
-    This section presents the core methodology of the proposed approach. For the fusion process, the \gls{pcv} vector is calculated. This is the velocity of a wheel spoke tip expressed in the body frame in a \gls{rwr} system. The \gls{pcv} can also be referred to as spoke-tip velocity or contact velocity. The term "Potential" comes from the possibility that any one of the spokes in a wheel can be in contact depending on the terrain. The \gls{pcv} is calculated in two forms. The \gls{pcv} vector, calculated from the filter state vector, after the prediction step of the \gls{inekf} is called predicted \gls{pcv}. In the update step, the \gls{pcv} vector is calculated from the wheel encoder measurements called measured \gls{pcv}. Within the \gls{inekf}, the predicted and measured \gls{pcv} vectors are used to calculate the residual, also known as the innovation.
+    This section presents the core methodology of the proposed approach. For the fusion process, the \gls{pcv} vector is calculated. This is the velocity of a wheel spoke tip expressed in the body frame in a \gls{rwr} system. The \gls{pcv} can also be referred to as spoke-tip velocity or contact velocity. The term "Potential" comes from the possibility that any one of the spokes in a wheel can be in contact depending on the terrain. The \gls{pcv} is calculated in two forms. The \gls{pcv} vector, calculated from the filter state vector, after the prediction step of the \gls{inekf} is called predicted \gls{pcv}. In the update step, the \gls{pcv} vector is calculated from the joint encoder measurements called measured \gls{pcv}. Within the \gls{inekf}, the predicted and measured \gls{pcv} vectors are used to calculate the residual, also known as the innovation.
     
     \subsection{Predicted Potential Contact Velocity} \label{subsec:predictedPCV}
     
@@ -107,7 +103,6 @@
         v_{pc, measured}^{body} = R_{wheel}^{body} (\omega_{wheel}^{wheel} \times {}^{}r_{pc}^{wheel})
         \label{eq:MeasuredPCVCalculation}
     \end{equation}
-    
 
     From the rover's body frame of reference, $v_{pc, measured}^{body}$ represents the velocity of the ground moving under the point of contact. This is the same quantity as the $v_{pc, predicted}^{body}$, so the difference between them can be calculated as the residual. The $\omega_{wheel}^{wheel}$ is the angular velocity of the wheel expressed in the wheel frame. The $r_{pc}^{wheel}$ is the position vector of the \gls{pc} from the wheel center expressed in the wheel frame. $R_{wheel}^{body}$ is the orientation of the wheel frame expressed in the body frame.
       
@@ -137,7 +132,6 @@
             \label{eq:gyroBiasRemoved}
         \end{equation}
 
-    
         \begin{equation}
             \xi = \begin{bmatrix}
             \delta R \\
@@ -171,16 +165,16 @@
         \end{equation}
         
         The validity of the measurement Jacobian is verified by comparing the analytical Jacobian with a numerical Jacobian. The numerical Jacobian is calculated by perturbing the state vector and calculating the change in the measurement function. The analytical and numerical Jacobians are found to be consistent with each other. The numerical jacobian calculation is provided in the appendix \ref{appendix:NumericalJacobianCalculation}. 
-        \todo[inline]{Provide the numerical jacobian calculation in the appendix}
+        % \todo[inline]{Provide the numerical jacobian calculation in the appendix}
        
         \section{Slip-aware Measurement Rejection}
         
-        The measured \gls{pcv}, calculated from the wheel encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
+        The measured \gls{pcv}, calculated from the joint encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
         
-        In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the wheel encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. This inconsistency can be calculated using the \gls{md}. 
+        In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the joint encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. This inconsistency can be calculated using the \gls{md}. 
         
-        The \gls{md} measures residual between a measurement and its predicted values weighted by the inverse residual covariance \cite{SITE-mathworks-mahalanobis}. The residual calculated in Section~\ref{subsec:residual} is used to calculate the \gls{md}. When the squared \gls{md} is higher than a threshold value (details are provided in the Implementation Chapter~\ref{chap:implementation})\todo[inline]{Include the chi2 threshold in the implementation chapter} then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent wheel encoder measurements from a slip event \cite{chang2014MahalanobisFormula}.
-        
+        The \gls{md} measures residual between a measurement and its predicted values weighted by the inverse residual covariance \cite{SITE-mathworks-mahalanobis}. The residual calculated in Section~\ref{subsec:residual} is used to calculate the \gls{md}. When the squared \gls{md} is higher than a threshold value (details are provided in the Implementation Chapter~\ref{chap:implementation}) then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent joint encoder measurements from a slip event \cite{chang2014MahalanobisFormula}.
+        % \todo[inline]{Include the chi2 threshold in the implementation chapter}
         \begin{equation}
         S = HPH^T + R
         \label{eq:innovationCovariance}
@@ -200,19 +194,17 @@
         \subsection{Lowest-Foot-based Contact Estimation}
         
         A geometrical method of estimating the contact spoke is by using the assumption that the spoke tip that has the lowest vertical position is in contact. This can be estimated using the robot kinematics and the joint positions of the wheel. The pose of each spoke with respect to the body frame can be calculated and the spoke in contact can be estimated. The \gls{rw} is constructed with five spokes so, geometrically there could be either one spoke in contact or two. The lowest-foot assumption can estimate only one foot as contact. For multi contact spoke estimation, we assumed a region of vertical position, if the spoke tip is within this region, then it is estimated as in contact. This assumption works well on a flat, solid terrain but on an inclined or rough terrain with obstacles, this assumption may not hold.
-                
               
         \subsection{Mahalanobis-Distance-based Contact Estimation} \label{subsec:mahala-based-contact-estimation}
         
-        The use of \gls{inekf} for odometry estimation provides an opportunity to estimate the spokes that are in contact. With the \gls{md} squared calculated in the previous section, the contact spokes can be estimated by calculating the \gls{md} squared value for each spoke and selecting the spoke with the lowest \gls{md} squared as the spoke in contact. This is based on the fact that, the spoke with lowest \gls{md} squared value's predicted and measured \gls{pcv} will be consistent compared to the other spokes with higher \gls{md} squared value. This method can also be used to estimate multiple contact spokes by selecting the spokes with \gls{md} squared value below a certain threshold. 
+        The use of \gls{inekf} for odometry estimation provides an opportunity to estimate the spokes that are in contact. With the \gls{md} squared calculated in the previous section, the contact spokes can be estimated by calculating the \gls{md} squared value for each spoke and selecting the spoke with the lowest \gls{md} squared as the spoke in contact. This is based on the fact that, the spoke with lowest \gls{md} squared value's predicted and measured \gls{pcv} will be consistent compared to the other spokes with higher \gls{md} squared value. This method can also be used to estimate multiple contact spokes by selecting the spokes with \gls{md} squared value below a certain threshold. The implementation details related to the approach discussed in this chapter is presented in the Implementation Chapter~\ref{chap:implementation}.
         
-        \todo[inline]{Do we need more explanation on the contact estimation? Probably}
-        
-        
+        % \todo[inline]{Do we need more explanation on the contact estimation? Probably}
+                
 
-        \section{Limitations of the Proposed Approach}
+        % \section{Limitations of the Proposed Approach}
         
-        The limitations of the proposed approach are discussed in this section. 
+        % The limitations of the proposed approach are discussed in this section. 
 
         
         

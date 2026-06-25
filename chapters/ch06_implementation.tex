@@ -2,7 +2,18 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
     \chapter{Implementation} \label{chap:implementation}
+    
+    To test the proposed methodology, the approach is implemented in the Coyote~3 rover system and tested in a lab environment. This chapter provides the details on the rover specific software implementation, 
 
+    
+    \begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{media/plots/implementation_uml_1.15x.pdf}
+    \caption{UML diagram showing the implementation of the proposed approach in the Coyote~3 rover system.}
+    \label{fig:implementation_uml}
+    \end{figure}
+        
+    
     \section{Implementation details}
         
     \subsection{Setup}
@@ -17,8 +28,7 @@
         \item \todo[inline]{add the cpu specs of the coyote rover}
 
     \end{itemize} 
-    
-    
+
     
     \subsection {Predicted PCV}
     
@@ -48,6 +58,8 @@
             The fixed wheel frames are added in the robot URDF model at the location of motors. This fixed wheel frames have the same pose as the initial pose of the rotating wheel frame. The fixed wheel frames are added to get the position vector to the spoke of the wheel from the center of the wheel. These position vectors are later used to calculate the measured \gls{pcv}. This is the only purpose of the fixed wheel frames. 
     
 
+    
+            
     
     
 \end{document}

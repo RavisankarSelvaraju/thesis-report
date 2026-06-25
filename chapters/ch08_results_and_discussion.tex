@@ -4,42 +4,7 @@
     \chapter{Evaluation and Results} \label{chap:resultsanddiscussion}
     This chapter provides the information on the experimental setup and evaluation techniques used to evaluate the Contact Velocity Odometry.
 
-    \section{Experiment Description}
-
-    The Experimentation to evaluate the proposed approach is done by collecting the data using the Coyote3 rover in a set of trajectories. This data collection also contains the VICON motion capture system data. The Evaluation is done by comparing the estimated odometry samples and the pose estimates from the VICON system. 
-    
-    Multiple experiments are conducted and the IMU sensor and joint encoder sensor data is collected. This data is later used in Contact Velocity Odometry estimation. 
-    
-    \subsection{Rover description}
-    
-    The coyote3 rover used in the experiments have four rimless wheels, a Xsens Mti680(G) IMU sensor, Joint encoders \todo[inline]{add the make and model of the joint encoder} the rover is controlled using an Xbox gamepad. Two LiPo batteries are used to power the rover. 
-    
-    The rimless wheels are equipped with rubber feet for better friction with the ground and also to provide suspension for the wheels. The coyote system does not have a suspension system so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smoothens this effect. 
-    
-    \subsection{Experiment site explanation}
-    
-    Two locations at DFKI RIC Bremen, is used as experiment sites, Both location are indoors so the GPS/GNSS data cannot be used. The first experiment site is the Multi Function Hall(MFH) and the second one is called the Space Hall/ Crater Hall. 
-    
-    In MFH, the floor is solid and concrete and in the space hall, the floor is made of very fine sand \todo[inline]{include the exact description about the sand} and there is a moon crater replica in the space hall.
-    
-    Both of the experiment site is covered by the VICON motion capture system. 
-    
-    In the MFH, Approximately, 5mx5m area is chosen as the experiment site \ref{fig:Multi Function Hall experiment area}. There are 19 experiments conducted in the MFH and 17 of those experiments are repeated three times. In total, 53 set of experimental data is available from the MFH experiments.
-    
-    In the Space Hall, the area with sand\ref{fig:Space Hall experiment area} is chosen as the experiment site. There are 11 experiments conducted in the space hall including the crater area. Out of 11, there are 8 experiments with 3 repetitions, there is one type of experiment on the crater with 4 repetitions and two more experiments in the sand without repetitions. In total, 30 set of experimental data is available from the Space Hall experiments. 
-    
-    \begin{figure}
-        \includegraphics[width=\linewidth]{media/images/MFH_experiment_area.png}
-        \caption{The Multi Function Hall area where the experiments are conducted }
-        \label{fig:Multi Function Hall experiment area}
-    \end{figure}
-    
-    \begin{figure}
-        \includegraphics[width=\linewidth]{media/images/spaceHall_experiment_area.jpg}
-        \caption{The sand area in the Space Hall where the experiments are conducted }
-        \label{fig:Space Hall experiment area}
-    \end{figure}
-
+ 
     \section{Results}
 
     Describe the results of your experiments in detail.

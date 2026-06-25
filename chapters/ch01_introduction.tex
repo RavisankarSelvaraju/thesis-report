@@ -3,11 +3,21 @@
 \begin{document}
     \chapter{Introduction} \label{chap:introduction}
 
-    For any mobile robot, a reliable estimate of its pose relative to its environment is crucial for autonomous navigation. In general, mobile robots estimate their pose based on the incremental motion calculated using proprioceptive sensors such as \gls{imu} and wheel encoders. 
-    \todo[inline]{This sentence needs citation/ source}
-    This pose estimation technique is called dead-reckoning based odometry. In robotic platforms with limited onboard computational power, this method of odometry is particularly important due to its simplicity and computational efficiency \cite{Agostinho2022}. This approach is vital in scenarios where positioning systems like \gls{gps}/\gls{gnss} and Motion capture systems are unavailable. The odometry estimate based on a single source of odometry is susceptible to sensor drift over time and wheel slip related errors.
+    \todo[inline]{Fix the comments from Raul}
+        
+    For any mobile robot, a reliable estimate of its pose relative to its environment is crucial for autonomous navigation. In general, mobile robots estimate their pose based on integrating the incremental motion calculated using proprioceptive sensors such as \gls{imu} and wheel encoders~\cite{Siegwart2011}. This pose estimation technique is called dead-reckoning based odometry. In robotic platforms with limited onboard computational power, this method of odometry is particularly important due to its simplicity and computational efficiency \cite{Agostinho2022}. This approach is vital in scenarios where positioning systems like \gls{gps}/\gls{gnss} and Motion capture systems are unavailable.
     
-    While these errors are prevalent across mobile robots, their effects are particularly evident in the systems operating in slip-prone terrain. One such system is the Coyote~3 rover. \todo[inline]{Include an image of coyote~3 without arm} This rover uses a non-traditional wheel type, the \gls{rw}, which is a hybrid between wheeled and legged locomotion. The spokes provide a foot-like terrain interaction while the overall wheel structure keeps the motion and control simple. These rovers, due to their spoked wheels, can traverse diverse terrains like soft and coarse sand terrain, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can overcome challenging obstacles effectively \cite{Brinkmann2018}.
+    \begin{figure}[!ht]
+        \begin{center}
+            \includegraphics[width=0.5\linewidth]{media/images/coyote3_with_vicon_markers_in_sand.jpg}
+            \caption{Coyote~3 rover with reflective markers in a sand terrain used in the experiments for this thesis.}
+            \label{fig:coyote3_with_vicon_markers}
+        \end{center}
+    \end{figure}
+    
+    The odometry estimate based on a single source of odometry is susceptible to sensor drift over time and wheel slip related errors. While these errors are prevalent across mobile robots, their effects are particularly evident in the systems operating in slip-prone terrain.
+    
+    One such system is the Coyote~3 rover, shown in Figure~\ref{fig:coyote3_with_vicon_markers}. This rover uses a non-traditional wheel type, the \gls{rw}, which is a hybrid between wheeled and legged locomotion. The spokes provide a foot-like terrain interaction while the overall wheel structure keeps the motion and control simple. This rover, due to its spoked wheels, can traverse diverse terrains like soft and coarse sand terrain, rocky terrain and inclined terrain. Unlike traditional wheeled rover, \gls{rwr} can overcome challenging obstacles effectively \cite{Brinkmann2018}.
     
     This hybrid locomotion capability of the \gls{rwr} system comes at a cost. The spokes of the \gls{rwr} system change the wheel-ground interaction from smooth rolling motion to discontinuous contact-based motion. The current baseline odometry in the Coyote~3 rover assumes a circular wheel model and uses wheel odometry for translational estimation and \gls{imu} data for orientation estimation. Since the translation and rotation are decoupled, this is commonly referred to as decoupled odometry. This approach provides a simple means of odometry estimation without complex state estimation techniques. Any slippage that occurs when traversing slip-prone terrain is not accounted for and the pose error from the slippage propagates to the odometry estimate. To address this problem, sensor fusion techniques are often employed.
     
