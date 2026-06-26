@@ -3,63 +3,55 @@
 \begin{document}
     \chapter{Implementation} \label{chap:implementation}
     
-    To test the proposed methodology, the approach is implemented in the Coyote~3 rover system and tested in a lab environment. This chapter provides the details on the rover specific software implementation, 
+    To test the proposed methodology, the approach discussed in Chapter~\ref{chap:methodology} is implemented in the Coyote~3 rover software system and tested in a lab environment. This chapter provides the details of the rover-specific software implementation, the contact velocity odometry library and the modifications in the \gls{inekf} library. 
 
+    \section{Software Framework}
+    
+    The proposed approach is implemented as a library which depends on the \gls{inekf} implementation developed by Ross Hartley~\cite{REPO-inekf-github}. The developed library is called \gls{cvo}. The Coyote~3 software system uses the ROCK~\cite{SW-rockrobotics} framework for development and deployment of its libraries. The functionalities can be developed as libraries independent of the ROCK framework and can later be integrated into the oroGen component based framework. The component based systems are built by Orocos Real Time Toolkit (Orocos RTT)~\cite{SW-orocos-rtt}. The Orocos RTT have a state machine representation using Hook methods as mentioned in rock-robotics documentation~\cite{SW-rockrobotics}. These methods are explained in Section~\ref{subsec:hookMethods}. Since this thesis implementation does not modify or add functionalities to the ROCK framework, the details on these systems are not provided. Readers who are interested in these systems can refer the rock-robotics documentation~\cite{SW-rockrobotics} for further details. The oroGen components that are relevant to this thesis implementation are shown in Figure~\ref{fig:component_map_implementation}. The data path between the components is also shown in the figure. 
+    
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=\linewidth]{media/plots/component_map_implementation_1.15x.pdf}
+        \caption{The oroGen components and the data path between the components that are used in the implementation of the proposed approach are shown.}
+        \label{fig:component_map_implementation}
+    \end{figure}
+    
+    The \gls{cvo} library is developed along with the component and integrated into the framework using the oroGen component called \gls{cvoe}. The software that is developed and modified in context of this thesis is shown as a structural Unified Markup Language (UML) diagram in Figure~\ref{fig:software_implementation_uml}. The following sections describe the packages, libraries, components and external dependencies used in this implementation. 
+    
+    \section{Contact Velocity Odometry Estimator}
+    
+    The purpose of the \gls{cvoe} component is to connect the implemented \gls{cvo} library to the ROCK component framework and obtain the necessary data for the \gls{cvo} library. The oroGen component framework uses a \texttt{.orogen} file which contains component description which includes the input ports, output ports, properties, and transformations necessary for the component. This file is provided in Listing~\ref{code:orogenfileCVOE}. This component is connected with other components via input and output ports. The input ports relevant to this implementation are: \texttt{measurement\_imu}, \texttt{joint\_state}, \texttt{pose\_imu}. The output ports relevant to this implementation are: \texttt{pose\_body\_estimated} and \texttt{pose\_body\_estimated\_local}. There are three main data types that are used, the \texttt{IMUSensors}, the \texttt{RigidBodyState} and the \texttt{Joints}. The \texttt{measurement\_imu} port uses \texttt{IMUSensors} data type, the \texttt{joint\_state} uses \texttt{Joints} data type and \texttt{pose\_imu}, \texttt{pose\_body\_estimated} and \texttt{pose\_body\_estimated\_local} use \texttt{RigidBodyState} data type. Additional debug ports are added to inspect the selected contact points, estimated biases, calculated innovation, and state covariance matrices. 
+    
+    The properties defined in the \texttt{.orogen} file are configured using a YAML configuration file. This helps to change the \gls{inekf} configuration without rebuilding the \texttt{C++} project. Some robot-specific properties such as path to the Coyote~3 URDF model, the coordinate frame names for world, body, wheel, and contact frames, the bias estimation and debug flags, the noise parameters and the threshold values for slip rejection and multi-contact estimation are included in the configuration file.
+    
+    Apart from the data flow and the configuration, the \gls{cvoe} component also performs several preprocessing steps before calling the \gls{cvo} library. 
+    These include \gls{imu} and joint encoder data preprocessing, IMU frame transformation, initial gyroscope bias estimation, and kinematic calculations. These implementation details are explained in the following sections.
+    
+    
+    \subsection{Hook Methods} \label{subsec:hookMethods}
+    
+    The oroGen component framework uses a state machine representation for the components. Every component can define the following hook methods: \texttt{configureHook}, \texttt{startHook}, \texttt{updateHook}, \texttt{errorHook}, \texttt{stopHook}, \texttt{cleanupHook}. Each method is called when the component transitions from one state to another. Components can be in one of the following states: \texttt{PreOperational}, \texttt{Stopped}, \texttt{Running}, \texttt{Exception}. Detailed information is available in the rock-robotics documentation~\cite{SW-rockrobotics}. A brief explanation of the methods necessary to understand the thesis implementation process flow is explained here. 
+    
+    The \texttt{configureHook} method is the first hook method called after the construction of the component. This method reads the properties that are defined in the \texttt{.orogen} file and set the class member variables of the component. Sanity checks on the property variables are also done in this method. Next, the \texttt{startHook} is called, for this implementation, \texttt{startHook} is not used. The \texttt{updateHook} is called after the \texttt{startHook}. This \texttt{updateHook} is continuously called until the state changes from \texttt{Running} to \texttt{Stopped}. The \texttt{errorHook}, \texttt{stopHook} and \texttt{cleanupHook} are also not used in this implementation. The preprocessing steps and triggering the \gls{cvo} library were done in the \texttt{updateHook} which was triggered at 100Hz. This implementation technique does not align the input data streams, so the implementation is moved into the \gls{imu} transformer callback method. This is further explained in Section~\ref{subsec:StreamAlignerandTransformerCallbacks}. 
+    
+    \subsection{Initial Gyro Bias Estimation}
+
+    The \gls{cvoe} component does gyroscope bias calculation every time the component is launched
+    
+    \subsection{Wheel and Contact Kinematics Calculation}
+    
+    \subsection{Inclusion of Fixed Wheel Frames}
+    
+    \subsection{Filter State Propagation and Correction}
+    
+    \subsection{Stream Aligner and Transformer Callbacks} \label{subsec:StreamAlignerandTransformerCallbacks}
+    
     
     \begin{figure}[!ht]
     \centering
     \includegraphics[width=\linewidth]{media/plots/implementation_uml_1.15x.pdf}
-    \caption{UML diagram showing the implementation of the proposed approach in the Coyote~3 rover system.}
-    \label{fig:implementation_uml}
+    \caption{Structural UML diagram of the software implementation of the proposed approach in the Coyote~3 rover system.}
+    \label{fig:software_implementation_uml}
     \end{figure}
-        
-    
-    \section{Implementation details}
-        
-    \subsection{Setup}
-        
-    \begin{itemize}
-        \item We have a rimless wheeled rover named coyote which has four wheel joints and a bogie joint between body and the rear axle. \todo[inline]{add the make and model of wheel encoder}
-        \item A Mti680(G) \cite{DT-IMU-datasheet} series IMU is used to get the linear acceleration and angular rotation of the robot body
-        \item The Motion capture for ground truth data is done by VICON system 
-        \item The ROCK framework by DFKI \cite{SW-rockrobotics} is used to run the Invariant extended Kalman filter library \cite{REPO-inekf-github} by RossHartley 
-        \item The MARS simulator is used for running simulated experiments and the development of the proposed approach 
-        \item Multi function hall and the crater hall at DFKI is used to run real world experiments
-        \item \todo[inline]{add the cpu specs of the coyote rover}
 
-    \end{itemize} 
-
-    
-    \subsection {Predicted PCV}
-    
-    This operation can also be done using the \gls{kdl} library using Twists \ref{subsec:twists} by utilizing the adjoint representation of the transformation matrix using the equation \ref{eq:TwistTransformationEquation}. The implemented version of the twist transformation is provided in the equation \ref{eq:ExpectedPCVCalculationTwist}
-    
-                
-        \begin{equation}
-            \begin{bmatrix}
-            \boldsymbol{\omega}_{pc}^{body} \\
-            \mathbf{v}_{pc}^{body}
-            \end{bmatrix}
-            =
-            \begin{bmatrix}
-            I & 0 \\
-            \left[\,\mathbf{p}_{pc}^{body}\,\right]_\times & I
-            \end{bmatrix}
-            \begin{bmatrix}
-            \boldsymbol{\omega}_{body}^{body} \\
-            \mathbf{v}_{body}^{body}
-            \end{bmatrix}
-            \label{eq:ExpectedPCVCalculationTwist}            
-        \end{equation}
-        
-
-            \subsection{Fixed Wheel Frames}
-    
-            The fixed wheel frames are added in the robot URDF model at the location of motors. This fixed wheel frames have the same pose as the initial pose of the rotating wheel frame. The fixed wheel frames are added to get the position vector to the spoke of the wheel from the center of the wheel. These position vectors are later used to calculate the measured \gls{pcv}. This is the only purpose of the fixed wheel frames. 
-    
-
-    
-            
-    
-    
 \end{document}

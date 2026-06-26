@@ -28,6 +28,196 @@
     \section{Numerical Jacobian} \label{appendix:NumericalJacobianCalculation}
     \todo[inline]{Provide the numerical jacobian calculation}
     
+    
+    \chapter{Additional Implementation Details}
+    
+    \section{Contact Velocity Odometry Estimator}
+
+        \begin{lstlisting}[style=orogenstyle, caption=orogen file of the \gls{cvoe} component, label={code:orogenfileCVOE}]
+
+            name "contact_velocity_odometry_estimator"
+
+            import_types_from "contact_velocity_odometry/ContactVelocityOdometry_Types.hpp"
+            import_types_from "std"
+            import_types_from "base"
+            import_types_from "odometry"
+
+            using_library "contact_velocity_odometry"
+            using_library "odometry"
+            using_library 'urdfdom'
+
+
+            task_context "Task" do
+                needs_configuration
+
+                # ********************* Properties *********************
+                property('world_frame', '/std/string', 'world').
+                    doc 'Name of the world coordinate frame.'
+
+                property('body_frame', '/std/string').
+                    doc 'Name of the robot root coordinate frame.'
+
+                property('enable_debug', '/bool', false).
+                    doc 'Whether to enable debug output and ports.'
+
+                property('noise_parameters', '/contact_velocity_odometry/NoiseParams').
+                    doc 'Filter parameters.'
+
+                property('initial_pose', '/base/Pose').
+                    doc 'Initial pose of the body link in world frame. If not set, the filter will use the first input pose as initial state.'
+                    
+                property('measurement_noise', '/double').
+                    doc 'Measurement noise for the wheel angular velocity measurements used in the contact velocity estimation.'
+                    
+                property('chi_squared_threshold', '/double').
+                    doc 'confidence threshold for the Mahalanois distance for slip elimination.'
+                
+                property('contact_md2_threshold', '/double', 2.0).
+                    doc 'threshold to determine if multiple spokes are in contact based on their MD squared distance difference.'
+                
+                property('estimate_contacts', 'bool', false).
+                    doc 'Whether to estimate the contact points using mahalanobis distance .'
+
+                property('gyro_bias_estimation_time', '/double', 2.0).
+                    doc 'Time window for gyro bias estimation in seconds.'
+
+                property('bias_estimation', 'bool', false).
+                    doc 'Whether to estimate the bias of the IMU measurements in the filter propagation step.'
+
+                property('contact_frame_names', '/std/vector<std/string>').
+                    doc 'Names of the contact frames. Dynamic input ports will be created with names pose_contact_<name> accordingly.'
+                    
+                property('wheel_frame_names', '/std/vector<std/string>').
+                    doc 'Names of the wheel frames. These names will be used to get the transformations from the wheel frames to the body frame.
+                        The order of the names must be the same as the order of the contact_frame_names. Counter clockwise from front left wheel.'
+
+                property('wheel_frame_fixed_names', '/std/vector<std/string>').
+                    doc 'Names of the wheel frames fixed. These names will be used to get the transformations from the fixed wheel frames to the foot frame.
+                        The order of the names must be the same as the order of the contact_frame_names. Counter clockwise from front left wheel.'
+
+                property('robot_configuration', '/contact_velocity_odometry/RobotConfiguration').
+                    doc 'Hardware configuration parameters for the robot.'
+
+                # ********************* Input Ports *********************
+                input_port('measurement_imu', '/base/samples/IMUSensors').
+                    doc 'Input for acceleration and gyro sensor measurement from the IMU.'
+
+                input_port('pose_imu', '/base/samples/RigidBodyState').
+                    doc 'Pose of the IMU wrt. to the body link.'
+                    
+                input_port('joint_state', '/base/samples/Joints').
+                    doc 'Input for the joint state of the robot. Used to get the wheel velocity.'
+
+                # *********************** Output Ports *********************
+                output_port( "pose_body_estimated", "base/samples/RigidBodyState" ).
+                    doc 'The estimated pose of the body link wrt. to world.'
+
+                output_port( "pose_body_estimated_local", "base/samples/RigidBodyState" ).
+                    doc 'The estimated pose transformed to body frame.'
+                
+                output_port('imu_body_estimated', '/base/samples/IMUSensors').
+                    doc 'The measured gyro and acc. transformed to body and corrected by estimated bias.'
+
+                output_port('imu_world_estimated', '/base/samples/IMUSensors').
+                    doc 'For debugging: The measured acc. - gravity in world frame.'
+
+                output_port('imu_bias_estimated', '/base/samples/IMUSensors').
+                    doc 'The estimated bias of acc. and gyro measurement.'
+                    
+                # *********************** Debug Ports *********************
+                output_port("debug_lf_contact_points", "/odometry/BodyContactState").
+                    doc '[debug port] The selected contact points for visualization and analysis.'
+
+                output_port("debug_md_contact_points", "/odometry/BodyContactState").
+                    doc '[debug port] The selected contact points for visualization and analysis.'
+
+                output_port('debug_measurement_imu', '/base/samples/IMUSensors').
+                    doc '[debug port]Input for acceleration and gyro sensor measurement from the IMU.'
+                    
+                output_port('debug_state_covariance_propagation', '/base/MatrixXd').
+                    doc '[debug port] The state covariance after the propagation step.'
+                    
+                output_port('debug_state_covariance_correction', '/base/MatrixXd').
+                    doc '[debug port] The state covariance after the correction step.'
+                    
+                output_port('debug_kalman_gain', '/base/MatrixXd').
+                    doc '[debug port] The Kalman gain matrix.'
+                    
+                output_port('debug_innovations', '/base/MatrixXd').
+                    doc '[debug port] The innovation matrix from the last correction step.'
+
+                transformer do
+
+                    transform "foot_fl01", "body"
+                    transform "foot_fl02", "body"
+                    transform "foot_fl03", "body"
+                    transform "foot_fl04", "body"
+                    transform "foot_fl05", "body"
+
+                    transform "foot_fr01", "body"
+                    transform "foot_fr02", "body"
+                    transform "foot_fr03", "body"
+                    transform "foot_fr04", "body"
+                    transform "foot_fr05", "body"
+
+                    transform "foot_rl01", "body"
+                    transform "foot_rl02", "body"
+                    transform "foot_rl03", "body"
+                    transform "foot_rl04", "body"
+                    transform "foot_rl05", "body"
+
+                    transform "foot_rr01", "body"
+                    transform "foot_rr02", "body"
+                    transform "foot_rr03", "body"
+                    transform "foot_rr04", "body"
+                    transform "foot_rr05", "body"
+
+                    transform "wheel_fl", "body"
+                    transform "wheel_fr", "body"
+                    transform "wheel_rl", "body"
+                    transform "wheel_rr", "body" 
+                    
+                    transform "wheel_fl_fixed", "body"
+                    transform "wheel_fr_fixed", "body"
+                    transform "wheel_rl_fixed", "body"
+                    transform "wheel_rr_fixed", "body" 
+                    
+                    transform "foot_fl01", "wheel_fl_fixed"
+                    transform "foot_fl02", "wheel_fl_fixed"
+                    transform "foot_fl03", "wheel_fl_fixed"
+                    transform "foot_fl04", "wheel_fl_fixed"
+                    transform "foot_fl05", "wheel_fl_fixed"
+
+                    transform "foot_fr01", "wheel_fr_fixed"
+                    transform "foot_fr02", "wheel_fr_fixed"
+                    transform "foot_fr03", "wheel_fr_fixed"
+                    transform "foot_fr04", "wheel_fr_fixed"
+                    transform "foot_fr05", "wheel_fr_fixed"
+
+                    transform "foot_rl01", "wheel_rl_fixed"
+                    transform "foot_rl02", "wheel_rl_fixed"
+                    transform "foot_rl03", "wheel_rl_fixed"
+                    transform "foot_rl04", "wheel_rl_fixed"
+                    transform "foot_rl05", "wheel_rl_fixed"
+
+                    transform "foot_rr01", "wheel_rr_fixed"
+                    transform "foot_rr02", "wheel_rr_fixed"
+                    transform "foot_rr03", "wheel_rr_fixed"
+                    transform "foot_rr04", "wheel_rr_fixed"
+                    transform "foot_rr05", "wheel_rr_fixed"
+
+                    align_port("joint_state", 0.025)
+                    align_port("measurement_imu", 0.01)
+                    
+                    max_latency 0.01
+                end
+                port_driven
+            end
+        
+        
+        \end{lstlisting}
+
+    
     \chapter{Parameters}
     Your second chapter appendix
 
