@@ -137,8 +137,8 @@
             \delta R \\
             \delta V \\
             \delta P \\
-            \delta acc\_bias \\
-            \delta gyro\_bias
+            \delta gyro\_bias \\
+            \delta acc\_bias
             \end{bmatrix}
             \label{eq:ErrorStateVector}
         \end{equation}
@@ -152,14 +152,14 @@
         
         \begin{equation}
             H = \begin{bmatrix}
-            \frac{\partial h(x)}{\partial \delta R} & \frac{\partial h(x)}{\partial \delta V} & \frac{\partial h(x)}{\partial \delta P} & \frac{\partial h(x)}{\partial \delta acc\_bias} & \frac{\partial h(x)}{\partial \delta gyro\_bias}
+            \frac{\partial h(x)}{\partial \delta R} & \frac{\partial h(x)}{\partial \delta V} & \frac{\partial h(x)}{\partial \delta P} & \frac{\partial h(x)}{\partial \delta gyro\_bias} & \frac{\partial h(x)}{\partial \delta acc\_bias}
             \end{bmatrix}
             \label{eq:MeasurementJacobian-2}
         \end{equation}
         
         \begin{equation}
             H = \begin{bmatrix}
-                -[[R_{body}^{world}]^T \cdot v_{body}^{world}]_\times & -\mathbf{I} & \mathbf{0} & \mathbf{0} & -[r_{pc}^{body}]_\times
+                -[[R_{body}^{world}]^T \cdot v_{body}^{world}]_\times & -\mathbf{I} & \mathbf{0} & -[r_{pc}^{body}]_\times & \mathbf{0}
             \end{bmatrix}
             \label{eq:MeasurementJacobian-3}      
         \end{equation}
