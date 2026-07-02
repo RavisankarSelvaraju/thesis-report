@@ -2,42 +2,142 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
     \chapter{Experiment and evaluation} \label{chap:experimentandevaluation}
+        
+    \section{Experiment Objective}
     
-    \section{Experiment Description}
+    The purpose of the experiments is to evaluate the proposed \gls{cvo} approach in the Coyote~3 \gls{rwr} platform under various terrain and trajectory conditions. The \gls{cvo} estimates are compared against the ground truth pose estimates from the Vicon motion capture system. The \gls{cvo} estimates are also compared against the baseline odometry estimates to evaluate the difference in performance between the baseline odometry and the proposed \gls{cvo}. The \gls{cvo} approach is implemented in the Coyote~3 rover and the data necessary to run the \gls{cvoe} component are collected using the ROCK data logging components. The main logged data are the \gls{imu} and the joint encoder data. The Vicon pose estimates are also logged and used as ground truth in evaluation. Multiple experiments are conducted, and the mentioned data are logged. In addition to the above-mentioned data, the RGB image and the depth map are also logged for some specific datasets so that these datasets can be later used for visual odometry and SLAM. These additional data are not used for the evaluation of the proposed approach in this thesis. The experimental site, terrain and dataset types are described in Section~\ref{sec:experiment-site-terrain}. The evaluation focuses on the error between the estimated trajectory from the \gls{cvo} and the ground truth trajectory from the Vicon pose estimates. The evaluation uses metrics such as \gls{ape}, \gls{rpe}, translational and rotational drift rate, and statistical error values such as minimum, maximum, mean, and standard deviation. 
+    
+    \section{Experiment Site and Terrain Conditions} \label{sec:experiment-site-terrain}
+    
+    The experiments are conducted in the indoor experiment area at \gls{ric}, \gls{dfki}, Bremen, Germany. This experiment area is called Multifunctional Hall. This hall is mainly divided into two sections, the flexible experimental area and the crater landscape. Within the crater hall, "The area in front of the crater is filled with fine-grained granulate\footnote{This line is taken from the \gls{dfki} website \cite{SITE-dfki-mfh}}", which is treated as the sand terrain in this thesis.  Detailed information on the experimental area can be found in the \gls{dfki} website \cite{SITE-dfki-mfh}. In this report, the experimental area is classified into three terrain conditions: flat floor terrain, sand terrain, and crater terrain. Since, all three locations are indoors, the GPS/GNSS data cannot be used for ground truth pose estimation. To measure the pose of systems during the experiments, the Multifunctional Hall is covered with 21 Vicon motion tracking cameras. For the thesis approach evaluation, 83 sets of experimental data are collected in the Multifunctional Hall. The description of each terrain and the number of experiments conducted in each terrain is described in the following sections. 
+    
+    \subsection{Flat Floor Terrain}
+      
+    The flat experimental area in the Multifunctional Hall is used as the flat floor terrain for the experiments. The flat floor is made of solid concrete. During the experiments, objects are placed in the flat floor area to create a feature rich RGB and depth map image data. The flat floor terrain is shown in Figure \ref{fig:Flat-Floor-Terrain-in-Multifunctional-Hall}. Approximately, 8~m $\times$ 5~m area is chosen as the experiment area within the flat floor terrain. This area is completely covered by the Vicon motion tracking camera to collect the ground truth data.
+    
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\linewidth]{media/images/flat_floor_terrain_1.png}
+        \caption{The flat floor area in the Multi Function Hall where the experiments are conducted}
+        \label{fig:Flat-Floor-Terrain-in-Multifunctional-Hall}
+    \end{figure}
+    
+    The flat floor terrain is used for 19 unique experiments and 17 of those experiments are repeated three times. In total, 53 set of experimental data is available from the flat terrain experiments. The trajectory types used in the flat floor terrain experiments are presented in Table~\ref{tab:flat-terrain-experiments}. The \texttt{Dataset group} name in the table is designed as \texttt{DATA\_XX\_YY} where \texttt{XX} is the unique experiment number and \texttt{YY} is the repetition number. The \texttt{Dataset group} name convention is the same for all the experiments conducted for this thesis. The \texttt{slope} column of the table represents the slope of the terrain in which the experiment is conducted. In the flat floor terrain, the slope is $0^\circ$ for most of the experiments. However, in some experiments involving obstacles, the rover climbs up and down the obstacles in the flat floor terrain which makes the slope vary from $20$--$60^\circ$. The slope values in the obstacle experiments represent the approximate slope created by the obstacles and not the slop of the terrain itself. In all the experiments, the rover is controlled by human operator using a game pad. The \texttt{Velocity} column in the table represents the maximum velocity limit with which the rover is set to move in the experiment. The rover can move slower than the set velocity limit but cannot exceed the limit. The \texttt{Trajectory} column in the table represents the type of trajectory followed by the rover in the experiment. The \texttt{Runs} column in the table represents the number of repetitions of the experiment conducted.
+       
+    \begin{table}[!htbp]
+    \centering
+    \caption{Description of the flat floor experimental datasets.}
+    \label{tab:flat-terrain-experiments}
+    \small
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{@{}p{0.20\textwidth}p{0.13\textwidth}p{0.13\textwidth}p{0.42\textwidth}r@{}}
+        \toprule
+        Dataset group & Slope & Velocity & Trajectory & Runs \\
+        \midrule
+        \texttt{DATA\_01\_01--03} & $0^\circ$, $10$--$20^\circ$ & --    & stand-still & 3 \\
+        \texttt{DATA\_02\_01--03} & $0^\circ$ & 0.2~m/s                 & move forward & 3 \\
+        \texttt{DATA\_03\_01--03} & $0^\circ$ & 0.2~m/s                 & move backward & 3 \\
+        \texttt{DATA\_04\_01--03} & $0^\circ$ & 0.2~m/s                 & move forward, pause, and move backward & 3 \\
+        \texttt{DATA\_05\_01--03} & $0^\circ$ & 0.2~m/s                 & rotate in place, clockwise & 3 \\
+        \texttt{DATA\_06\_01--03} & $0^\circ$ & 0.2~m/s                 & rotate in place, counter-clockwise & 3 \\
+        \texttt{DATA\_07\_01--03} & $0^\circ$ & 0.2~m/s                 & figure-eight with approx. 1.5 m loop radius& 3 \\
+        \texttt{DATA\_08\_01--03} & $0^\circ$ & 0.2~m/s                 & figure-eight with approx. 2.3 m loop radius& 3 \\
+        \texttt{DATA\_09\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius clockwise circle & 3 \\
+        \texttt{DATA\_10\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius counter-clockwise circle & 3 \\
+        \texttt{DATA\_11\_01--03} & $0^\circ$ & 0.2~m/s                 & 4~m $\times$ 4~m square, clockwise & 3 \\
+        \texttt{DATA\_12\_01--03} & $0^\circ$ & 0.2~m/s                 & 4~m $\times$ 4~m square, counter-clockwise & 3 \\
+        \texttt{DATA\_13\_01--03} & $0^\circ$ & 0.2~m/s                 & move forward when pulled back & 3 \\
+        \texttt{DATA\_14\_01--03} & $0^\circ$ & 0.2~m/s                 & move forward while held in place by stand & 3 \\
+        \texttt{DATA\_15\_01--03} & $20$--$60^\circ$ & 0.1--0.2~m/s     & move forward with obstacles on right side & 3 \\
+        \texttt{DATA\_16\_01--03} & $20$--$60^\circ$ & 0.1--0.2~m/s     & move forward with obstacles on both sides & 3 \\
+        \texttt{DATA\_17\_01--03} & $20$--$60^\circ$ & 0.1--0.2~m/s     & move forward with both sides staggered obstacles& 3 \\
+        \texttt{DATA\_29\_01--02} & $0^\circ$ & 0.2~m/s                 & complex trajectory with loops and turns & 2 \\
+        \midrule
+        Total & -- & -- & -- & 53 \\
+        \bottomrule
+    \end{tabular}
+    \end{table}  
+    
+    \subsection{Sand Terrain}
 
-    The Experimentation to evaluate the proposed approach is done by collecting the data using the Coyote3 rover in a set of trajectories. This data collection also contains the VICON motion capture system data. The Evaluation is done by comparing the estimated odometry samples and the pose estimates from the VICON system. 
+    The sand area in front of the crater landscape is used as the sand terrain for the experiments. The sand area is filled with fine-grained granulate which is less than 1 mm in size \cite{SITE-dfki-mfh}. The sand terrain area  used for the experiments is shown in Figure \ref{fig:Sand-Terrain-in-Multifunctional-Hall}. 
     
-    Multiple experiments are conducted and the IMU sensor and joint encoder sensor data is collected. This data is later used in Contact Velocity Odometry estimation. 
-    
-    \subsection{Rover description}
-    
-    The coyote3 rover used in the experiments have four rimless wheels, a Xsens Mti680(G) IMU sensor, Joint encoders \todo[inline]{add the make and model of the joint encoder} the rover is controlled using an Xbox gamepad. Two LiPo batteries are used to power the rover. 
-    
-    The rimless wheels are equipped with rubber feet for better friction with the ground and also to provide suspension for the wheels. The coyote system does not have a suspension system so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smoothens this effect. 
-    
-    \subsection{Experiment site explanation}
-    
-    Two locations at DFKI RIC Bremen, is used as experiment sites, Both location are indoors so the GPS/GNSS data cannot be used. The first experiment site is the Multi Function Hall(MFH) and the second one is called the Space Hall/ Crater Hall. 
-    
-    In MFH, the floor is solid and concrete and in the space hall, the floor is made of very fine sand \todo[inline]{include the exact description about the sand} and there is a moon crater replica in the space hall.
-    
-    Both of the experiment site is covered by the VICON motion capture system. 
-    
-    In the MFH, Approximately, 5mx5m area is chosen as the experiment site \ref{fig:Multi Function Hall experiment area}. There are 19 experiments conducted in the MFH and 17 of those experiments are repeated three times. In total, 53 set of experimental data is available from the MFH experiments.
-    
-    In the Space Hall, the area with sand\ref{fig:Space Hall experiment area} is chosen as the experiment site. There are 11 experiments conducted in the space hall including the crater area. Out of 11, there are 8 experiments with 3 repetitions, there is one type of experiment on the crater with 4 repetitions and two more experiments in the sand without repetitions. In total, 30 set of experimental data is available from the Space Hall experiments. 
-    
-    \begin{figure}
-        \includegraphics[width=\linewidth]{media/images/MFH_experiment_area.png}
-        \caption{The Multi Function Hall area where the experiments are conducted }
-        \label{fig:Multi Function Hall experiment area}
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\linewidth]{media/images/sand_terrain.png}
+        \caption{The sand area in the Multifunctional Hall where the experiments are conducted }
+        \label{fig:Sand-Terrain-in-Multifunctional-Hall}
     \end{figure}
     
-    \begin{figure}
-        \includegraphics[width=\linewidth]{media/images/spaceHall_experiment_area.jpg}
-        \caption{The sand area in the Space Hall where the experiments are conducted }
-        \label{fig:Space Hall experiment area}
+    Similar to the flat floor terrain, the sand terrain is also covered by the Vicon motion tracking cameras to collect the ground truth data. The sand terrain also have a few objects placed in the area to create a feature rich RGB and depth map image data. The experiments conducted in the sand terrain are presented in Table~\ref{tab:sand-terrain-experiments}. The sand terrain is used for 10 unique experiments and 8 of those experiments are repeated three times. In total, 26 set of experimental data is available from the sand terrain experiments.
+                
+    \begin{table}[htbp]
+        \centering
+        \caption{Description of the sand terrain experimental datasets.}
+        \label{tab:sand-terrain-experiments}
+        \small
+        \setlength{\tabcolsep}{3pt}
+        \begin{tabular}{@{}p{0.20\textwidth}p{0.13\textwidth}p{0.15\textwidth}p{0.42\textwidth}r@{}}
+            \toprule
+            Dataset group & Slope & Velocity & Trajectory & Runs \\
+            \midrule
+            \texttt{DATA\_18\_01--03} & $0^\circ$ & 0.2~m/s & move forward, pause, and move backward & 3 \\
+            \texttt{DATA\_19\_01--03} & $0^\circ$ & 0.4~m/s & move forward, pause, and move backward & 3 \\
+            \texttt{DATA\_20\_01--03} & $0^\circ$ & 0.6~m/s & move forward, pause, and move backward & 3 \\
+            \texttt{DATA\_21\_01--03} & $0^\circ$ & 0.2~m/s & rotate in place, clockwise & 3 \\
+            \texttt{DATA\_22\_01--03} & $0^\circ$ & 0.2~m/s & rotate in place, counter-clockwise & 3 \\
+            \texttt{DATA\_23\_01--03} & $0^\circ$ & 0.2~m/s & move forward when pulled back & 3 \\
+            \texttt{DATA\_24\_01--03} & $0^\circ$ & 0.2~m/s & 2~m radius clockwise circle & 3 \\
+            \texttt{DATA\_25\_01--03} & $0^\circ$ & 0.2~m/s & 2~m radius counter-clockwise circle & 3 \\
+            \texttt{DATA\_27\_01} & $0^\circ$ & 0.2--0.6~m/s & complex trajectory with loops and turns & 1 \\
+            \texttt{DATA\_28\_01} & $0^\circ$ & 0.2~m/s & complex trajectory with loops and turns & 1 \\
+            \midrule
+            Total & -- & -- & -- & 26 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+        
+    \subsection{Crater Terrain}
+
+    A part of the crater landscape in the Multifunctional hall is used as the crater terrain for the experiments. The crater terrain is a slope with an angle of $35$--$45^\circ$. The crater terrain area used for the experiments is shown in Figure \ref{fig:Crater-Terrain-in-Multifunctional-Hall}. 
+    
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.6\linewidth]{media/images/crater_terrain.png}
+        \caption{The crater area in the Multifunctional Hall where the experiments are conducted }
+        \label{fig:Crater-Terrain-in-Multifunctional-Hall}
     \end{figure}
-  
+    
+    Similar to the flat floor and sand terrain, the crater terrain is also covered by the Vicon motion tracking cameras to collect the ground truth data. The experiments conducted in the crater terrain are presented in Table~\ref{tab:crater-dataset-groups}. The crater terrain is used for one unique experiment and that experiment is repeated four times. In total, 4 set of experimental data is available from the crater terrain experiments.
+
+    \begin{table}[htbp]
+    \centering
+    \caption{Description of the crater terrain experimental datasets.}
+    \label{tab:crater-dataset-groups}
+    \small
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{@{}p{0.20\textwidth}p{0.13\textwidth}p{0.15\textwidth}p{0.42\textwidth}r@{}}
+        \toprule
+        Dataset group & Slope & Velocity & Trajectory & Runs \\
+        \midrule
+        \texttt{DATA\_26\_01--04} & $35$--$45^\circ$ & 0.2~m/s & Move up the crater with slip & 4 \\
+        \midrule
+        Total & -- & -- & -- & 4 \\
+        \bottomrule
+    \end{tabular}
+    \end{table}
+    
+    \section{Coyote~3 Rover Platform}
+    
+    The Coyote~3 \gls{rwr} platform is used to evaluate the proposed \gls{cvo} approach. This section describes the rover configuration, the sensors equipped on the rover, the control method, and the onboard computation module used during the experiments. The Coyote~3 rover is equipped with four \glspl{rw} attached to four $48 V$ \texttt{RoboDrive ILM 50x08} BLDC motors combined with \texttt{HarmonicDrive CPG 17-80} gearboxes. The front wheels are attached to the main rover body and the rear wheel axle is attached to the main body through a passive bogie joint. All wheel joints, along with the bogie joint, are equipped with a \texttt{iC-Haus MU} absolute encoders. Two RGB-D cameras are mounted to both the front and rear of the rover to get the depth images and the Velodyne LiDAR, mounted in the front of the rover, is used to get the 3D point cloud data. The camera and LiDAR data are not used in the evaluation of the proposed approach in this thesis.
+    
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.6\linewidth]{media/images/coyote3-component-labelled.jpg}
+        \caption{Coyote~3 rover with components annotated.}
+        \label{fig:annotated-coyote3-components}
+    \end{figure}
+    
+    A \texttt{MTi-680(G)} \cite{DT-IMU-datasheet} series IMU is used to measure the linear acceleration and angular velocity of the robot body frame. The \gls{imu} sensor is located inside the main body of the rover. For the Vicon motion capture system to track the rover, four reflective markers are placed on the rover body. The Coyote~3 rover is equipped with an onboard computer with \texttt{Intel Core i7-3555LE @ 2.5 GHz} processor. The rover is controlled using an \texttt{Xbox} game pad and powered using 2 $\times$ 4500~mAh LiPo batteries. The rimless wheels are equipped with rubber feet for better friction with the ground and to reduce impact forces during wheel-ground contact. The coyote system does not have a suspension system so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smooths this effect. The components described in this section are annotated in Figure~\ref{fig:annotated-coyote3-components}.
     
 \end{document}

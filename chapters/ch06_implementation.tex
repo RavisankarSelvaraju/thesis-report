@@ -95,7 +95,6 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
                     id(id_in), 
                     pose(pose_in), 
                     covariance(covariance_in) { }
-
         int id;
         Eigen::Matrix4d pose;
         Eigen::Matrix<double,6,6> covariance;
@@ -108,7 +107,24 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     
     The predicted \gls{pcv} is computed in the \path{computeExpectedContactVelocity} method. This method uses the kinematics from the \gls{pc} frame to the body frame (\path{potential_contact_to_body_kinematics}), the bias-corrected angular velocity of the body (\texttt{omega\_corrected}), the rotation from the odom frame to the body frame (\path{R_odom_to_body}), and the body velocity expressed in the odom frame (\path{v_body_in_odom}). The result is stored in \path{expected_contact_velocity_in_body}. Inside this method, the \gls{pcv} vector is calculated by constructing a body-frame twist and changing its reference point to each \gls{pc}. The \path{v_body_in_odom} vector is rotated to obtain the body velocity expressed in the body frame, \path{v_body_in_body}.
     
-    A \texttt{KDL::Twist} is constructed using this velocity vector and the \texttt{omega\_corrected} vector. This constructed twist is stored in the \texttt{twist\_body\_in\_body} variable and is expressed in the body frame.. The reference point of this twist is changed to the \gls{pc} using the \texttt{.RefPoint} method from the \gls{kdl} library. The resulting twist is stored as \texttt{twist\_at\_pc}. The twist at the \gls{pc} is used to extract the linear velocity vector, which is then stored in an \texttt{Eigen::VectorXd}. As discussed in the Methodology Chapter~\ref{subsec:predictedPCV}, the calculated velocity vectors are negated and each vector is stored in \path{expected_contact_velocity_in_body} using the corresponding \texttt{id} from \path{potential_contact_to_body_kinematics}. This is done for all \glspl{pc} that is stored in the (\path{potential_contact_to_body_kinematics}) vector. The background required to understand twist representation and reference point changes is explained in Background Chapter Section~\ref{subsec:transformingTwists}.
+    A \texttt{KDL::Twist} is constructed using this velocity vector and the \texttt{omega\_corrected} vector. This constructed twist is stored in the \texttt{twist\_body\_in\_body} variable and is expressed in the body frame. The reference point of this twist is changed to the \gls{pc} using the \texttt{.RefPoint} method from the \gls{kdl} library. The adjoint transformation to change the reference point of the twist is shown in Equation~\ref{eq:ExpectedPCVCalculationTwist}. The resulting twist is stored as \texttt{twist\_at\_pc}. The twist at the \gls{pc} is used to extract the linear velocity vector, which is then stored in an \texttt{Eigen::VectorXd}. As discussed in the Methodology Chapter~\ref{subsec:predictedPCV}, the calculated velocity vectors are negated and each vector is stored in \path{expected_contact_velocity_in_body} using the corresponding \texttt{id} from \path{potential_contact_to_body_kinematics}. This is done for all \glspl{pc} that is stored in the (\path{potential_contact_to_body_kinematics}) vector. The background required to understand twist representation and reference point changes is explained in Background Chapter Section~\ref{subsec:transformingTwists}.
+    
+    \begin{equation}
+        \begin{bmatrix}
+        \boldsymbol{\omega}_{pc}^{body} \\
+        \mathbf{v}_{pc}^{body}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        I & 0 \\
+        \left[\,\mathbf{p}_{pc}^{body}\,\right]_\times & I
+        \end{bmatrix}
+        \begin{bmatrix}
+        \boldsymbol{\omega}_{body}^{body} \\
+        \mathbf{v}_{body}^{body}
+        \end{bmatrix}
+        \label{eq:ExpectedPCVCalculationTwist}            
+    \end{equation}
     
     The measured \gls{pcv} is computed in the \path{computeMeasuredContactVelocity} method. The kinematics from the \gls{pc} frame to the fixed wheel frame (\path{potential_contact_to_wheel_kinematics}) and the wheel angular velocity vector (\path{omega_wheel}) are used in this method. The \gls{pcv} is initially calculated in the fixed wheel frame of reference using Equation~\ref{eq:MeasuredPCVCalculation}. The resulting velocity vector is then transformed to the body frame using the rotation from the fixed wheel frame to the body frame extracted from the fixed wheel to body kinematics (\path{wheel_to_body_kinematics}). Similar to the predicted \gls{pcv}, the measured \gls{pcv} is stored in an \texttt{Eigen::VectorXd} using the corresponding \texttt{id} from \path{potential_contact_to_wheel_kinematics}. This is done for all \glspl{pc} that is stored in the (\path{potential_contact_to_wheel_kinematics}) vector. Both the predicted and measured \gls{pcv} vectors are available in the \path{correctContactVelocity} method after the \path{computeExpectedContactVelocity} and \path{computeMeasuredContactVelocity} methods are called. 
     
@@ -167,7 +183,7 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     
     The \gls{cvoe} component is connected to the \texttt{rock-replay2} tool, which provide the necessary input for the component to estimate the odometry. When the \gls{imu} and the joint state data are replayed, the \gls{cvoe} component produces the estimated pose of the rover which is also stored in a log file in an evaluation folder. The log file generated by the \gls{cvoe} component is called \path{coyote3_contact_velocity_odometry_estimator_Logger.0.log}. During the experiments, the ground truth pose of the rover is also recorded using a motion capture system. The ground truth data is also stored as a \texttt{.log} file called \texttt{coyote3\_vicon\_Logger.0.log}. The ground truth log file, \path{coyote3_vicon_Logger.0.log}, and the baseline odometry log file, \texttt{coyote3\_odometry\_Logger.0.log}, associated with the replayed dataset are also copied to the evaluation folder. 
     
-    The \texttt{validation\_toolset} calls the evaluation bash script with the evaluation folder path as an argument \texttt{--log-dir-path}. The \texttt{pocolog2msgpack} command line tool is used to convert the \texttt{log} files into \texttt{msgpack} files with \path{.msgpack} file extension and later the \texttt{msgpack} files are converted to \texttt{.relational} file using the \texttt{pocolog2msgpack.object2relational} function. The relational file is loaded in Python using the \texttt{msgpack} and \texttt{pandas} libraries. It is first converted to a \texttt{pandas.DataFrame} and then stored as a dictionary with timestamps as keys. Once both the estimated rover pose and the ground truth rover pose are converted to \texttt{pandas.DataFrame}, the data is aligned based on the timestamps.After alignment, the error between the estimated pose and the ground truth pose is calculated using various metrics which are explained in the Background Chapter~\ref{chap:background} and the Evaluation Chapter~\ref{chap:experimentandevaluation}. 
+    The \texttt{validation\_toolset} calls the evaluation bash script with the evaluation folder path as an argument \texttt{--log-dir-path}. The \texttt{pocolog2msgpack} command line tool is used to convert the \texttt{log} files into \texttt{msgpack} files with \path{.msgpack} file extension and later the \texttt{msgpack} files are converted to \texttt{.relational} file using the \texttt{pocolog2msgpack.object2relational} function. The relational file is loaded in Python using the \texttt{msgpack} and \texttt{pandas} libraries. It is first converted to a \texttt{pandas.DataFrame} and then stored as a dictionary with timestamps as keys. Once both the estimated rover pose and the ground truth rover pose are converted to \texttt{pandas.DataFrame}, the data is aligned based on the timestamps. After alignment, the error between the estimated pose and the ground truth pose is calculated using various metrics which are explained in the Background Chapter~\ref{chap:background} and the Evaluation Chapter~\ref{chap:experimentandevaluation}. 
 
 \end{document}
      

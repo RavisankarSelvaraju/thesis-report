@@ -17,6 +17,9 @@
 *.snm
 *.vrb
 *.xdv
+*.glg
+*.glo
+*.gls
 
 .vscode/
 files-sent-for-review/
