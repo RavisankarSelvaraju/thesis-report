@@ -30,6 +30,7 @@
 \glossaryentry{DFKI?\glossentry{dfki}|setentrycounter[]{page}"\glsnumberformat}{xiii}
 \glossaryentry{RPE?\glossentry{rpe}|setentrycounter[]{page}"\glsnumberformat}{xiii}
 \glossaryentry{APE?\glossentry{ape}|setentrycounter[]{page}"\glsnumberformat}{xiii}
+\glossaryentry{RMSE?\glossentry{rmse}|setentrycounter[]{page}"\glsnumberformat}{xiii}
 \glossaryentry{IMU?\glossentry{imu}|setentrycounter[]{page}"\glsnumberformat}{1}
 \glossaryentry{GPS?\glossentry{gps}|setentrycounter[]{page}"\glsnumberformat}{1}
 \glossaryentry{GNSS?\glossentry{gnss}|setentrycounter[]{page}"\glsnumberformat}{1}
@@ -316,4 +317,8 @@
 \glossaryentry{CVO?\glossentry{cvo}|setentrycounter[]{page}"\glsnumberformat}{44}
 \glossaryentry{CVO?\glossentry{cvo}|setentrycounter[]{page}"\glsnumberformat}{44}
 \glossaryentry{CVOE?\glossentry{cvoe}|setentrycounter[]{page}"\glsnumberformat}{44}
-\glossaryentry{CVOE?\glossentry{cvoe}|setentrycounter[]{page}"\glsnumberformat}{59}
+\glossaryentry{RPE?\glossentry{rpe}|setentrycounter[]{page}"\glsnumberformat}{45}
+\glossaryentry{RPE?\glossentry{rpe}|setentrycounter[]{page}"\glsnumberformat}{45}
+\glossaryentry{RMSE?\glossentry{rmse}|setentrycounter[]{page}"\glsnumberformat}{46}
+\glossaryentry{RPE?\glossentry{rpe}|setentrycounter[]{page}"\glsnumberformat}{46}
+\glossaryentry{CVOE?\glossentry{cvoe}|setentrycounter[]{page}"\glsnumberformat}{61}

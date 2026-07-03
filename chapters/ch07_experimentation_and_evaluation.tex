@@ -149,7 +149,7 @@
     
     \subsection{Trajectory Preprocessing and Comparisons}
     
-    For the evaluation, two main comparisons are considered. The first comparison is between the \gls{cvo} estimated trajectory and the ground truth trajectory. The second comparison is between the baseline odometry trajectory and the ground truth trajectory. The evaluation metrics are calculated for both comparisons. The evaluation is performed for a set of selected trajectories that are presented in Section~\ref{sec:experiment-site-terrain}. The ground truth pose estimates are recorded at a frequency of approximately $75$~Hz and the pose estimates from the \gls{cvoe} components are also logged at the same frequency. Even though the pose estimate samples are recorded at similar frequency, both data streams use different timestamps. To compare the two trajectories, the estimated timestamps and the ground truth timestamps are aligned. The data samples from the estimated trajectory are paired with the closest timestamp from the ground truth trajectory. Samples with the closest timestamp outside the allowed time difference are discarded. 
+    For the evaluation, two main comparisons are considered. The first comparison is between the \gls{cvo} estimated trajectory and the ground truth trajectory. The second comparison is between the baseline odometry trajectory and the ground truth trajectory. The evaluation metrics are calculated for both comparisons. The evaluation is performed for a set of selected trajectories that are presented in Section~\ref{sec:experiment-site-terrain}. The ground truth pose estimates are recorded at a frequency of approximately $75$~Hz and the pose estimates from the \gls{cvoe} components are also logged at the same frequency. Even though the pose estimate samples are recorded at similar frequency, both data streams use different timestamps. To compare the two trajectories, the estimated timestamps and the ground truth timestamps are aligned. The data samples from the estimated trajectory are paired with the closest timestamp from the ground truth trajectory. Samples with the closest timestamp outside the allowed time difference are discarded. After the alignment process, the estimated and the ground truth data streams have the same number of samples with the same timestamps. 
         
     Before comparing the trajectories, the initial pose of the estimated trajectory is aligned with the initial pose of the ground truth trajectory. The reference frame of the Vicon pose estimates is fixed and different from the odometry reference frame ($odom$) which is created at the starting location of the rover. The trajectories aligned by calculating the transformation between the initial pose of the estimated trajectory and the initial pose of the ground truth trajectory. The calculated transformation is applied to all the poses of the estimated trajectory. 
     
@@ -163,23 +163,60 @@
     \end{figure}
         
     \subsection{Relative Pose Error}
+    
+    The \gls{rpe} between the ground truth (gt) trajectory and the estimated (est) trajectory can be calculated using the following steps. Let a pose in the ground truth trajectory at index \texttt{i} is defined as Equation~\ref{eq:rpeGtPose} and a pose in estimated trajectory at the same index be defined as Equation~\ref{eq:rpeEstPose}. A distance based sliding window is created with the initial index \texttt{i} and a new index \texttt{j}, where $j>i$. Cumulative travel distance from the starting pose of the gt and every pose in the gt is calculated and stored. This cumulative distance is used when the sliding window is created. The window size is based on a pre-defined threshold value. This value is set to $0.5~m$ because SLAM algorithm runs every $0.5 m$ in translation.
+    
+    \begin{equation}
+        \mathbf{T}^{gt}_i =
+        \begin{bmatrix}
+            \mathbf{R}^{gt}_i & \mathbf{p}^{gt}_i \\
+            \mathbf{0} & 1
+        \end{bmatrix}
+    \label{eq:rpeGtPose}
+    \end{equation}
 
+    \begin{equation}
+        \mathbf{T}^{est}_i =
+        \begin{bmatrix}
+            \mathbf{R}^{est}_i & \mathbf{p}^{est}_i \\
+            \mathbf{0} & 1
+        \end{bmatrix}
+    \label{eq:rpeEstPose}
+    \end{equation}
+    
+    The Relative Pose Error is computed by comparing two relative poses, each derived from estimated and ground-truth trajectories independently. The first relative pose is obtained by transforming $\mathbf{T}^{est}_j$ into the local frame of $\mathbf{T}^{est}_i$. The second relative pose is obtained similarly by transforming $\mathbf{T}^{gt}_j$ into the local frame of $\mathbf{T}^{est}_i$. Since ${T}^{est}_i$ and $\mathbf{T}^{gt}_i$ do not coincide in the \texttt{odom} frame, each relative pose is expressed in its own local coordinate frame. The relative poses of gt and est are expressed as $\Delta\mathbf{T}^{gt}_{i,j}$ and $\Delta\mathbf{T}^{gt}_{i,j}$. The transformation of poses within the sliding window to their local frame and the calculation of \gls{rpe} are shown in Figure~\ref{fig:rpe_explanation_plot}
+        
     \begin{figure}[ht!]
         \centering
         \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_1.png}
         \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_2.png}
-        \caption{Relative Pose Error (RPE) explanation plot}
-        \label{fig:rpe_explanation_plot_1}  
+        \caption{Sliding Window based Relative Pose Error (RPE)}
+        \label{fig:rpe_explanation_plot}  
     \end{figure}
-    
-    % \begin{figure}[ht!]
-    %     \centering
-    %     \caption{Relative Pose Error (RPE) explanation plot}
-    %     \label{fig:rpe_explanation_plot_2}  
-    % \end{figure}
   
     
+    The relative translational error $\mathbf{p}^{err}_{i,j}$ is calculated as the difference between the relative pose from gt and est. The $\Delta \mathbf{p}^{est}_{i,j}$ and $\Delta \mathbf{p}^{gt}_{i,j}$ are position vectors extracted from the relative poses calculated using Equation~\ref{eq:transRelativeDiff}. Similarly, the orientation is expressed as quaternions and the orientation difference between the relative poses are calculated using Equation~\ref{eq:quatRelativeDiff}. The $\mathbf{p}^{err}_{i,j}$ and $\mathbf{q}^{err}_{i,j}$ are the \texttt{3D} position error vector and error quaternion respectively. 
     
+    \begin{equation}
+        \mathbf{p}^{err}_{i,j} = \Delta \mathbf{p}^{est}_{i,j} - \Delta \mathbf{p}^{gt}_{i,j}
+        \label{eq:transRelativeDiff}
+    \end{equation}
+    
+    \begin{equation}
+    \mathbf{q}^{err}_{i,j}
+    =
+    \left(
+        \Delta \mathbf{q}^{gt}_{i,j}
+    \right)^{-1}
+    \otimes
+    \Delta \mathbf{q}^{est}_{i,j}
+    \label{eq:quatRelativeDiff}
+    \end{equation}
+    
+    These error quantities are converted into scalar error values by taking the Euclidean norm of the translational error vector and the geodesic angle of the rotational error quaternion. Therefore, each sliding window produces one translational error in meters and one rotational error in radians. The sliding window is then shifted along the trajectory sample by sample until a valid sliding window cannot be created with the distance threshold. At the end of the trajectory, two lists of relative translation and rotation error is available. These values are used to calculate \gls{rmse} of translation and rotation error to quantify the error over the complete trajectory. 
+    
+    The \gls{rpe} metric is specifically useful in odometry evaluation because odometry is based on incremental motion estimation. Since, the metric computes the error between two relative poses within the sliding window, the influence of errors accumulated before the pose at index $i$ is reduced. This helps us determine the local consistency of the odometry without the influence of accumulated global errors.
+
     \subsection{Drift Rate}
 
     \subsection{Statistical Error Values}
