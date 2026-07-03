@@ -1,12 +1,28 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Experiment and evaluation} \label{chap:experimentandevaluation}
+
+    \chapter{Experiments and evaluation} \label{chap:experimentandevaluation}
         
-    \section{Experiment Objective}
+    The proposed \gls{cvo} approach is evaluated in the Coyote~3 \gls{rwr} with various experiments in diverse terrain and trajectory conditions. The \gls{cvo} estimates are compared against the ground truth pose estimates from the Vicon motion capture system. The \gls{cvo} estimates are also compared against the baseline odometry estimates to evaluate the difference in performance between the baseline odometry and the proposed \gls{cvo}. The \gls{cvo} approach is implemented in the Coyote~3 rover and the data necessary to run the \gls{cvoe} component are collected using the ROCK data logging components. The main logged data are the \gls{imu} and the joint encoder data. The Vicon pose estimates are also logged and used as ground truth in evaluation. Multiple experiments are conducted, and the mentioned data are logged. The evaluation focuses on the error between the estimated trajectory from the \gls{cvo} and the ground truth trajectory from the Vicon pose estimates. The evaluation uses metrics such as \gls{ape}, \gls{rpe}, translational and rotational drift rate, and statistical error values such as minimum, maximum, mean, and standard deviation. 
     
-    The purpose of the experiments is to evaluate the proposed \gls{cvo} approach in the Coyote~3 \gls{rwr} platform under various terrain and trajectory conditions. The \gls{cvo} estimates are compared against the ground truth pose estimates from the Vicon motion capture system. The \gls{cvo} estimates are also compared against the baseline odometry estimates to evaluate the difference in performance between the baseline odometry and the proposed \gls{cvo}. The \gls{cvo} approach is implemented in the Coyote~3 rover and the data necessary to run the \gls{cvoe} component are collected using the ROCK data logging components. The main logged data are the \gls{imu} and the joint encoder data. The Vicon pose estimates are also logged and used as ground truth in evaluation. Multiple experiments are conducted, and the mentioned data are logged. In addition to the above-mentioned data, the RGB image and the depth map are also logged for some specific datasets so that these datasets can be later used for visual odometry and SLAM. These additional data are not used for the evaluation of the proposed approach in this thesis. The experimental site, terrain and dataset types are described in Section~\ref{sec:experiment-site-terrain}. The evaluation focuses on the error between the estimated trajectory from the \gls{cvo} and the ground truth trajectory from the Vicon pose estimates. The evaluation uses metrics such as \gls{ape}, \gls{rpe}, translational and rotational drift rate, and statistical error values such as minimum, maximum, mean, and standard deviation. 
+    This chapter describes the Coyote~3 platform used for the experiments, the experimental site and terrain conditions, the datasets with trajectory types, the evaluation metrics used for the evaluation, and the evaluation results of the proposed \gls{cvo} approach against the ground truth and baseline odometry estimates.
+        
+    \section{Coyote~3 Rover Platform}
     
+    The Coyote~3 \gls{rwr} platform is used to evaluate the proposed \gls{cvo} approach. This section describes the rover configuration, the sensors equipped on the rover, the control method, and the onboard computation module used during the experiments. The Coyote~3 rover is equipped with four \glspl{rw} attached to four $48 V$ \texttt{RoboDrive ILM 50x08} BLDC motors combined with \texttt{HarmonicDrive CPG 17-80} gearboxes. The front wheels are attached to the main rover body and the rear wheel axle is attached to the main body through a passive bogie joint. All wheel joints, along with the bogie joint, are equipped with \texttt{iC-Haus MU} absolute encoders. Two RGB-D cameras are mounted on the front and rear of the rover to get the depth images. A Velodyne LiDAR, mounted at the front of the rover, is used to get the 3D point cloud data. The camera and LiDAR sensors are used to collect the RGB image and the depth map for some specific datasets so that these datasets can be later used for visual odometry and SLAM. These additional data are not used for the evaluation of the proposed approach in this thesis.
+    
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.6\linewidth]{media/images/coyote3-component-labelled.jpg}
+        \caption{Coyote~3 rover with components annotated.}
+        \label{fig:annotated-coyote3-components}
+    \end{figure}
+    
+    A \texttt{MTi-680(G)} \cite{DT-IMU-datasheet} series IMU is used to measure the linear acceleration and angular velocity of the robot body. The \gls{imu} sensor is located inside the main body of the rover. For the Vicon motion capture system to track the rover, four reflective markers are placed on the rover body. The Coyote~3 rover is equipped with an onboard computer with \texttt{Intel Core i7-3555LE @ 2.5 GHz} processor. The rover is controlled using an \texttt{Xbox} gamepad and powered using $2 \times 4500$~mAh LiPo batteries. The rimless wheels are equipped with rubber feet for better friction with the ground and to reduce impact forces during wheel-ground contact. The coyote system does not have a suspension system, so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smooths this effect. The components described in this section are annotated in Figure~\ref{fig:annotated-coyote3-components}.
+
+    \todo[inline]{Check if different trajectory types and the reason behind using those should be explained}
+
     \section{Experiment Site and Terrain Conditions} \label{sec:experiment-site-terrain}
     
     The experiments are conducted in the indoor experiment area at \gls{ric}, \gls{dfki}, Bremen, Germany. This experiment area is called Multifunctional Hall. This hall is mainly divided into two sections, the flexible experimental area and the crater landscape. Within the crater hall, "The area in front of the crater is filled with fine-grained granulate\footnote{This line is taken from the \gls{dfki} website \cite{SITE-dfki-mfh}}", which is treated as the sand terrain in this thesis.  Detailed information on the experimental area can be found in the \gls{dfki} website \cite{SITE-dfki-mfh}. In this report, the experimental area is classified into three terrain conditions: flat floor terrain, sand terrain, and crater terrain. Since, all three locations are indoors, the GPS/GNSS data cannot be used for ground truth pose estimation. To measure the pose of systems during the experiments, the Multifunctional Hall is covered with 21 Vicon motion tracking cameras. For the thesis approach evaluation, 83 sets of experimental data are collected in the Multifunctional Hall. The description of each terrain and the number of experiments conducted in each terrain is described in the following sections. 
@@ -22,7 +38,7 @@
         \label{fig:Flat-Floor-Terrain-in-Multifunctional-Hall}
     \end{figure}
     
-    The flat floor terrain is used for 19 unique experiments and 17 of those experiments are repeated three times. In total, 53 set of experimental data is available from the flat terrain experiments. The trajectory types used in the flat floor terrain experiments are presented in Table~\ref{tab:flat-terrain-experiments}. The \texttt{Dataset group} name in the table is designed as \texttt{DATA\_XX\_YY} where \texttt{XX} is the unique experiment number and \texttt{YY} is the repetition number. The \texttt{Dataset group} name convention is the same for all the experiments conducted for this thesis. The \texttt{slope} column of the table represents the slope of the terrain in which the experiment is conducted. In the flat floor terrain, the slope is $0^\circ$ for most of the experiments. However, in some experiments involving obstacles, the rover climbs up and down the obstacles in the flat floor terrain which makes the slope vary from $20$--$60^\circ$. The slope values in the obstacle experiments represent the approximate slope created by the obstacles and not the slop of the terrain itself. In all the experiments, the rover is controlled by human operator using a game pad. The \texttt{Velocity} column in the table represents the maximum velocity limit with which the rover is set to move in the experiment. The rover can move slower than the set velocity limit but cannot exceed the limit. The \texttt{Trajectory} column in the table represents the type of trajectory followed by the rover in the experiment. The \texttt{Runs} column in the table represents the number of repetitions of the experiment conducted.
+    The flat floor terrain is used for 19 unique experiments and 17 of those experiments are repeated three times. In total, 53 set of experimental data is available from the flat terrain experiments. The trajectory types used in the flat floor terrain experiments are presented in Table~\ref{tab:flat-terrain-experiments}. The \texttt{Dataset group} name in the table is designed as \texttt{DATA\_XX\_YY} where \texttt{XX} is the unique experiment number and \texttt{YY} is the repetition number. The \texttt{Dataset group} name convention is the same for all the experiments conducted for this thesis. The \texttt{slope} column of the table represents the slope of the terrain in which the experiment is conducted. In the flat floor terrain, the slope is $0^\circ$ for most of the experiments. However, in some experiments involving obstacles, the rover climbs up and down the obstacles in the flat floor terrain which makes the slope vary from $20$--$60^\circ$. The slope values in the obstacle experiments represent the approximate slope created by the obstacles and not the slop of the terrain itself. In all the experiments, the rover is controlled by human operator using a gamepad. The \texttt{Velocity} column in the table represents the maximum velocity limit with which the rover is set to move in the experiment. The rover can move slower than the set velocity limit but cannot exceed the limit. The \texttt{Trajectory} column in the table represents the type of trajectory followed by the rover in the experiment. The \texttt{Runs} column in the table represents the number of repetitions of the experiment conducted.
        
     \begin{table}[!htbp]
     \centering
@@ -127,17 +143,47 @@
     \end{tabular}
     \end{table}
     
-    \section{Coyote~3 Rover Platform}
+    \section{Evaluation Metrics and Methods}
     
-    The Coyote~3 \gls{rwr} platform is used to evaluate the proposed \gls{cvo} approach. This section describes the rover configuration, the sensors equipped on the rover, the control method, and the onboard computation module used during the experiments. The Coyote~3 rover is equipped with four \glspl{rw} attached to four $48 V$ \texttt{RoboDrive ILM 50x08} BLDC motors combined with \texttt{HarmonicDrive CPG 17-80} gearboxes. The front wheels are attached to the main rover body and the rear wheel axle is attached to the main body through a passive bogie joint. All wheel joints, along with the bogie joint, are equipped with a \texttt{iC-Haus MU} absolute encoders. Two RGB-D cameras are mounted to both the front and rear of the rover to get the depth images and the Velodyne LiDAR, mounted in the front of the rover, is used to get the 3D point cloud data. The camera and LiDAR data are not used in the evaluation of the proposed approach in this thesis.
+    Comparing a trajectory estimated by a method under evaluation against a ground truth trajectory is a common practice in robotics~\cite{zhangEvaluationMetrics2018}. In this thesis, the method under evaluation is the proposed \gls{cvo} approach and the ground truth trajectory is obtained from the Vicon motion capture system. The baseline odometry is also compared with Vicon trajectory and the calculated error metrics are also compared with the \gls{cvo} and Vicon trajectory evaluation. This section presents the evaluation metrics used in these comparisons. Each evaluation metric represents different aspects of the odometry estimation, which is discussed in the following sections.
     
-    \begin{figure}[ht]
+    \subsection{Trajectory Preprocessing and Comparisons}
+    
+    For the evaluation, two main comparisons are considered. The first comparison is between the \gls{cvo} estimated trajectory and the ground truth trajectory. The second comparison is between the baseline odometry trajectory and the ground truth trajectory. The evaluation metrics are calculated for both comparisons. The evaluation is performed for a set of selected trajectories that are presented in Section~\ref{sec:experiment-site-terrain}. The ground truth pose estimates are recorded at a frequency of approximately $75$~Hz and the pose estimates from the \gls{cvoe} components are also logged at the same frequency. Even though the pose estimate samples are recorded at similar frequency, both data streams use different timestamps. To compare the two trajectories, the estimated timestamps and the ground truth timestamps are aligned. The data samples from the estimated trajectory are paired with the closest timestamp from the ground truth trajectory. Samples with the closest timestamp outside the allowed time difference are discarded. 
+        
+    Before comparing the trajectories, the initial pose of the estimated trajectory is aligned with the initial pose of the ground truth trajectory. The reference frame of the Vicon pose estimates is fixed and different from the odometry reference frame ($odom$) which is created at the starting location of the rover. The trajectories aligned by calculating the transformation between the initial pose of the estimated trajectory and the initial pose of the ground truth trajectory. The calculated transformation is applied to all the poses of the estimated trajectory. 
+    
+    \subsection{Absolute Pose Error} 
+
+    \begin{figure}[ht!]
         \centering
-        \includegraphics[width=0.6\linewidth]{media/images/coyote3-component-labelled.jpg}
-        \caption{Coyote~3 rover with components annotated.}
-        \label{fig:annotated-coyote3-components}
+        \includegraphics[width=0.6\textwidth]{media/plots/APE_explanation_plot_1.png}
+        \caption{Absolute Pose Error (APE) explanation plot}
+        \label{fig:ape_explanation_plot_1}  
+    \end{figure}
+        
+    \subsection{Relative Pose Error}
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_1.png}
+        \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_2.png}
+        \caption{Relative Pose Error (RPE) explanation plot}
+        \label{fig:rpe_explanation_plot_1}  
     \end{figure}
     
-    A \texttt{MTi-680(G)} \cite{DT-IMU-datasheet} series IMU is used to measure the linear acceleration and angular velocity of the robot body frame. The \gls{imu} sensor is located inside the main body of the rover. For the Vicon motion capture system to track the rover, four reflective markers are placed on the rover body. The Coyote~3 rover is equipped with an onboard computer with \texttt{Intel Core i7-3555LE @ 2.5 GHz} processor. The rover is controlled using an \texttt{Xbox} game pad and powered using 2 $\times$ 4500~mAh LiPo batteries. The rimless wheels are equipped with rubber feet for better friction with the ground and to reduce impact forces during wheel-ground contact. The coyote system does not have a suspension system so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smooths this effect. The components described in this section are annotated in Figure~\ref{fig:annotated-coyote3-components}.
+    % \begin{figure}[ht!]
+    %     \centering
+    %     \caption{Relative Pose Error (RPE) explanation plot}
+    %     \label{fig:rpe_explanation_plot_2}  
+    % \end{figure}
+  
+    
+    
+    \subsection{Drift Rate}
+
+    \subsection{Statistical Error Values}
+
+
     
 \end{document}
