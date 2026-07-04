@@ -10,6 +10,8 @@
     The equation \ref{eq:MeasurementJacobian-2} contains five partial derivatives, each corresponding to one of the error state variables. This section provides the detailed derivation of each partial derivative so that the resulting measurement jacobian will be the one shown in equation \ref{eq:MeasurementJacobian-3}.
     
     \subsection{Rotation matrix}
+    
+    \todo[inline]{Outdated information, FIX IT}
         The orientation of the body is not related to the velocity at the point of contact, the rotation matrix block of measurement jacobian will be $0_{3\times3}$
     \subsection{Velocity}
         When the measurement function is differentiated with respect to the body velocity,
@@ -321,6 +323,49 @@
 
         \end{lstlisting}
 
+\begin{lstlisting}[style=consoleoutput, caption={Sample summary of the statistical error metrics.}, label={lst:statistical-error-metrics}]
+    
+--------------------------------------------------
+Position error metrics
+--------------------------------------------------
+Max position error          : 0.92 m
+Mean position error         : 0.32 m
+Min position error          : 0.00 m
+Std dev of position error   : 0.32 m
+RMSE of position error      : 0.45 m    
+--------------------------------------------------
+Orientation Geodesic angle error metrics
+--------------------------------------------------
+Max geodesic angle error        : 9.36 degrees
+Mean geodesic angle error       : 4.80 degrees
+Min geodesic angle error        : 0.00 degrees
+Std dev of geodesic angle error : 2.65 degrees
+RMSE of geodesic angle error    : 5.49 degrees
+--------------------------------------------------
+--------------------------------------------------
+Relative Pose Error (RPE) Translation metrics
+--------------------------------------------------
+Max translation error                   : 0.05 m
+Mean translation error                  : 0.04 m
+Std dev of translation error            : 0.00 m
+RMSE of translation error               : 0.04 m
+
+Mean translation error per meter        : 0.15 m/m
+Std dev of translation error per meter  : 0.01 m/m
+RMSE of translation error per meter     : 0.15 m/m
+--------------------------------------------------
+Relative Pose Error (RPE) Rotation metrics
+--------------------------------------------------
+Max rotation error                  : 3.59 degrees
+Mean rotation error                 : 0.91 degrees
+Std dev of rotation error           : 0.92 degrees
+RMSE of rotation error              : 1.29 degrees
+
+Mean rotation error per meter       : 3.62 degrees/m
+Std dev of rotation error per meter : 3.70 degrees/m
+RMSE of rotation error per meter    : 5.18 degrees/m
+--------------------------------------------------
+\end{lstlisting}
     
     \chapter{Parameters}
     Your second chapter appendix
