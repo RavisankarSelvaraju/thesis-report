@@ -27,7 +27,7 @@
     
     The experiments are conducted in the indoor experiment area at \gls{ric}, \gls{dfki}, Bremen, Germany. This experiment area is called Multifunctional Hall. This hall is mainly divided into two sections, the flexible experimental area and the crater landscape. Within the crater hall, "The area in front of the crater is filled with fine-grained granulate\footnote{This line is taken from the \gls{dfki} website \cite{SITE-dfki-mfh}}", which is treated as the sand terrain in this thesis.  Detailed information on the experimental area can be found in the \gls{dfki} website \cite{SITE-dfki-mfh}. In this report, the experimental area is classified into three terrain conditions: flat floor terrain, sand terrain, and crater terrain. Since, all three locations are indoors, the GPS/GNSS data cannot be used for ground truth pose estimation. To measure the pose of systems during the experiments, the Multifunctional Hall is covered with 21 Vicon motion tracking cameras. For the thesis approach evaluation, 83 sets of experimental data are collected in the Multifunctional Hall. The description of each terrain and the number of experiments conducted in each terrain is described in the following sections. 
     
-    \subsection{Flat Floor Terrain}
+    \subsection{Flat Floor Terrain} \label{subsec:exp_flatFloorTerrain}
       
     The flat experimental area in the Multifunctional Hall is used as the flat floor terrain for the experiments. The flat floor is made of solid concrete. During the experiments, objects are placed in the flat floor area to create a feature rich RGB and depth map image data. The flat floor terrain is shown in Figure \ref{fig:Flat-Floor-Terrain-in-Multifunctional-Hall}. Approximately, 8~m $\times$ 5~m area is chosen as the experiment area within the flat floor terrain. This area is completely covered by the Vicon motion tracking camera to collect the ground truth data.
     
@@ -58,8 +58,8 @@
         \texttt{DATA\_06\_01--03} & $0^\circ$ & 0.2~m/s                 & rotate in place, counter-clockwise & 3 \\
         \texttt{DATA\_07\_01--03} & $0^\circ$ & 0.2~m/s                 & figure-eight with approx. 1.5 m loop radius& 3 \\
         \texttt{DATA\_08\_01--03} & $0^\circ$ & 0.2~m/s                 & figure-eight with approx. 2.3 m loop radius& 3 \\
-        \texttt{DATA\_09\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius clockwise circle & 3 \\
-        \texttt{DATA\_10\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius counter-clockwise circle & 3 \\
+        \texttt{DATA\_09\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius counter-clockwise circle & 3 \\
+        \texttt{DATA\_10\_01--03} & $0^\circ$ & 0.2~m/s                 & 1.5~m radius clockwise circle & 3 \\
         \texttt{DATA\_11\_01--03} & $0^\circ$ & 0.2~m/s                 & 4~m $\times$ 4~m square, clockwise & 3 \\
         \texttt{DATA\_12\_01--03} & $0^\circ$ & 0.2~m/s                 & 4~m $\times$ 4~m square, counter-clockwise & 3 \\
         \texttt{DATA\_13\_01--03} & $0^\circ$ & 0.2~m/s                 & move forward when pulled back & 3 \\
@@ -74,7 +74,7 @@
     \end{tabular}
     \end{table}  
     
-    \subsection{Sand Terrain}
+    \subsection{Sand Terrain} \label{subsec:exp_sandTerrain}
 
     The sand area in front of the crater landscape is used as the sand terrain for the experiments. The sand area is filled with fine-grained granulate which is less than 1 mm in size \cite{SITE-dfki-mfh}. The sand terrain area  used for the experiments is shown in Figure \ref{fig:Sand-Terrain-in-Multifunctional-Hall}. 
     
@@ -113,7 +113,7 @@
         \end{tabular}
     \end{table}
         
-    \subsection{Crater Terrain}
+    \subsection{Crater Terrain} \label{subsec:exp_craterTerrain}
 
     A part of the crater landscape in the Multifunctional hall is used as the crater terrain for the experiments. The crater terrain is a slope with an angle of $35$--$45^\circ$. The crater terrain area used for the experiments is shown in Figure \ref{fig:Crater-Terrain-in-Multifunctional-Hall}. 
     
