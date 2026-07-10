@@ -1,13 +1,59 @@
 %!TEX root = ../report.tex
 \documentclass[report.tex]{subfiles}
 \begin{document}
-    \chapter{Conclusions} \label{chap:conclusionandfuturework}
+    \chapter{Conclusion and Future Work} \label{chap:conclusionandfuturework}
 
-    \section{Contributions}
-
-    \section{Lessons learned}
-
-    GAITS
+    This chapter summarizes the findings, observed improvements, and limitations of the proposed approach as well as directions for future work. This chapter is organized into three sections: Conclusion, Limitations, and Future Work. The Conclusion section details the improvements and drawbacks of the \gls{cvo} approach observed during experimental evaluation. This section also summarizes the problem, the methodology used to address it, and the results obtained. The Limitations section describes the limitations of the proposed approach. The limitations of the evaluation methods and specific assumptions used in this work are also discussed. The Future Work section presents potential approaches for addressing these limitations and identifies further research directions.
     
-    \section{Future work}
+    \section{Conclusion}
+
+    The current baseline odometry uses a circular-wheel approximation and does not explicitly account for wheel slip. Hence, this thesis investigated an \gls{inekf}-based sensor fusion approach that accounts for the contact-point velocity of the rimless-wheel spokes during state estimation. The existing \gls{inekf} library was extended to implement the proposed \gls{pcv}-based measurement update.
+
+    In the proposed approach, the \gls{imu} measurements are used to propagate the filter state. The predicted \gls{pcv} is calculated using the propagated state and the spoke-tip positions, while the measured \gls{pcv} is calculated using the wheel joint encoder measurements and forward kinematics. For each selected contact spoke, the squared \gls{md} is calculated using the residual and its innovation covariance. Measurements below the specified threshold are used in the left-invariant correction step, while measurements above the threshold are rejected as inconsistent. The proposed approach was evaluated using datasets collected on flat-floor, sand, and crater terrains. Metrics such as travel-distance error, final-position error, yaw \gls{rmse}, \texttt{z}-position \gls{rmse}, and translational and rotational \gls{rpe} drift \gls{rmse} were used to quantify its performance. The developed framework also includes \gls{lf}- and \gls{md}-based contact-spoke selection and a configurable setup for rejecting inconsistent \gls{pcv} measurements before the filter correction.
+       
+    The evaluation results show that the proposed \gls{cvo} approach does not consistently outperform the baseline odometry. On flat-floor terrain, the baseline odometry generally provides lower translational and rotational \gls{rpe} drift, indicating that the \gls{pcv}-based update does not provide a consistent advantage under the selected flat-floor conditions. On sand terrain, the \gls{cvo} approach provides lower translational \gls{rpe} drift in six of the seven selected datasets. However, its rotational \gls{rpe} drift is higher in six of the seven datasets. These results indicate that the proposed approach is more beneficial for local translational motion estimation on deformable terrain than for local rotational estimation.
+    
+    The crater terrain experiments demonstrate the potential benefit of rejecting inconsistent \gls{pcv} measurements under slip-prone conditions. In \texttt{DATA\_26\_01}, enabling slip elimination substantially reduces both the translational and rotational \gls{rpe} drift compared with the same \gls{cvo} configuration without slip elimination. In \texttt{DATA\_26\_04}, enabling slip elimination produces little change in the translational \gls{rpe} drift and slightly increases the rotational \gls{rpe} drift. Compared with the baseline odometry, the \gls{cvo} approach with slip elimination provides lower translational \gls{rpe} drift in both selected crater datasets but higher rotational \gls{rpe} drift. Therefore, the effectiveness of measurement rejection depends on the characteristics of the inconsistent wheel measurements and the motion condition.
+    
+    Overall, this thesis demonstrates that \gls{pcv} measurements and innovation-based measurement rejection can improve local translational odometryon deformable terrain and under conditions with pronounced slip. However, the proposed approach does not yet provide consistent improvement across all terrains and motion types, and rotational estimation remains an important weakness. The work developed an odometry framework for the Coyote~3 rover that is contact-aware and rejects wheel slip, while achieving a consistently better replacement for the baseline odometry remains future work.
+    
+    \section{Limitations}
+    \label{sec:limitations}
+    
+    \begin{itemize}
+        
+    \item The proposed approach uses the squared \gls{md} to detect inconsistent \gls{pcv} measurements. However, a high \gls{md} value can be caused by wheel slip, incorrect contact-spoke selection, modelling error, sensor noise, transformation error, or incorrect covariance values. Therefore, the rejected measurements cannot always be confirmed as physical wheel slip.
+    
+    \item In addition, the Vicon system provides the ground truth pose of the rover body, but it does not provide ground truth information about wheel slip or contact information. Hence, the accuracy of slip detection and contact-spoke estimation cannot be calculated directly. 
+    
+    \item The \gls{lf}-based contact estimation also assumes that the vertically lowest spoke is in contact, which may not be correct on inclined, rough, deformable, or obstacle-covered terrain. Similarly, the \gls{md}-based method can select a spoke with a low residual, but this does not guarantee that the selected spoke is physically in contact. 
+
+    \item Using the \gls{md} both to select the contact spoke and to determine the measurements used in the \gls{pcv} update creates a coupled dependency between contact estimation and the measurement update. During testing, this configuration resulted in poor performance of the \gls{cvo} approach. Hence, the \gls{md}-based contact estimation was disabled in the evaluated implementation, and only the \gls{lf}-based contact estimation was used.
+    
+    \item The chi-squared threshold and measurement noise values used in the evaluated implementation are fixed and were selected experimentally. The contact \gls{md} threshold used during the testing of \gls{md}-based contact estimation was also selected experimentally. Their performance was not systematically evaluated for every terrain type, velocity, motion type, and contact condition. The current approach also performs complete measurement rejection, where a measurement is either used or rejected. The magnitude and direction of slip are not estimated. 
+    
+    \item If several wheel measurements are rejected at the same time, the filter depends mainly on the \gls{imu} propagation step, which can increase position and orientation drift. The evaluation results also show that the rotational \gls{rpe} drift is higher for the \gls{cvo} approach in most of the selected flat-floor and sand terrain datasets. This shows that orientation estimation, specifically yaw estimation remains a weakness of the proposed approach.
+
+    \item The effect of slip elimination was explicitly compared only in the crater terrain experiments. Only four crater datasets were collected, and two datasets were discussed in detail. The improvement was substantial in \texttt{DATA\_26\_01}, but small in \texttt{DATA\_26\_04}. Therefore, the crater results are not sufficient to make a general conclusion about all inclined and slip-prone terrain conditions. 
+
+    \item The effect of different \gls{rw} gait configurations were not evaluated separately. Different gaits can change the spoke contact timing, the number of simultaneous contacts, and the calculated \gls{pcv} measurements. Changes in gait can also introduce different slip characteristics, which can affect the performance of the proposed approach. These effects were not evaluated in this work. 
+    
+    \item Although three repetitions were collected for most dataset types, the evaluation does not present aggregate statistics across all repetitions. Therefore, the reported results mainly describe the selected datasets and are not sufficient to establish statistically repeatable improvements.
+
+    \end{itemize}
+
+    \section{Future Work}
+    
+    \label{sec:futureWork}
+    
+    From the collected datasets, the visually identifiable slip events and contact-spoke information could be extracted from the video recordings collected during the experiments. This information could be used to evaluate the accuracy of the contact-spoke estimation methods and the slip detection method. However, due to the lack of time, this was not performed in this work. Improving the dataset with this information from video analysis would allow the proposed approach to be evaluated more thoroughly and also help improve the \gls{cvo} approach.
+    
+    The multi-spoke contact estimation method is developed in this work, but it was not evaluated due to time constraints. The multi-spoke contact estimation method could be evaluated using the collected datasets. A detailed evaluation comparing the single and multi-spoke contact estimation methods could be performed to determine the effect of multi-spoke contact estimation on the \gls{cvo} performance. To avoid jittery contact-spoke selection, the previous contact-spoke selections could be stored and based on the wheel rotation direction, the contact-spoke selection could be limited to the adjacent spokes of the previously selected spoke. 
+
+    The contact estimation could also be changed from binary contact selection to a probabilistic contact estimation method. A probabilistic contact estimation method could assign a contact probability to each spoke and use this information in the \gls{pcv} update. Currently, the measurement uncertainty is fixed at the configuration time and never changes during the filter operation. A dynamic measurement uncertainty could be used to inform the filter about the confidence of the measurement when squared \gls{md} values are high but not above the rejection threshold. 
+    
+    The noise parameters used in the \gls{pcv} update could be tuned to improve the performance of the proposed approach. Currently, the noise values are selected experimentally and kept fixed during the filter operation. The noise values could be tuned based on the terrain type and could be switched based on the terrain type during operation. The effects of different \gls{rw} gait configurations could be evaluated by repeating the same trajectories with different predefined wheel positions. This would allow the effects of gait on contact timing, simultaneous contacts, wheel slip, and \gls{pcv} consistency to be studied.
+
+    A slip magnitude and direction estimation method in addition to slip rejection could be developed to improve the performance of the proposed approach. This information could be used to distinguish longitudinal slip, which occurs along the wheel rolling direction, from lateral slip, which occurs perpendicular to the wheel rolling direction. Lateral slip can be more noticeable during turning, while longitudinal slip commonly occurs during forward or backward traction. Estimating the slip direction could allow direction-dependent measurement uncertainty to be used and may improve yaw estimation during turning motions.
+
 \end{document}
