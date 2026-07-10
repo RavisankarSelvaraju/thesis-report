@@ -1,4 +1,4 @@
-\begin{table}[ht]
+\begin{table}[!htbp]
 \centering
 \caption{Odometry evaluation metrics for DATA\_09\_03.}
 \label{tab:odometry_metrics_data-09-03}
