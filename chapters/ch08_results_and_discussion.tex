@@ -27,7 +27,7 @@
         \label{fig:straight_line_motion_dataset_02_03_trajectory}
     \end{figure}   
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -46,7 +46,7 @@
     \end{figure}
 
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -65,7 +65,7 @@
     \end{figure}
 
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -85,10 +85,9 @@
 
     \input{media/results/01_flat_floor_terrain/DATA_02_03/latex_metrics_table_DATA_02_03.txt}
         
-    From Figure~\ref{fig:straight_line_motion_dataset_02_03_trajectory}, it can be observed that the baseline odometry trajectory closely follows the ground truth, while the \gls{cvo} trajectory shows an initial yaw deviation, which is reflected in the deviation of the X--Y trajectory.
+    From Figure~\ref{fig:straight_line_motion_dataset_02_03_trajectory}, it can be observed that the baseline odometry trajectory closely follows the ground truth, while the \gls{cvo} trajectory shows an initial yaw deviation, which is reflected in the deviation of the X--Y trajectory. From Table~\ref{tab:odometry_metrics_data-02-03}, it can be observed that the \gls{cvo} approach has a slightly smaller absolute travel distance error than the baseline odometry, but it has a larger final position error, and translational and rotational drift rates compared to the baseline odometry. A negative travel distance error indicates that the estimated travel distance is smaller than the ground truth travel distance. The \gls{rmse} of the translational and rotational \gls{rpe} drift is higher for the \gls{cvo} compared to the baseline odometry, as shown in Figure~\ref{fig:flat_floor_dataset_02_03_RPE}. Notably, the \texttt{z}-position plot shown in Figure~\ref{fig:flat_floor_dataset_02_03_z_comparison} indicates that the \gls{cvo} approach tracks the ground truth better than the baseline odometry. Based on the evaluation results, when the rover moves in a straight-line forward without any turns or complex maneuvers, the baseline odometry performs better than the \gls{cvo} approach.
+    \FloatBarrier
 
-    From Table~\ref{tab:odometry_metrics_data-02-03}, it can be observed that the \gls{cvo} approach has a higher travel distance error, final position error, and translational and rotational drift rates compared to the baseline odometry. A negative travel distance error indicates that the estimated travel distance is smaller than the ground truth travel distance. The \gls{rmse} of the translational and rotational \gls{rpe} drift is higher for the \gls{cvo} compared to the baseline odometry, as shown in Figure~\ref{fig:flat_floor_dataset_02_03_RPE}. Notably, the \texttt{z}-position plot shown in Figure~\ref{fig:flat_floor_dataset_02_03_z_comparison} indicates that the \gls{cvo} approach tracks the ground truth better than the baseline odometry. Based on the evaluation results, when the rover moves in a straight-line forward without any turns or complex maneuvers, the baseline odometry performs better than the \gls{cvo} approach.
-        
     \subsubsection{Straight-Line Motion Dataset 2: \texttt{DATA\_03\_01}} \label{subsubsec:straightLineDD2_03_01}
 
     In this dataset, the Coyote~3 rover moves backward in a straight-line for a distance of approximately $5~\mathrm{m}$. The trajectory of the rover does not include any turns or complex maneuvers. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$. The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_03_01}. The \texttt{z}-position and \texttt{z}-position error plots are shown in Figure~\ref{fig:flat_floor_dataset_03_01_z_comparison}. The yaw orientation and yaw error plots are shown in Figure~\ref{fig:flat_floor_dataset_03_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:flat_floor_dataset_03_01_RPE}. Some key evaluation metrics are summarized in Table~\ref{tab:odometry_metrics_data-03-01}.
@@ -100,7 +99,7 @@
         \label{fig:straight_line_motion_dataset_03_01}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -118,7 +117,7 @@
         \label{fig:flat_floor_dataset_03_01_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -136,7 +135,7 @@
         \label{fig:flat_floor_dataset_03_01_z_comparison}
     \end{figure}
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -160,7 +159,10 @@
 
     The \gls{cvo} underestimates the travel distance, which can be seen in the X--Y trajectory plot and in the \texttt{Travel distance error} row in Table~\ref{tab:odometry_metrics_data-03-01}. The \gls{rmse} of translational drift is consistent with the forward motion \texttt{DATA\_02\_03} dataset, as shown in Figure~\ref{fig:flat_floor_dataset_03_01_RPE} and Table~\ref{tab:odometry_metrics_data-03-01}.
 
-    From Figure~\ref{fig:flat_floor_dataset_03_01_yaw_comparison}, the yaw error at the start of the trajectory causes both the baseline odometry and \gls{cvo} trajectories to deviate from the ground truth. This yaw estimation becomes better once the rover starts moving around $18~\mathrm{s}$, this can be seen in both Figure~\ref{fig:flat_floor_dataset_03_01_yaw_comparison} and Figure~\ref{fig:flat_floor_dataset_03_01_RPE}. Similar to the forward motion, when the trajectory is simple and does not include any turns or complex maneuvers, the baseline odometry performs better than the \gls{cvo} approach.
+    From Figure~\ref{fig:flat_floor_dataset_03_01_yaw_comparison}, the yaw error at the start of the trajectory causes the baseline odometry to deviate from the ground truth. This error persists for the entire trajectory, which can be seen in the yaw error plot. The \gls{cvo} yaw estimation is better than the baseline odometry yaw estimation and the yaw error is smaller than the baseline odometry yaw error throughout the trajectory. 
+  
+    Hence, the baseline odometry performs better than the \gls{cvo} approach in terms of travel distance estimation, final position error, and translational \gls{rpe} drift \gls{rmse}. In terms of yaw estimation, rotational \gls{rpe} drift \gls{rmse}, and \texttt{z}-position estimation, the \gls{cvo} approach performs better than the baseline odometry.
+    \FloatBarrier
 
     \subsubsection{Straight-Line Motion Dataset 3: \texttt{DATA\_04\_02}}  \label{subsubsec:straightLineD3_04_02}
 
@@ -176,7 +178,7 @@
         \label{fig:straight_line_motion_dataset_04_02_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -194,7 +196,7 @@
         \label{fig:flat_floor_dataset_04_02_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -212,7 +214,7 @@
         \label{fig:flat_floor_dataset_04_02_z_comparison}
     \end{figure}
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -232,10 +234,11 @@
         
     \input{media/results/01_flat_floor_terrain/DATA_04_02/latex_metrics_table_DATA_04_02.txt}
 
-    This dataset combines the forward and backward straight-line motion that is discussed in the previous two datasets. Similar to \texttt{DATA\_03\_01} backward straight-line dataset, the \gls{cvo} X--Y trajectory deviates from the ground truth and closely matches the baseline odometry trajectory. This is shown in the X--Y trajectory plot in Figure~\ref{fig:straight_line_motion_dataset_04_02_trajectory}. 
-
+    This dataset combines the forward and backward straight-line motion that is discussed in the previous two datasets. The CVO trajectory follows the ground truth more closely than the baseline odometry in the X--Y trajectory. However, Table~\ref{tab:odometry_metrics_data-04-02} shows that the CVO still has larger travel distance error, z-position RMSE, and RPE drift values.
+    
     The travel distance error of \gls{cvo} is higher than the baseline odometry, as shown in Table~\ref{tab:odometry_metrics_data-04-02}. This is the case for all the straight-line trajectories on flat floor terrain. Notably, the final position error of \gls{cvo} is closer to the baseline odometry final position error than in the previous two datasets.
-        
+    \FloatBarrier
+
     \subsection{Circular Motion}
 
     The circular motion datasets include the experiments where the rover moves in a circular trajectory. The circular motion datasets are: \texttt{DATA\_09\_YY} and \texttt{DATA\_10\_YY}, where \texttt{YY} represents the iteration number. The evaluation results of these datasets are presented in the following subsections. 
@@ -253,7 +256,7 @@
         \label{fig:circular_motion_dataset_09_03_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -271,7 +274,7 @@
         \label{fig:flat_floor_dataset_09_03_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -289,7 +292,7 @@
         \label{fig:flat_floor_dataset_09_03_z_comparison}
     \end{figure}
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -310,6 +313,7 @@
     \input{media/results/01_flat_floor_terrain/DATA_09_03/latex_metrics_table_DATA_09_03.txt}
 
     The motion in this dataset is purely circular and does not include straight-line motion. From the X--Y trajectory plot in Figure~\ref{fig:circular_motion_dataset_09_03_trajectory}, it can be observed that both the baseline odometry and \gls{cvo} trajectories follow the shape of the ground truth trajectory. The translational \gls{rpe} drift \gls{rmse} is the same for both the baseline odometry and \gls{cvo}. The rotational \gls{rpe} drift \gls{rmse} is slightly better for the \gls{cvo} compared to the baseline odometry. This can be inferred from Table~\ref{tab:odometry_metrics_data-09-03} and Figure~\ref{fig:flat_floor_dataset_09_03_RPE}. The \texttt{z}-position plot in Figure~\ref{fig:flat_floor_dataset_09_03_z_comparison} shows that the \gls{cvo} follows the variations in the ground truth better than the baseline odometry. Over time the \gls{cvo} \texttt{z}-position estimation drifts away from the ground truth. This increases the \texttt{z}-position \gls{rmse}. Unlike the straight-line motion datasets, the final position error of the \gls{cvo} is closer to the baseline odometry final position error. The travel distance errors are both negative, meaning both the \gls{cvo} and the baseline odometry underestimated the true travel distance. Compared to the straight-line datasets, the baseline odometry travel distance error is smaller in this circular motion dataset, while the \gls{cvo} still underestimates the travel distance. 
+    \FloatBarrier
 
     \subsubsection{Circular Motion Dataset 2: \texttt{DATA\_10\_02}} \label{subsubsec:circularMotionD2_10_02}
 
@@ -324,7 +328,7 @@
         \label{fig:circular_motion_dataset_10_02_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -342,7 +346,7 @@
         \label{fig:flat_floor_dataset_10_02_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -360,7 +364,7 @@
         \label{fig:flat_floor_dataset_10_02_z_comparison}
     \end{figure}
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -380,17 +384,20 @@
 
     \input{media/results/01_flat_floor_terrain/DATA_10_02/latex_metrics_table_DATA_10_02.txt}
 
-    From the X--Y trajectory plot in Figure~\ref{fig:circular_motion_dataset_10_02_trajectory}, it can be observed that both the baseline odometry and \gls{cvo} trajectories follow the shape of the ground truth trajectory. The translational and rotational \gls{rpe} drift \gls{rmse} are better for the \gls{cvo} compared to the baseline odometry. This can be inferred from Table~\ref{tab:odometry_metrics_data-10-02} and Figure~\ref{fig:flat_floor_dataset_10_02_RPE}. The \texttt{z}-position plot in Figure~\ref{fig:flat_floor_dataset_10_02_z_comparison} shows that the \gls{cvo} follows the variations in the ground truth better than the baseline odometry. The \gls{cvo} starts to drift around $20~\mathrm{s}$ after the rover starts moving causing the \texttt{z}-position \gls{rmse} to be higher than the baseline odometry. The travel distance error of the \gls{cvo} is closer to the ground truth travel distance than the baseline odometry. In terms of final position error, the \gls{cvo} is consistent with the previous circular motion dataset but worse than the baseline odometry. 
+    From the X--Y trajectory plot in Figure~\ref{fig:circular_motion_dataset_10_02_trajectory}, it can be observed that both the baseline odometry and \gls{cvo} trajectories follow the shape of the ground truth trajectory. The translational RPE drift RMSE is better for the CVO compared to the baseline odometry, while the rotational RPE drift RMSE is slightly worse for the CVO compared to the baseline odometry. This can be inferred from Table~\ref{tab:odometry_metrics_data-10-02} and Figure~\ref{fig:flat_floor_dataset_10_02_RPE}. 
+    
+    The \texttt{z}-position plot in Figure~\ref{fig:flat_floor_dataset_10_02_z_comparison} shows that the \gls{cvo} follows the variations in the ground truth better than the baseline odometry. The \gls{cvo} starts to drift around $20~\mathrm{s}$ after the rover starts moving causing the \texttt{z}-position \gls{rmse} to be higher than the baseline odometry. The travel distance error of the \gls{cvo} is closer to the ground truth travel distance than the baseline odometry. In terms of final position error, the \gls{cvo} is consistent with the previous circular motion dataset but worse than the baseline odometry. 
 
-    Overall, the circular motion datasets show that the \gls{cvo} approach achieves slightly lower rotational \gls{rpe} drift than the baseline odometry, although the yaw \gls{rmse} remains lower for the baseline odometry. Even though the \gls{rmse} of yaw is better for the baseline odometry, the \gls{rmse} of rotational \gls{rpe} drift is better for the \gls{cvo} approach. This suggests that the \gls{cvo} approach can provide locally more consistent rotational estimates in circular trajectories, even when its absolute yaw error is higher than the baseline odometry.
-        
+    Overall, the circular motion datasets show that the \gls{cvo} approach achieves slightly lower rotational \gls{rpe} drift than the baseline odometry, although the yaw \gls{rmse} remains lower for the baseline odometry. Even though the \gls{rmse} of yaw is better for the baseline odometry, the \gls{rmse} of rotational \gls{rpe} drift is better for the \gls{cvo} approach. This suggests that the \gls{cvo} approach can provide locally more consistent rotational estimates in circular trajectories, even when its absolute yaw error is higher than the baseline odometry based on the two selected circular datasets.
+    \FloatBarrier
+      
     \subsection{Complex Trajectories}    
 
     The complex trajectory datasets include the experiments where the rover moves in a complex trajectory that includes turns and maneuvers. The complex trajectory datasets are: \texttt{DATA\_07\_YY}, \texttt{DATA\_08\_YY}, \texttt{DATA\_11\_YY}, \texttt{DATA\_12\_YY}, and \texttt{DATA\_29\_YY}, where \texttt{YY} represents the iteration number. The evaluation results of a representative subset of these datasets is presented in the following subsections.
 
     \subsubsection{Complex Trajectory Dataset 1: \texttt{DATA\_07\_03}} \label{subsubsec:complexTrajectoryD1_07_03}
 
-    In this dataset, the rover moves in a figure-\texttt{8} pattern. This includes combination of clockwise and counter-clockwise circular motion. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$. The X--Y trajectory comparison for \texttt{DATA\_07\_03} is shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_trajectory}. The \texttt{z}-position and \texttt{z}-position error plots are shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_z_comparison}. The yaw error plot is shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_yaw_error}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_RPE}. Table~\ref{tab:odometry_metrics_data-07-03} summarizes some key evaluation metrics for this dataset.
+    In this dataset, the rover moves in a figure-\texttt{8} pattern. This includes combination of clockwise and counter-clockwise circular motion. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$. The X--Y trajectory comparison for \texttt{DATA\_07\_03} is shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_trajectory}. The \texttt{z}-position and \texttt{z}-position error plots are shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_z_comparison}. The yaw orientation and error comparision plots are shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_RPE}. Table~\ref{tab:odometry_metrics_data-07-03} summarizes some key evaluation metrics for this dataset.
 
     \begin{figure}[!htbp]
         \centering
@@ -399,7 +406,7 @@
         \label{fig:complex_trajectory_dataset_07_03_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -417,7 +424,7 @@
         \label{fig:complex_trajectory_dataset_07_03_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -437,16 +444,28 @@
 
     \begin{figure}[!htbp]
         \centering
-        \includegraphics[width=\textwidth]{media/results/01_flat_floor_terrain/DATA_07_03/yaw_error_comparison_vicon_ground_truth_vs_contact_velocity_odometry_vs_baseline_odometry_DATA_07_03.png}
-        \caption{Yaw error plot of the figure-\texttt{8} motion dataset \texttt{DATA\_07\_03} on flat floor terrain. The plot compares the ground truth, baseline odometry, and contact velocity odometry along the \texttt{yaw} axis.}
-        \label{fig:complex_trajectory_dataset_07_03_yaw_error}
-    \end{figure}
+        \begin{minipage}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{media/results/01_flat_floor_terrain/DATA_07_03/yaw_orientation_comparison_vicon_ground_truth_vs_contact_velocity_odometry_vs_baseline_odometry_DATA_07_03.png}
+            \caption*{Yaw Orientation comparison}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.48\textwidth}
+            \centering
+            \includegraphics[width=\linewidth]{media/results/01_flat_floor_terrain/DATA_07_03/yaw_error_comparison_vicon_ground_truth_vs_contact_velocity_odometry_vs_baseline_odometry_DATA_07_03.png}
+            \caption*{Yaw Orientation Error comparison}
+        \end{minipage}
 
+        \caption{Yaw orientation and yaw orientation error comparison for the figure-\texttt{8} motion dataset \texttt{DATA\_07\_03} on the flat floor terrain. The plots compare the ground truth, baseline odometry, and contact velocity odometry along the yaw axis.}
+        \label{fig:complex_trajectory_dataset_07_03_yaw_comparison}
+    \end{figure}
+    
     \input{media/results/01_flat_floor_terrain/DATA_07_03/latex_metrics_table_DATA_07_03.txt}
 
-    From the X--Y trajectory plot shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_trajectory}, it can be observed that the \gls{cvo} trajectory produces the figure-\texttt{8} shape, but it deviates from the ground truth trajectory. The baseline odometry trajectory is closer to the ground truth trajectory in this dataset. The yaw estimation is also poor for the \gls{cvo} compared to the baseline odometry, which can be inferred from the yaw \gls{rmse} in Table~\ref{tab:odometry_metrics_data-07-03} and from the yaw error plot in Figure~\ref{fig:complex_trajectory_dataset_07_03_yaw_error}. 
+    From the X--Y trajectory plot shown in Figure~\ref{fig:complex_trajectory_dataset_07_03_trajectory}, it can be observed that the \gls{cvo} trajectory produces the figure-\texttt{8} shape, but it deviates from the ground truth trajectory. The baseline odometry trajectory is closer to the ground truth trajectory in this dataset. The yaw estimation is also poor for the \gls{cvo} compared to the baseline odometry, which can be inferred from the yaw \gls{rmse} in Table~\ref{tab:odometry_metrics_data-07-03} and from the yaw error plot in Figure~\ref{fig:complex_trajectory_dataset_07_03_yaw_comparison}. 
 
     In this figure-\texttt{8} dataset, translational and rotational \gls{rpe} drift \gls{rmse} of the \gls{cvo} is slightly higher than the baseline odometry. The \texttt{z}-position plot in Figure~\ref{fig:complex_trajectory_dataset_07_03_z_comparison} shows that the \gls{cvo} follows the oscillation in the ground truth but drifts away from the ground truth over time. The travel distance of the \gls{cvo} is heavily underestimated, which can be inferred from Table~\ref{tab:odometry_metrics_data-07-03}.
+    \FloatBarrier
 
     \subsubsection{Complex Trajectory Dataset 2: \texttt{DATA\_11\_01}} \label{subsubsec:complexTrajectoryD2_11_01}
 
@@ -461,7 +480,7 @@
         \label{fig:complex_trajectory_dataset_11_01_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -479,7 +498,7 @@
         \label{fig:complex_trajectory_dataset_11_01_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -497,7 +516,7 @@
         \label{fig:complex_trajectory_dataset_11_01_z_comparison}
     \end{figure}
 
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -523,7 +542,8 @@
 
     The rotational \gls{rpe} shown in Figure~\ref{fig:complex_trajectory_dataset_11_01_RPE} shows that the \gls{cvo} has a higher rotational error when the rover is performing point turns. This sudden increase in the yaw error during point turns can be observed in the yaw error plot in Figure~\ref{fig:complex_trajectory_dataset_11_01_yaw_comparison}. The \gls{cvo} estimation also suffers from initial drift in yaw which can be observed in the yaw error plot.
 
-    The \texttt{z}-position plot shown in Figure~\ref{fig:complex_trajectory_dataset_11_01_z_comparison} shows that the error in the \texttt{z}-position estimation decreases when a point turn is performed and increases when the rover starts moving in a straight line. \todo[inline]{why is that?} The \gls{rmse} of the \texttt{z}-position is very high compared to the baseline odometry. The travel distance estimation is heavily underestimated by the \gls{cvo} approach. These results are presented in Table~\ref{tab:odometry_metrics_data-11-01}. 
+    The \texttt{z}-position plot shown in Figure~\ref{fig:complex_trajectory_dataset_11_01_z_comparison} shows that the error in the \texttt{z}-position estimation decreases when a point turn is performed and increases when the rover starts moving in a straight line. The \gls{rmse} of the \texttt{z}-position is very high compared to the baseline odometry. The travel distance estimation is heavily underestimated by the \gls{cvo} approach. These results are presented in Table~\ref{tab:odometry_metrics_data-11-01}. 
+    \FloatBarrier
 
     \subsubsection{Complex Trajectory Dataset 3: \texttt{DATA\_12\_02}} \label{subsubsec:complexTrajectoryD3_12_02}
 
@@ -538,7 +558,7 @@
         \label{fig:complex_trajectory_dataset_12_02_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -556,7 +576,7 @@
         \label{fig:complex_trajectory_dataset_12_02_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -578,7 +598,8 @@
 
     From the X--Y trajectory plot shown in Figure~\ref{fig:complex_trajectory_dataset_12_02_trajectory}, it can be observed that the \gls{cvo} trajectory produces the square shape, but it deviates from the ground truth trajectory. The \gls{rmse} of yaw is higher for the \gls{cvo} compared to the baseline odometry, which can be inferred from Table~\ref{tab:odometry_metrics_data-12-02}. Similar to the previous dataset, the \gls{cvo} estimation suffers from initial drift in yaw which can be observed in the rotational \gls{rpe} plot shown in Figure~\ref{fig:complex_trajectory_dataset_12_02_RPE}. The \gls{rmse} of translational \gls{rpe} is slightly higher for the \gls{cvo} compared to the baseline odometry and the \gls{rmse} of rotational \gls{rpe} is significantly higher for the \gls{cvo} compared to the baseline odometry. 
 
-    Similar to the previous dataset, the \texttt{z}-position plot shown in Figure~\ref{fig:complex_trajectory_dataset_12_02_z_comparison} shows that the error in the \texttt{z}-position estimation decreases when a point turn is performed and increases when the rover is starts moving in a straight line. Unlike the previous dataset, the final position error of the \gls{cvo} is better than the baseline odometry but the travel distance error is underestimated and also worse than the baseline odometry. 
+    Similar to the previous dataset, the \texttt{z}-position plot shown in Figure~\ref{fig:complex_trajectory_dataset_12_02_z_comparison} shows that the error in the \texttt{z}-position estimation decreases when a point turn is performed and increases when the rover starts moving in a straight line. Unlike the previous dataset, the final position error of the \gls{cvo} is better than the baseline odometry, but the travel distance error is underestimated and also worse than the baseline odometry. 
+    \FloatBarrier
 
     \subsubsection{Complex Trajectory Dataset 4: \texttt{DATA\_29\_01}} \label{subsubsec:complexTrajectoryD4_29_01}
 
@@ -593,7 +614,7 @@
         \label{fig:complex_trajectory_dataset_29_01_trajectory}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -611,7 +632,7 @@
         \label{fig:complex_trajectory_dataset_29_01_RPE}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -638,7 +659,8 @@
     Unlike the previous complex trajectory datasets, the yaw \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry. This shows that, in a random exploration type motion, the \gls{cvo} approach can be beneficial, even though the travel distance estimation is heavily underestimated. 
         
     The final position error of the \gls{cvo} is better than the baseline odometry in this dataset. This improvement is due to this specific trajectory and not a representative of the overall performance of the \gls{cvo} approach. The final position error for the \texttt{DATA\_29\_02} dataset is worse for the \gls{cvo} compared to the baseline odometry. The \texttt{DATA\_29\_02} dataset is not presented in this report.
-    
+    \FloatBarrier
+  
     \subsection{Evaluation Summary of Flat Floor Terrain Experiments} \label{subsec:flatFloorEvalSummary}
 
     The straight-line flat floor experiments show that the baseline odometry performs better than the \gls{cvo} approach in terms of travel distance error and translational \gls{rpe} drift. This shows that the baseline approach is sufficient for simple low-speed straight-line motion on flat floor terrain. Even though the \gls{cvo} approach captures the variation pattern of the \texttt{z}-position better in some cases, the overall performance is not better than the baseline odometry.
@@ -663,7 +685,7 @@
         
     In this dataset, the Coyote~3 rover moves forward in a straight-line for approximately $5~\mathrm{m}$, stops for 4--5 seconds, and then moves backward for approximately $5~\mathrm{m}$. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. This motion is grouped under straight-line motion since the rover moves in a straight-line without any turns or complex maneuvers. 
     
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_18_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_18_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_18\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_18_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_18_02_RPE}. Table~\ref{tab:odometry_metrics_data-18-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_18_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_18_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_18\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_18_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_18_02_RPE}. Table~\ref{tab:odometry_metrics_data-18-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
@@ -672,7 +694,7 @@
         \label{fig:straight_line_motion_dataset_18_02_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -691,7 +713,7 @@
     \end{figure}
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -710,7 +732,7 @@
     \end{figure}
     
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -734,13 +756,14 @@
     
     From Table~\ref{tab:odometry_metrics_data-18-02}, it can be observed that the yaw \gls{rmse} is higher for the \gls{cvo} compared to the baseline odometry. The yaw \gls{rmse} is also higher for the \gls{cvo} compared to the baseline odometry. The translational \gls{rpe} drift \gls{rmse} is slightly better compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is slightly worse than the baseline odometry. This can be seen in Figure~\ref{fig:sand_terrain_dataset_18_02_RPE}. The travel distance and final position error is slightly worse for the \gls{cvo} compared to the baseline odometry. However, the \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is almost the same as the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_18_02_z_comparison}. 
     
-    Since \gls{rpe} metric is trajectory independent and the straight-line motion trajectory explained in Subsection~\ref{subsubsec:straightLineD3_04_02} uses same maximum velocity setting, the \gls{rpe} metrics these datasets are compared. The translational \gls{rpe} drift \gls{rmse} in sand terrain better than the flat floor terrain, while the rotational \gls{rpe} drift \gls{rmse} is worse in sand terrain compared to the flat floor terrain. 
+    Since \gls{rpe} metric is less sensitive to global trajectory errors than absolute error metrics, and the straight-line motion trajectory explained in Subsection~\ref{subsubsec:straightLineD3_04_02} uses same maximum velocity setting, the \gls{rpe} metrics these datasets are compared. The translational \gls{rpe} drift \gls{rmse} in sand terrain better than the flat floor terrain, while the rotational \gls{rpe} drift \gls{rmse} is worse in sand terrain compared to the flat floor terrain. 
+    \FloatBarrier
     
     \subsubsection{Straight-Line Motion Dataset 2: \texttt{DATA\_19\_02}} \label{subsubsec:straightLineMotionD2_19_02}
     
     In this dataset, the Coyote~3 rover moves similar to the previous dataset. The maximum commanded velocity of the rover is $0.4~\mathrm{m/s}$ when moving. The rover moves forward in a straight-line, pauses for 4--5 seconds, and then moves backward in a straight-line. 
     
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_19_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_19\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_19_02_RPE}. Table~\ref{tab:odometry_metrics_data-19-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_19_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_19\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_19_02_RPE}. Table~\ref{tab:odometry_metrics_data-19-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
@@ -749,7 +772,7 @@
         \label{fig:straight_line_motion_dataset_19_02_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -768,7 +791,7 @@
     \end{figure}
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -787,7 +810,7 @@
     \end{figure}
     
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -810,13 +833,14 @@
     
     From the X--Y trajectory plot shown in Figure~\ref{fig:straight_line_motion_dataset_19_02_trajectory}, it can be observed that the \gls{cvo} trajectory shape is similar to the ground truth. There is a significant deviation in the \gls{cvo} trajectory in yaw axis compared to the ground truth trajectory which can also be seen in Figure~\ref{fig:sand_terrain_dataset_19_02_yaw_comparison}.
     
-    The translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is worse than the baseline odometry. The \gls{rpe} plot are shown in Figure~\ref{fig:sand_terrain_dataset_19_02_RPE}. The \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is slightly worse than the baseline odometry. The travel distance and final position error also performs worse compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_z_comparison}. Compared to the previous dataset with $0.2~\mathrm{m/s}$ maximum commanded velocity, the translational \gls{rpe} drift \gls{rmse}, the travel distance and the final position error of the current dataset with $0.4~\mathrm{m/s}$ maximum commanded velocity is better for the \gls{cvo} approach.
+    The translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is worse than the baseline odometry. The \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_19_02_RPE}. The \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is slightly worse than the baseline odometry. The travel distance and final position error also worse compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_19_02_z_comparison}. Compared to the previous dataset with $0.2~\mathrm{m/s}$ maximum commanded velocity, the translational \gls{rpe} drift \gls{rmse}, the travel distance and the final position error of the current dataset with $0.4~\mathrm{m/s}$ maximum commanded velocity is better for the \gls{cvo} approach.
+    \FloatBarrier
 
     \subsubsection{Straight-Line Motion Dataset 3: \texttt{DATA\_20\_03}} \label{subsubsec:straightLineMotionD3_20_03}
     
     In this dataset, the Coyote~3 rover moves similar to the previous dataset. The maximum commanded velocity of the rover is $0.6~\mathrm{m/s}$ when moving. The rover moves forward in a straight-line, pauses for 4--5 seconds, and then moves backward in a straight-line. 
     
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_20_03_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_20_03_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_20\_03} is shown in Figure~\ref{fig:sand_terrain_dataset_20_03_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_20_03_RPE}. Table~\ref{tab:odometry_metrics_data-20-03} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_20_03_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_20_03_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_20\_03} is shown in Figure~\ref{fig:sand_terrain_dataset_20_03_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_20_03_RPE}. Table~\ref{tab:odometry_metrics_data-20-03} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
@@ -825,7 +849,7 @@
         \label{fig:straight_line_motion_dataset_20_03_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -844,7 +868,7 @@
     \end{figure}
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -863,7 +887,7 @@
     \end{figure}
     
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -885,9 +909,10 @@
     
     From the X--Y trajectory plot shown in Figure~\ref{fig:straight_line_motion_dataset_20_03_trajectory}, it can be observed that the \gls{cvo} trajectory is significantly deviated in yaw axis compared to the ground truth trajectory. This can also be observed from yaw comparison plot shown in Figure~\ref{fig:sand_terrain_dataset_20_03_yaw_comparison}. The translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is significantly worse than the baseline odometry. This can be seen from the plots shown in Figure~\ref{fig:sand_terrain_dataset_20_03_RPE}. The \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is worse and can be seen from the \texttt{z}-position comparison plot shown in Figure~\ref{fig:sand_terrain_dataset_20_03_z_comparison}. 
     
-    The travel distance and final position error also performs worse compared to the baseline odometry. Compared to the previous dataset with $0.4~\mathrm{m/s}$ maximum commanded velocity, the translational \gls{rpe} drift \gls{rmse}, the travel distance and the final position error of the current dataset with $0.6~\mathrm{m/s}$ maximum commanded velocity is worse for the \gls{cvo} approach. 
+    The travel distance error is reduced compared to the previous dataset with $0.4~\mathrm{m/s}$ maximum commanded velocity, the translational \gls{rpe} drift \gls{rmse}, and the final position error of the current dataset with $0.6~\mathrm{m/s}$ maximum commanded velocity is worse for the \gls{cvo} approach. 
     
-    With the increase in maximum commanded velocity, in straight line trajectory in sand terrain, the translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} approach, while the rotational \gls{rpe} drift \gls{rmse} gets much worse for the \gls{cvo} approach. The travel distance error is better as the velocity increases, while the \texttt{z}-position estimation \gls{rmse} and final position error is worse as the velocity increases. This shows that the \gls{cvo} approach is more sensitive to the increase in maximum commanded velocity compared to the baseline odometry.
+    With the increase in maximum commanded velocity, in straight line trajectory in sand terrain, the translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} approach, while the rotational \gls{rpe} drift \gls{rmse} gets much worse for the \gls{cvo} approach. The travel distance error is reduced as the velocity increases, while the \texttt{z}-position estimation \gls{rmse} and final position error is worse as the velocity increases. This shows that the \gls{cvo} approach is more sensitive to the increase in maximum commanded velocity compared to the baseline odometry.
+    \FloatBarrier
     
     \subsection{Circular Motion}
     
@@ -899,16 +924,16 @@
     
     In this dataset, the Coyote~3 rover moves in a clockwise circular motion with a diameter of approximately $4~\mathrm{m}$. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. The rover completes one full circular motion and stops at the starting location.
 
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_24_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_24\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_24_02_RPE}. Table~\ref{tab:odometry_metrics_data-24-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:straight_line_motion_dataset_24_02_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_24\_02} is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_24_02_RPE}. Table~\ref{tab:odometry_metrics_data-24-02} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=0.55\textwidth]{media/results/02_sand_terrain/DATA_24_02/Trajectory_With_Heading_vicon_ground_truth_vs_contact_velocity_odometry_vs_baseline_odometry_DATA_24_02.png}
-        \caption{X--Y trajectory plot of the straight-line motion dataset \texttt{DATA\_24\_02} on the sand terrain. The yaw orientations are shown as heading arrows along the trajectories. The plot compares the ground truth, baseline odometry, and contact velocity odometry.}
-        \label{fig:straight_line_motion_dataset_24_02_trajectory}
+        \caption{X--Y trajectory plot of the circular motion dataset \texttt{DATA\_24\_02} on the sand terrain. The yaw orientations are shown as heading arrows along the trajectories. The plot compares the ground truth, baseline odometry, and contact velocity odometry.}
+        \label{fig:circular_motion_dataset_24_02_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -922,11 +947,11 @@
             \caption*{Rotational \gls{rpe}}
         \end{minipage}
 
-        \caption{Translational and rotational \gls{rpe} for the straight-line motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the translational and rotational \gls{rpe} of the baseline odometry and contact velocity odometry against the ground truth.}
+        \caption{Translational and rotational \gls{rpe} for the circular motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the translational and rotational \gls{rpe} of the baseline odometry and contact velocity odometry against the ground truth.}
         \label{fig:sand_terrain_dataset_24_02_RPE}
     \end{figure}
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -940,11 +965,11 @@
             \caption*{Z-Position Error comparison}
         \end{minipage}
 
-        \caption{Z-position and Z-position error comparison for the straight-line motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the ground truth, baseline odometry, and contact velocity odometry along the \texttt{z} axis.}
+        \caption{Z-position and Z-position error comparison for the circular motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the ground truth, baseline odometry, and contact velocity odometry along the \texttt{z} axis.}
         \label{fig:sand_terrain_dataset_24_02_z_comparison}
     \end{figure}
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -958,23 +983,24 @@
             \caption*{Yaw Orientation Error comparison}
         \end{minipage}
 
-        \caption{Yaw orientation and yaw orientation error comparison for the straight-line motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the ground truth, baseline odometry, and contact velocity odometry along the yaw axis.}
+        \caption{Yaw orientation and yaw orientation error comparison for the circular motion dataset \texttt{DATA\_24\_02} on the sand terrain. The plots compare the ground truth, baseline odometry, and contact velocity odometry along the yaw axis.}
         \label{fig:sand_terrain_dataset_24_02_yaw_comparison}
     \end{figure}
     
     \input{media/results/02_sand_terrain/DATA_24_02/latex_metrics_table_DATA_24_02.txt}    
     
-    From the X--Y trajectory plot shown in Figure~\ref{fig:straight_line_motion_dataset_24_02_trajectory}, it can be observed that the \gls{cvo} trajectory shape is similar and closer to the ground truth compared to the baseline odometry. The yaw \gls{rmse} for the \gls{cvo} is worse compared to the baseline odometry. The yaw error evolution over time is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_yaw_comparison}. The translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is slightly worse. The \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_24_02_RPE}. 
+    From the X--Y trajectory plot shown in Figure~\ref{fig:circular_motion_dataset_24_02_trajectory}, it can be observed that the \gls{cvo} trajectory shape is similar and closer to the ground truth compared to the baseline odometry. The yaw \gls{rmse} for the \gls{cvo} is worse compared to the baseline odometry. The yaw error evolution over time is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_yaw_comparison}. The translational \gls{rpe} drift \gls{rmse} is better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is slightly worse. The \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_24_02_RPE}. 
         
-    Similar to the straight line trajectories, the \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is worse than the baseline odometry. However, the variations in the ground truth \texttt{z}-position is better tracked by the \gls{cvo} compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_z_comparison}. The travel distance and final position error are also bad for the \gls{cvo} compared to the baseline odometry.
+    Similar to the straight line trajectories, the \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is worse than the baseline odometry. However, the variations in the ground truth \texttt{z}-position is better tracked by the \gls{cvo} compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_24_02_z_comparison}. The travel distance and final position error are also worse for the \gls{cvo} compared to the baseline odometry.
     
-    The travel distance of the baseline odometry for this dataset is $-3.09~\mathrm{m}$. The negation represents that the travel distance is underestimated, in this case, the baseline travelled less compared to the ground truth. This might seem to contradict the visual observation of the X--Y trajectory plot shown in Figure~\ref{fig:straight_line_motion_dataset_24_02_trajectory}. However, the travel distance is calculated as the sum of the Euclidean distance between each consecutive 3D position in the trajectory. This distance also involves the \texttt{z}-position, which is underestimated by the baseline odometry. The travel distance is calculated in this way so that the travel distance on inclined crater terrain can also be calculated. 
-    
+    The travel distance of the baseline odometry for this dataset is $-3.09~\mathrm{m}$. The negation represents that the travel distance is underestimated, in this case, the baseline travelled less compared to the ground truth. This might seem to contradict the visual observation of the X--Y trajectory plot shown in Figure~\ref{fig:circular_motion_dataset_24_02_trajectory}. However, the travel distance is calculated as the sum of the Euclidean distance between each consecutive 3D position in the trajectory. This distance also involves the \texttt{z}-position, which is underestimated by the baseline odometry. The travel distance is calculated in this way so that the travel distance on inclined crater terrain can also be calculated. 
+    \FloatBarrier
+   
     \subsubsection{Circular Motion Dataset 2: \texttt{DATA\_25\_01}} \label{subsubsec:circularMotionD2_25_01}
     
     In this dataset, the Coyote~3 rover moves in a counter-clockwise circular motion with a diameter of approximately $4~\mathrm{m}$. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. The rover completes one full circular motion and stops at the starting location.
         
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:circular_motion_dataset_25_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_25\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_25_01_RPE}. Table~\ref{tab:odometry_metrics_data-25-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:circular_motion_dataset_25_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_25\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_25_01_RPE}. Table~\ref{tab:odometry_metrics_data-25-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
@@ -983,7 +1009,7 @@
         \label{fig:circular_motion_dataset_25_01_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1001,7 +1027,7 @@
         \label{fig:sand_terrain_dataset_25_01_RPE}
     \end{figure}
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1019,7 +1045,7 @@
         \label{fig:sand_terrain_dataset_25_01_z_comparison}
     \end{figure}
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1041,7 +1067,8 @@
     
     From the X--Y trajectory plot shown in Figure~\ref{fig:circular_motion_dataset_25_01_trajectory}, it can be observed that the \gls{cvo} trajectory shape is similar and closer to the ground truth compared to the baseline odometry. The yaw \gls{rmse} for the \gls{cvo} is worse compared to the baseline odometry. The yaw error evolution over time is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_yaw_comparison}. The translational \gls{rpe} drift \gls{rmse} is slightly better for the \gls{cvo} compared to the baseline odometry, while the rotational \gls{rpe} drift \gls{rmse} is slightly worse. The \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_25_01_RPE}. 
     
-    The \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is also bad for the \gls{cvo} compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_z_comparison}. Similar to the previous dataset, the travel distance is heavily underestimated by both the baseline odometry and \gls{cvo} approach. The travel distance and final position error are also bad for the \gls{cvo} compared to the baseline odometry. In sand terrain, in circular trajectories, the translational \gls{rpe} drift \gls{rmse} is similar or slightly better for the \gls{cvo} approach. All the other metrics are worse for the \gls{cvo} approach compared to the baseline odometry. The travel distance is heavily underestimated by both the baseline odometry and \gls{cvo} approach. 
+    The \texttt{z}-position estimation \gls{rmse} for \gls{cvo} is also worse for the \gls{cvo} compared to the baseline odometry. The \texttt{z}-position comparison is shown in Figure~\ref{fig:sand_terrain_dataset_25_01_z_comparison}. Similar to the previous dataset, the travel distance is heavily underestimated by both the baseline odometry and \gls{cvo} approach. The travel distance and final position error are also worse for the \gls{cvo} compared to the baseline odometry. In sand terrain, in circular trajectories, the translational \gls{rpe} drift \gls{rmse} is similar or slightly better for the \gls{cvo} approach. All the other metrics are worse for the \gls{cvo} approach compared to the baseline odometry. The travel distance is heavily underestimated by both the baseline odometry and \gls{cvo} approach. 
+    \FloatBarrier
 
     \subsection{Complex Trajectories}    
     
@@ -1051,7 +1078,7 @@
     
     In this dataset, the Coyote~3 rover moves in a random exploration type motion. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. The rover is moved in a random pattern that includes straight-line motion, curved motion, and three-point turning maneuvers. This trajectory is considered to be a representative of a real-world scenario where the rover is exploring an unknown environment. The rover is human-operated. 
     
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:complex_motion_dataset_28_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_28_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_28\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_28_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_28_01_RPE}. Table~\ref{tab:odometry_metrics_data-28-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:complex_motion_dataset_28_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_28_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_28\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_28_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_28_01_RPE}. Table~\ref{tab:odometry_metrics_data-28-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
     
     \begin{figure}[!htbp]
         \centering
@@ -1060,7 +1087,7 @@
         \label{fig:complex_motion_dataset_28_01_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1078,7 +1105,7 @@
         \label{fig:sand_terrain_dataset_28_01_RPE}
     \end{figure}
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1096,7 +1123,7 @@
         \label{fig:sand_terrain_dataset_28_01_z_comparison}
     \end{figure}
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1123,12 +1150,13 @@
     The translational \gls{rpe} drift \gls{rmse} is lower for the \gls{cvo} approach compared to the baseline odometry. This can be seen in the translational \gls{rpe} plot shown in Figure~\ref{fig:sand_terrain_dataset_28_01_RPE}. The rotational \gls{rpe} drift \gls{rmse} is slightly lower for the baseline odometry compared to the \gls{cvo} approach. However, the difference between the two approaches is small compared to the difference in yaw \gls{rmse}.
 
     The \texttt{z}-position and \texttt{z}-position error plots shown in Figure~\ref{fig:sand_terrain_dataset_28_01_z_comparison} show that both the baseline odometry and \gls{cvo} approaches overestimate the \texttt{z}-position compared to the ground truth. The \texttt{z}-position \gls{rmse} is lower for the baseline odometry compared to the \gls{cvo} approach. The travel distance estimation is underestimated by both approaches, but the underestimation is higher for the \gls{cvo} approach. Based on these results, the \gls{cvo} approach performs better in terms of final position error, yaw estimation, and translational \gls{rpe} drift, while the baseline odometry performs better in terms of travel distance error, \texttt{z}-position estimation, and slightly better rotational \gls{rpe} drift.
-  
+     \FloatBarrier
+ 
     \subsubsection{Complex Trajectory Dataset 2: \texttt{DATA\_27\_01}} \label{subsubsec:complexTrajectoryD1_27_01}
     
     In this dataset, the Coyote~3 rover moves in a random exploration type motion. Similar to the previous dataset, the maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. The rover is moved in a random pattern that includes straight-line motion, curved motion, and three-point turning maneuvers. This trajectory is considered to be a representative of a real-world scenario where the rover is exploring an unknown environment. The rover is human-operated. 
     
-    The X--Y trajectory comparison is shown in Figure~\ref{fig:complex_trajectory_dataset_27_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_27_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_27\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_27_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_27_01_RPE}. Table~\ref{tab:odometry_metrics_data-27-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse}of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
+    The X--Y trajectory comparison is shown in Figure~\ref{fig:complex_trajectory_dataset_27_01_trajectory}. The \texttt{z}-position and error comparison is shown in Figure~\ref{fig:sand_terrain_dataset_27_01_z_comparison}. The yaw orientation and error comparison for \texttt{DATA\_27\_01} is shown in Figure~\ref{fig:sand_terrain_dataset_27_01_yaw_comparison}. The translational and rotational \gls{rpe} plots are shown in Figure~\ref{fig:sand_terrain_dataset_27_01_RPE}. Table~\ref{tab:odometry_metrics_data-27-01} summarizes some key evaluation metrics such as final position error, travel distance error, \gls{rmse} of translational and rotational \gls{rpe} drift, and \gls{rmse} of yaw and \texttt{z}-position error for this dataset.
         
     \begin{figure}[!htbp]
         \centering
@@ -1137,7 +1165,7 @@
         \label{fig:complex_trajectory_dataset_27_01_trajectory}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1155,7 +1183,7 @@
         \label{fig:sand_terrain_dataset_27_01_RPE}
     \end{figure}
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1173,7 +1201,7 @@
         \label{fig:sand_terrain_dataset_27_01_z_comparison}
     \end{figure}
     
-    \begin{figure}[h]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1193,14 +1221,15 @@
         
     \input{media/results/02_sand_terrain/DATA_27_01/latex_metrics_table_DATA_27_01.txt}
     
-    From the X--Y trajectory plot shown in Figure~\ref{fig:sand_terrain_dataset_27_01_xy_trajectory}, it can be observed that the baseline odometry follows the ground truth trajectory better than the \gls{cvo} approach. The \gls{cvo} trajectory follows the general shape of the trajectory, but it deviates from the ground truth during the curved motion and turning maneuvers. This is also reflected in the final position error shown in Table~\ref{tab:odometry_metrics_data-27-01}, where the baseline odometry has a lower final position error than the \gls{cvo} approach.
+    From the X--Y trajectory plot shown in Figure~\ref{fig:complex_trajectory_dataset_27_01_trajectory}, it can be observed that the baseline odometry follows the ground truth trajectory better than the \gls{cvo} approach. The \gls{cvo} trajectory follows the general shape of the trajectory, but it deviates from the ground truth during the curved motion and turning maneuvers. This is also reflected in the final position error shown in Table~\ref{tab:odometry_metrics_data-27-01}, where the baseline odometry has a lower final position error than the \gls{cvo} approach.
 
     The yaw estimation of the \gls{cvo} is poor compared to the baseline odometry, which can be inferred from the yaw \gls{rmse} in Table~\ref{tab:odometry_metrics_data-27-01} and the yaw comparison plots in Figure~\ref{fig:sand_terrain_dataset_27_01_yaw_comparison}. The yaw error of the \gls{cvo} increases during different parts of the trajectory, while the baseline odometry yaw error remains lower. This yaw error contributes to the deviation of the \gls{cvo} trajectory from the ground truth trajectory.
 
     Unlike the final position error and yaw \gls{rmse}, the translational and rotational \gls{rpe} drift \gls{rmse} are lower for the \gls{cvo} approach compared to the baseline odometry. This can be seen in the translational and rotational \gls{rpe} plots shown in Figure~\ref{fig:sand_terrain_dataset_27_01_RPE}. This shows that the \gls{cvo} approach gives better local relative motion estimates in this dataset, even though the overall trajectory is worse than the baseline odometry.
 
     The \texttt{z}-position and \texttt{z}-position error plots shown in Figure~\ref{fig:sand_terrain_dataset_27_01_z_comparison} show that both the baseline odometry and \gls{cvo} approaches drift away from the ground truth. The \gls{cvo} approach drifts in the negative \texttt{z} direction, while the baseline odometry drifts in the positive \texttt{z} direction. The \texttt{z}-position \gls{rmse} is lower for the baseline odometry compared to the \gls{cvo} approach. The travel distance estimation is heavily underestimated by the \gls{cvo} approach, while the baseline odometry overestimates the travel distance. Based on these results, the baseline odometry performs better in this dataset, except for the translational and rotational \gls{rpe} drift.
-    
+        \FloatBarrier
+
     \subsection{Evaluation Summary of Sand Terrain Experiments}
     
     The straight-line sand terrain experiments show that the performance of the baseline odometry and the \gls{cvo} approach changes depending on the dataset. In some datasets, the baseline odometry performs better in terms of travel distance error and final position error. In other datasets, the \gls{cvo} approach shows better translational \gls{rpe} drift. This shows that the sand terrain introduces more variation in the odometry performance compared to the flat floor terrain.
@@ -1222,7 +1251,7 @@
     The X--Y trajectory comparison plot for before and after slip elimination for \texttt{DATA\_26\_01} is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_xy_trajectory_slip_comparison}. The \texttt{z}-position comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_z_position_error_slip_comparison}. The yaw error comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_yaw_error_slip_comparison}. The translational \gls{rpe} comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_rpe_translational_slip_comparison}. The translational \gls{ape} comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_ape_translational_slip_comparison}. The evaluation metrics for before and after slip elimination are summarized in Table~\ref{tab:odometry_metrics_data-26-01_beforeAfter_slip_elimination}.
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1241,7 +1270,7 @@
     \end{figure}
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1259,7 +1288,7 @@
         \label{fig:crater_terrain_dataset_26_01_z_position_error_slip_comparison}
     \end{figure}  
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1278,7 +1307,7 @@
     \end{figure}
 
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1297,7 +1326,7 @@
     \end{figure}
     
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1360,18 +1389,19 @@
     
     In terms of translation, both the \gls{ape} and \gls{rpe} metric's results shows significant improvement in the \gls{cvo} approach after enabling slip elimination. The corresponding plots for \gls{ape} and \gls{rpe} are shown in Figure~\ref{fig:crater_terrain_dataset_26_01_ape_translational_slip_comparison} and Figure~\ref{fig:crater_terrain_dataset_26_01_rpe_translational_slip_comparison} respectively. The translational \gls{rpe} drift \gls{rmse} is reduced from $0.39~\mathrm{m/m}$ to $0.23~\mathrm{m/m}$ after enabling slip elimination. The translational \gls{rpe} drift \gls{rmse} of the \gls{cvo} with slip elimination is lower than the baseline odometry. 
     
-    The final position error is also slightly improved from $0.76~\mathrm{m}$ to $0.74~\mathrm{m}$ after enabling slip elimination. The \gls{cvo} with and without slip elimination shows better final position error than the baseline odometry. The travel distance error without slip elimination is $0.39~\mathrm{m}$, which is higher than the baseline odometry travel distance error of $0.31~\mathrm{m}$. After enabling slip elimination, the travel distance error is reduced to $-0.15~\mathrm{m}$, which is a significant improvement from both the baseline odometry and \gls{cvo} without slip elimination. The travel distance error after slip elimination is negative, which indicates that the \gls{cvo} with slip elimination slightly underestimates the travel distance. This is consistent with the previous experiments in other terrains, where the \gls{cvo} approach tends to underestimate the travel distance. 
+    The final position error is also slightly improved from $0.76~\mathrm{m}$ to $0.74~\mathrm{m}$ after enabling slip elimination. The \gls{cvo} with and without slip elimination shows better final position error than the baseline odometry. The absolute travel distance error without slip elimination is $0.39~\mathrm{m}$, which is larger than the baseline odometry travel distance error of $0.31~\mathrm{m}$. After enabling slip elimination, the travel distance error is reduced to $-0.15~\mathrm{m}$, which is a significant improvement from both the baseline odometry and \gls{cvo} without slip elimination. The travel distance error after slip elimination is negative, which indicates that the \gls{cvo} with slip elimination slightly underestimates the travel distance. This is consistent with the previous experiments in other terrains, where the \gls{cvo} approach tends to underestimate the travel distance. 
     
     The \texttt{z}-position estimation is also improved after enabling slip elimination. The \texttt{z}-position \gls{rmse} is reduced from $0.26~\mathrm{m}$ to $0.23~\mathrm{m}$ after enabling slip elimination. This is better compared to the baseline odometry \texttt{z}-position \gls{rmse} of $0.43~\mathrm{m}$. The improvement in the \texttt{z}-position estimation is shown in Figure~\ref{fig:crater_terrain_dataset_26_01_z_position_error_slip_comparison}. 
-              
+      \FloatBarrier
+            
     \subsection{Dataset: \texttt{DATA\_26\_04}}
     
 
-    In this dataset, the Coyote~3 rover is commanded to move up the crater terrain. The experimental area is described in Section~\ref{subsec:exp_craterTerrain}. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. During the experiment, the rover moved in an inclined terrain with a slope of approximately $35^{\circ} to 45^{\circ}$. Similar to the previous dataset, when the rover moves up the crater terrain, the wheels of the rover slip due to the inclination. Since, the slip event cannot be verified in the ground truth with the available data, it can be inferred from the \texttt{z}-position comparison plot shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}. The slip event happens between $43~\mathrm{s}$ and $48~\mathrm{s}$ in the \texttt{z}-position comparison plot. 
+    In this dataset, the Coyote~3 rover is commanded to move up the crater terrain. The experimental area is described in Section~\ref{subsec:exp_craterTerrain}. The maximum commanded velocity of the rover is $0.2~\mathrm{m/s}$ when moving. During the experiment, the rover moved in an inclined terrain with a slope of approximately $35^{\circ}$ to $45^{\circ}$. Similar to the previous dataset, when the rover moves up the crater terrain, the wheels of the rover slip due to the inclination. Since, the slip event cannot be verified in the ground truth with the available data, it can be inferred from the \texttt{z}-position comparison plot shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}. The slip event happens between $43~\mathrm{s}$ and $48~\mathrm{s}$ in the \texttt{z}-position comparison plot. 
     
-    The X--Y trajectory comparison plot for before and after slip elimination for \texttt{DATA\_26\_04} is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_xy_trajectory_slip_comparison}. The \texttt{z}-position comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}. The yaw error comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_yaw_error_slip_comparison}. The translational \gls{rpe} comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_rpe_translational_slip_comparison}. The evaluation metrics for before and after slip elimination are summarized in Table~\ref{tab:odometry_metrics_data-26-04_beforeAfter_slip_elimination}.
+    The X--Y trajectory comparison plot for before and after slip elimination for \texttt{DATA\_26\_04} is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_xy_trajectory_slip_comparison}. The \texttt{z}-position comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}. and the \texttt{z}-position error comparision is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_error_slip_comparison}. The yaw error comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_yaw_error_slip_comparison}. The translational \gls{rpe} comparison plot for before and after slip elimination is shown in Figure~\ref{fig:crater_terrain_dataset_26_04_rpe_translational_slip_comparison}. The evaluation metrics for before and after slip elimination are summarized in Table~\ref{tab:odometry_metrics_data-26-04_beforeAfter_slip_elimination}.
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1389,7 +1419,7 @@
         \label{fig:crater_terrain_dataset_26_04_xy_trajectory_slip_comparison}
     \end{figure}
 
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1407,7 +1437,7 @@
         \label{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}
     \end{figure}  
             
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1425,7 +1455,7 @@
         \label{fig:crater_terrain_dataset_26_04_z_position_error_slip_comparison}
     \end{figure}   
     
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1443,7 +1473,7 @@
         \label{fig:crater_terrain_dataset_26_04_yaw_error_slip_comparison}
     \end{figure}    
         
-    \begin{figure}[ht]
+    \begin{figure}[!htbp]
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1461,7 +1491,7 @@
         \label{fig:crater_terrain_dataset_26_04_rpe_translational_slip_comparison}
     \end{figure}
     
-    \begin{figure}[ht]  
+    \begin{figure}[!htbp]  
         \centering
         \begin{minipage}{0.48\textwidth}
             \centering
@@ -1501,21 +1531,27 @@
     From the X--Y trajectory plot shown in Figure~\ref{fig:crater_terrain_dataset_26_04_xy_trajectory_slip_comparison}, similar to the previous dataset, the baseline odometry trajectory is significantly deviated from the ground truth trajectory. The shape of the ground truth trajectory is not followed by the baseline odometry trajectory. This dataset also includes a slip event. This can be seen from the \texttt{z}-position comparison plot shown in Figure~\ref{fig:crater_terrain_dataset_26_04_z_position_slip_comparison}. Between $43~\mathrm{s}$ and $48~\mathrm{s}$, the change in ground truth \texttt{z}-position from $0.3~\mathrm{m}$ to $0.5~\mathrm{m}$, a $0.2~\mathrm{m}$ increase, but the change in the baseline odometry \texttt{z}-position is from $0.9~\mathrm{m}$ to $1.5~\mathrm{m}$, a $0.6~\mathrm{m}$ increase. The \gls{cvo} estimation with and without slip elimination shows similar increase in the \texttt{z}-position from $0.65~\mathrm{m}$ to 
     $1.1~\mathrm{m}$, a $0.45~\mathrm{m}$ increase. Even though the slip is not detected, the \gls{cvo} estimation is closer to the ground truth than the baseline odometry. 
     
-    The reason behind this is that, the slip detection works better when all four wheels are slipping. This was the case in the previous dataset where the wheel were rotating, but the rover's position did not change. On the other hand, in this dataset, only the left side wheels were slipping. This could explain the lack performance improvement from the slip elimination. Nevertheless, based on the metrics from Table~\ref{tab:odometry_metrics_data-26-04_beforeAfter_slip_elimination}, the \gls{cvo} estimation with slip elimination shows slightly better performance than the \gls{cvo} estimation without slip elimination and mixed performance compared to the baseline odometry. 
+    The reason behind this is that, the slip detection works better when all four wheels are slipping. This was the case in the previous dataset where the wheel were rotating, but the rover's position did not change. One possible explanation is that the rejecting measurements from a subset of wheels may not be sufficient to produce a large noticeable improvement in the overall estimation. The remaining wheels that are not slipping may still provide enough information to maintain a reasonable estimation of the rover's position and orientation.  
     
-    The travel distance error is reduced from $-0.88~\mathrm{m}$ to $-0.85~\mathrm{m}$, the yaw \gls{rmse} is reduced from $5.68~^\circ$ to $5.54~^\circ$, and the \texttt{z}-position \gls{rmse} is reduced from $0.45~\mathrm{m}$ to $0.42~\mathrm{m}$. The translational \gls{rpe} drift \gls{rmse} is the same for both \gls{cvo} estimations, but the rotational \gls{rpe} drift \gls{rmse} is slightly higher for the \gls{cvo} estimation with slip elimination. Overall, the \gls{cvo} estimation with slip elimination shows better performance than the \gls{cvo} estimation without slip elimination. 
+    Nevertheless, based on the metrics from Table~\ref{tab:odometry_metrics_data-26-04_beforeAfter_slip_elimination}, the \gls{cvo} estimation with slip elimination shows slightly better performance than the \gls{cvo} estimation without slip elimination and mixed performance compared to the baseline odometry. 
+    
+    The travel distance error is reduced from $-0.88~\mathrm{m}$ to $-0.85~\mathrm{m}$, the yaw \gls{rmse} is reduced from $5.68~^\circ$ to $5.54~^\circ$, and the \texttt{z}-position \gls{rmse} is reduced from $0.45~\mathrm{m}$ to $0.42~\mathrm{m}$. The translational \gls{rpe} drift \gls{rmse} is the same for both \gls{cvo} estimations, but the rotational \gls{rpe} drift \gls{rmse} is slightly worse for the \gls{cvo} estimation with slip elimination.
+    
+    Overall, the \gls{cvo} estimation with slip elimination provides small improvements in travel distance error, yaw \gls{rmse}, and \texttt{z}-position \gls{rmse} while the translational \gls{rpe} drift \gls{rmse} and final position error remain the same. The rotational \gls{rpe} drift \gls{rmse} is slightly worse for the \gls{cvo} estimation with slip elimination. 
+    \FloatBarrier
 
-    The \gls{cvo} estimation with slip elimination performs better than the baseline odometry in terms of final position error, \texttt{z}-position \gls{rmse}, and the translational \gls{rpe} drift \gls{rmse}. In terms of yaw \gls{rmse} and rotational \gls{rpe} drift \gls{rmse} and travel distance error, the \gls{cvo} estimation with slip elimination performs worse than the baseline odometry. 
     
     \subsection{Evaluation Summary of Crater Terrain Experiments} \label{subsec:craterTerrainEvalSummary}
 
     The crater terrain experiments show that the \gls{cvo} approach with slip elimination performs better than the \gls{cvo} approach without slip elimination in both selected datasets. This shows that removing slipping wheel measurements is useful in the crater terrain, where the rover moves on an inclined surface and slip is more likely to occur.
 
-    The \gls{cvo} approach with slip elimination performs better than the baseline odometry in terms of final position error, \texttt{z}-position \gls{rmse}, and translational \gls{rpe} drift. This shows that the proposed slip elimination method helps to reduce the effect of slipping wheel measurements in the position estimation.
-
-    However, the baseline odometry performs better in terms of travel distance error, yaw \gls{rmse}, and rotational \gls{rpe} drift. This shows that the \gls{cvo} approach still has limitations in estimating the yaw and travel distance on crater terrain.
+    The \gls{cvo} approach with slip elimination performs better than the baseline odometry in terms of final position error, \texttt{z}-position \gls{rmse}, and translational \gls{rpe} drift. This shows that the proposed slip elimination method helps to reduce the effect of slipping wheel measurements in the position estimation. The baseline odometry performs better in travel distance error for \texttt{DATA\_26\_04}, while the CVO with slip elimination performs better in \texttt{DATA\_26\_01}. The yaw \gls{rmse} for both the crater terrain datasets is better for the baseline odometry than the \gls{cvo} approach with and without slip elimination.
 
     Overall, the crater terrain experiments show that the \gls{cvo} approach with slip elimination gives better results than the \gls{cvo} approach without slip elimination. The proposed approach also improves some metrics compared to the baseline odometry, especially final position error, \texttt{z}-position estimation, and translational \gls{rpe} drift. However, the performance is still not better than the baseline odometry in all metrics.
 
+    \section{Overall Result Interpretation}
+    
+    From the evaluation results of the flat floor, sand terrain, and crater terrain experiments, it can be observed that the proposed \gls{cvo} approach does not consistently outperform the baseline odometry in all metrics. The \gls{cvo} approach shows improvements in some datasets, especially in local relative motion estimation and yaw estimation. The performance of the \gls{cvo} across flat floor and sand terrain is not consistently better than the baseline odometry. In the crater terrain, the \gls{cvo} approach with slip elimination shows better performance than the \gls{cvo} approach without slip elimination and the baseline odometry. The difference of performance between the \gls{cvo} approach with and without slip elimination is clearly noticeable in the crater terrain experiments, where the rover moves on an inclined surface and slip is more likely to occur. 
+        
 
 \end{document}
