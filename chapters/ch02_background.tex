@@ -206,4 +206,114 @@ This section provides a brief overview of the Lie group, Lie algebra, and the In
 
 The \gls{inekf} extends the Extended Kalman Filter by representing suitable parts of the state on a Lie group. In this formulation, the rotation, velocity, and position are embedded in a matrix Lie group, while the IMU biases remain Euclidean variables. This representation preserves the underlying geometry of the state during estimation. The invariant error is expressed locally in vector coordinates associated with the corresponding Lie algebra, which enables the error dynamics to be linearized and the Kalman correction to be carried out using standard matrix operations.
 
+\subsection{Invariant Extended Kalman Filter Algorithm}
+\label{subsec:background_inekf_algorithm}
+
+The \gls{inekf} follows the propagation and correction structure of a conventional Extended Kalman Filter. However, the rotation, velocity, and position components are represented on a matrix Lie group, and their estimation error is defined using an invariant error. Let $\hat{\boldsymbol{X}}^{+}_{k}$ and $\boldsymbol{P}^{+}_{k}$ denote the corrected state estimate and its covariance at time step $k$. The superscript $'-'$ denotes the predicted state before a measurement correction, while the superscript $'+'$ denotes the corrected state after the measurement has been applied.
+
+During the propagation step, the current corrected state is propagated from time step $k$ to $k+1$ using the system motion model:
+
+\begin{equation}
+    \hat{\boldsymbol{X}}^{-}_{k+1}
+    =
+    f\left(
+        \hat{\boldsymbol{X}}^{+}_{k},
+        \boldsymbol{u}_{k},
+        \Delta t
+    \right),
+    \label{eq:inekfStatePropagationBackground}
+\end{equation}
+
+where $\boldsymbol{u}_{k}$ contains the bias-corrected gyroscope and accelerometer measurements, and $\Delta t$ is the time difference between two consecutive measurements. The corresponding covariance is propagated as
+
+\begin{equation}
+    \boldsymbol{P}^{-}_{k+1}
+    =
+    \boldsymbol{\Phi}_{k}
+    \boldsymbol{P}^{+}_{k}
+    \boldsymbol{\Phi}_{k}^{T}
+    +
+    \boldsymbol{Q}_{d,k},
+    \label{eq:inekfCovariancePropagationBackground}
+\end{equation}
+
+Where, $\boldsymbol{\Phi}_{k}$ is the discrete state-transition matrix and $\boldsymbol{Q}_{d,k}$ is the discrete process-noise covariance. The predicted state $\hat{\boldsymbol{X}}^{-}_{k+1}$ is also called the prior state estimate because it is calculated before using the measurement available at time step $k+1$. When a measurement $\boldsymbol{z}_{k+1}$ becomes available, it is compared with the measurement predicted from the prior state. The measurement residual is calculated as
+
+\begin{equation}
+    \boldsymbol{r}_{k+1}
+    =
+    \boldsymbol{z}_{k+1}
+    -
+    h\left(\hat{\boldsymbol{X}}^{-}_{k+1}\right),
+    \label{eq:inekfResidualBackground}
+\end{equation}
+
+where $h(\cdot)$ is the measurement function. The residual covariance and the Kalman gain are then calculated as
+
+\begin{align}
+    \boldsymbol{S}_{k+1}
+    &=
+    \boldsymbol{H}_{k+1}
+    \boldsymbol{P}^{-}_{k+1}
+    \boldsymbol{H}_{k+1}^{T}
+    +
+    \boldsymbol{N}_{k+1},
+    \label{eq:inekfInnovationCovarianceBackground}
+    \\
+    \boldsymbol{K}_{k+1}
+    &=
+    \boldsymbol{P}^{-}_{k+1}
+    \boldsymbol{H}_{k+1}^{T}
+    \boldsymbol{S}_{k+1}^{-1},
+    \label{eq:inekfKalmanGainBackground}
+\end{align}
+
+where $\boldsymbol{H}_{k+1}$ is the measurement Jacobian and $\boldsymbol{N}_{k+1}$ is the measurement-noise covariance. The correction vector is obtained from
+
+\begin{equation}
+    \delta\boldsymbol{x}_{k+1}
+    =
+    \boldsymbol{K}_{k+1}\boldsymbol{r}_{k+1}.
+    \label{eq:inekfCorrectionVectorBackground}
+\end{equation}
+
+Unlike a conventional vector-state update, the correction of the Lie-group state cannot be performed using direct vector addition. For the left-invariant formulation used in this thesis, the correction associated with the rotation, velocity, and position is mapped from the Lie algebra to the Lie group using the exponential map:
+
+\begin{equation}
+    \hat{\boldsymbol{X}}^{+}_{k+1}
+    =
+    \hat{\boldsymbol{X}}^{-}_{k+1}
+    \operatorname{Exp}
+    \left(
+        \delta\boldsymbol{\xi}_{k+1}
+    \right),
+    \label{eq:inekfStateCorrectionBackground}
+\end{equation}
+
+where $\delta\boldsymbol{\xi}_{k+1}$ is the Lie-group part of the correction vector. Euclidean state variables, such as the gyroscope and accelerometer biases, are corrected using vector addition. Finally, the corrected covariance is calculated using
+
+\begin{equation}
+    \boldsymbol{P}^{+}_{k+1}
+    =
+    \left(
+        \boldsymbol{I}
+        -
+        \boldsymbol{K}_{k+1}\boldsymbol{H}_{k+1}
+    \right)
+    \boldsymbol{P}^{-}_{k+1}
+    \left(
+        \boldsymbol{I}
+        -
+        \boldsymbol{K}_{k+1}\boldsymbol{H}_{k+1}
+    \right)^{T}
+    +
+    \boldsymbol{K}_{k+1}
+    \boldsymbol{N}_{k+1}
+    \boldsymbol{K}_{k+1}^{T}.
+    \label{eq:inekfCovarianceCorrectionBackground}
+\end{equation}
+
+The corrected estimate $\hat{\boldsymbol{X}}^{+}_{k+1}$ is used as the starting state for the next propagation step. Therefore, the filter repeatedly propagates the state using the motion model and corrects the accumulated error whenever a suitable measurement is available. The specific propagation model and measurement update used for the proposed odometry approach are presented in Chapter~\ref{chap:methodology}.
+
+
 \end{document}

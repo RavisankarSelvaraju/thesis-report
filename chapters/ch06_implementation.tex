@@ -185,17 +185,11 @@ public:
     
     The \gls{pc} selection is done based on two methods: the \gls{lf} and the \gls{md}. The method used to update the \gls{inekf} is decided based on the configuration flag \texttt{estimate\_contacts}. If this flag is true, the \gls{md} method is used to select the \gls{pc}. If this flag is false, the \gls{lf} method is used to select the \gls{pc}. 
     
-    The \gls{md}-based contact estimation method selects the spoke with the lowest squared \gls{md}. It also considers the spoke with the second-lowest squared \gls{md}. The difference between these two values is calculated as
-    
-    $\Delta d_M^2 = d_{M,2}^2-d_{M,1}^2.$
-    
-    If this difference is below the configured \texttt{contact_md2_threshold}, both spokes are selected as \glspl{pc}. Otherwise, only the spoke with the lowest squared \gls{md} is selected. In the experiments, the threshold is configured as \texttt{0.002}, a unitless value. 
+    The \gls{md} based contact estimation method selects the spoke with the lowest squared \gls{md}. It also considers the spoke with the second-lowest squared \gls{md}. The difference between these two values is calculated as $\Delta d_M^2 = d_{M,2}^2-d_{M,1}^2.$ If this difference is below the configured \texttt{contact\_md2\_threshold}, both spokes are selected as \glspl{pc}. Otherwise, only the spoke with the lowest squared \gls{md} is selected. In the experiments, the threshold is configured as \texttt{0.002}, a unitless value. 
 
-    
     In the \gls{lf} method of contact estimation, initially, the spoke with the lowest \texttt{z} position is selected as the \gls{pc} then a threshold region is created in the \texttt{z} position of the spoke tip in the body frame. The threshold region is created by adding \texttt{0.02 m} to the \texttt{z} position of the selected spoke tip. Spokes with \texttt{z} position below this threshold are also selected as \glspl{pc}. The threshold value of \texttt{0.02 m} is experimentally selected in a flat and non-deformable terrain. 
     
-    Once the slip rejection and contact selection are done, the \texttt{SpokeData} map is updated with the contact and slip status of each spoke. 
-    For updating the \gls{inekf}, the innovation, Jacobian, and noise matrices of the \glspl{pc} which are non-slipping and in contact are extracted from the \texttt{SpokeData} map and stored in \texttt{Eigen::VectorXd}, \texttt{Eigen::MatrixXd}, and \texttt{Eigen::MatrixXd}.
+    Once the slip rejection and contact selection are done, the \texttt{SpokeData} map is updated with the contact and slip status of each spoke. For updating the \gls{inekf}, the innovation, Jacobian, and noise matrices of the \glspl{pc} which are non-slipping and in contact are extracted from the \texttt{SpokeData} map and stored in \texttt{Eigen::VectorXd}, \texttt{Eigen::MatrixXd}, and \texttt{Eigen::MatrixXd}.
     
     When all the spoke data is processed, the \texttt{CorrectContactVelocity} method of the \gls{inekf} library is called with the extracted innovation, Jacobian, and noise matrices. The \gls{inekf} library is extended with this new method to handle the contact velocity correction step. The \texttt{correctContactVelocity} method uses the \texttt{CorrectLeftInvariant} method from the \gls{inekf} library to update the filter state and covariance. The updated filter state and covariance are stored in the \gls{cvo} library and can be accessed using the getter methods. If there are no spokes that satisfy the contact and slip conditions, the \texttt{CorrectContactVelocity} method is not called, and the filter state and covariance are not updated. 
     

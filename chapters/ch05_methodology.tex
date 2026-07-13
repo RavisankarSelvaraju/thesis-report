@@ -3,7 +3,7 @@
 \begin{document}
     \chapter{Methodology} \label{chap:methodology}
     
-    This chapter provides details on the proposed approach to improve the odometry estimation in the coyote~3 rover system. The details of \gls{inekf}-based odometry, the proposed measurement update step for the \gls{inekf}, the Mahalanobis-distance-based measurement rejection, the contact spoke estimation, and an overview of the proposed approach are presented in this chapter. 
+    This chapter provides details on the proposed approach to improve the odometry estimation in the Coyote~3 rover system. The details of \gls{inekf}-based odometry, the proposed measurement update step for the \gls{inekf}, the Mahalanobis-distance-based measurement rejection, the contact spoke estimation, and an overview of the proposed approach are presented in this chapter. 
     
     \section{Overview of the Proposed Approach} \label{sec:approach_overview}
     
@@ -18,7 +18,7 @@
     \begin{figure}[!h]
         \begin{center}
         \includegraphics[width=0.75\linewidth]{media/plots/approach_explanation_plot.png}
-        \caption{Predicted and Measured PCV overlaid on the Front Left wheel of the Coyote~3 rover.}
+        \caption[Predicted and measured PCV vectors for the front-left wheel]{Predicted and measured \gls{pcv} vectors at the five spoke tips of the Coyote~3 front-left wheel, shown in the body-frame \(x\)-\(z\) plane. The green arrows represent the measured \gls{pcv} calculated from the wheel encoder angular velocity, while the red arrows represent the predicted \gls{pcv} calculated from the propagated \gls{inekf} state and the bias-corrected body angular velocity. The blue marker shows the body-frame origin and coordinate axes, and the grey line represents the ground surface. For the lower spoke in contact with the ground, the predicted and measured vectors are closely aligned, resulting in a smaller residual than for the other spokes.}
         \label{fig:approachPCVexplanation}
         \end{center}
     \end{figure}
@@ -27,10 +27,9 @@
     
     In this thesis, the \gls{inekf} estimates the pose and velocity of the rover body with respect to the odometry frame, denoted as $odom$. This frame is initialized at the start of the estimator component and remains fixed during the estimation. The \gls{inekf} estimates the pose of the rover and other elements in its state vector. To estimate these elements, the filter uses the \gls{imu} data to propagate the state vector elements forward in time. Let us define this propagated state $\hat{X}^{-}_{k+1}$ at the time step $k+1$. Let the current state be $X_{k}$ and the current time step be $k$. This propagation of state is done using an inertial motion model driven by the \gls{imu} measurement. This motion model uses the bias corrected gyroscope and accelerometer values to estimate the orientation, position and velocity of the rover at $k+1$. Since, this predicted state is calculated only with \gls{imu} driven motion model, it accumulates error due to sensor drift. This error needs to be corrected by an independent measurement source. In the proposed approach, the correction is done using the joint encoder measurements.
     
-    Figure~\ref{fig:approachPCVexplanation} presents the front left wheel of the Coyote~3 rover and the body frame coordinate system. The wheel is rotating in the clock-wise direction resulting in rover moving forward. The purpose of this figure is to show the predicted and measured \gls{pcv} vectors expressed in body frame. 
+    Figure~\ref{fig:approachPCVexplanation} shows the front left wheel of the Coyote~3 rover in the body frame coordinate system. The wheel is rotating in the clock-wise direction resulting in rover moving forward. The purpose of this figure is to show the predicted and measured \gls{pcv} vectors expressed in body frame. 
     
-    Using the predicted state $\hat{X}^{-}_{k+1}$, the velocity of each spoke tip can be calculated in the body frame. The details of the predicted \gls{pcv} are provided in Section~\ref{subsec:predictedPCV}.
-    To understand the predicted \gls{pcv}, we calculate the velocity that each spoke tip would have due to the predicted body linear velocity, the bias-corrected body angular velocity from \gls{imu}, and the spoke-tip position relative to the body frame. This calculation generates a velocity vector for each spoke tip of the selected wheel, shown as red arrows in Figure~\ref{fig:approachPCVexplanation}. 
+    Using the predicted state $\hat{X}^{-}_{k+1}$, the velocity of each spoke tip can be calculated in the body frame. The details of the predicted \gls{pcv} are provided in Section~\ref{subsec:predictedPCV}. To understand the predicted \gls{pcv}, the velocity of each spoke tip is calculated using the predicted body linear velocity, the bias-corrected body angular velocity from the \gls{imu}, and the spoke-tip position relative to the body frame. This calculation generates a velocity vector for each spoke tip of the selected wheel, shown as red arrows in Figure~\ref{fig:approachPCVexplanation}. 
     
     To correct the predicted state $\hat{X}^{-}_{k+1}$, the measured \gls{pcv} is calculated using the joint encoder measurements. The details of the measured \gls{pcv} are provided in Section~\ref{subsec:measuredPCV}. Similar to the predicted \gls{pcv}, we calculate the measured \gls{pcv} for all the spokes of a wheel. The measured \gls{pcv} is calculated from the wheel angular velocity about its rotation axis and the position vector from the wheel center to the spoke tip. The resulting measured \gls{pcv} points along the direction of wheel rotation and is perpendicular to the position vector from the wheel center to the spoke tip. These vectors are shown as the green arrow in Figure~\ref{fig:approachPCVexplanation}. This measured \gls{pcv} is initially expressed in the wheel frame and later transformed into the body frame.
         
@@ -83,9 +82,11 @@
         \label{eq:measurementFunction}
     \end{equation}
     
-    where, $R_{body}^{odom}$ is the orientation of the body frame expressed in the odom frame and $[R_{body}^{odom}]^T$ transforms the $v_{body}^{odom}$ to the $v_{body}^{body}$. The $R_{body}^{odom}$ and the $v_{body}^{odom}$ are part of the filter's state vector shown in Equation~\ref{eq:stateVector}. $v_{body}^{odom}$ represents the linear velocity of the body frame expressed in the odom frame. $\omega_{body}^{body}$ is the angular velocity of the body expressed in the body frame. $r_{pc}^{body}$, is the position vector of the \gls{pc} from the body frame of the rover expressed in the body frame.
-   
-    The $v_{pc, rigid}^{body}$ is the rigid-body velocity of the potential contact point at the spoke tip, expressed in the body frame. This quantity is calculated in Equation~\ref{eq:velocityOfaPointInRigidBody}. The negated form represents the relative velocity of the contact surface with respect to the rover body at this potential contact point. This quantity is used as the predicted \gls{pcv}, or measurement function $h(x)$, as shown in Equation~\ref{eq:measurementFunction}.
+    where, $R_{body}^{odom}$ is the orientation of the body frame expressed in the odom frame and $[R_{body}^{odom}]^T$ transforms the $v_{body}^{odom}$ to the $v_{body}^{body}$. The $R_{body}^{odom}$ and the $v_{body}^{odom}$ are part of the filter's state vector shown in Equation~\ref{eq:stateVector}. $v_{body}^{odom}$ represents the linear velocity of the body frame expressed in the odom frame. $\omega_{body}^{body}$ is the angular velocity of the body expressed in the body frame. $r_{pc}^{body}$, is the position vector of the \gls{pc} from the body frame of the rover expressed in the body frame. The $v_{pc, rigid}^{body}$ is the rigid-body velocity of the potential contact point at the spoke tip, expressed in the body frame. It represents how fast the spoke tip would move if it were rigidly fixed to the rover body and the wheel were not rotating.
+
+    This can be understood using the difference between an ice skate and a roller skate. A point on an ice skate blade is fixed relative to the boot, so its velocity is caused only by the translation and rotation of the skater. This is analogous to $v_{pc, rigid}^{body}$, which describes the motion of the spoke tip due only to the rover body motion. In contrast, a point on a roller-skate wheel also has an additional velocity component caused by the wheel rotation.
+    
+    This quantity is calculated in Equation~\ref{eq:velocityOfaPointInRigidBody}. The negated form represents the relative velocity of the contact surface with respect to the rover body at this potential contact point. This quantity is used as the predicted \gls{pcv}, or measurement function $h(x)$, as shown in Equation~\ref{eq:measurementFunction}.
     
     To understand this negation, we should look at an example. Imagine we have rover that is moving forward with a velocity of $+2 m/s$, for the sake of simplicity, our imaginary rover does not have rotational velocity. According to rigid body kinematics, the velocity of a point attached to the rover will also be $+2 m/s$. From the rover's body frame of reference, the forward motion of the body will be seen as the ground moving backwards under the rover. Mathematically, this can be represented by the negation of Equation~\ref{eq:velocityOfaPointInRigidBody}, resulting in the velocity of the ground moving under the point of contact to be $-2 m/s$. This perspective is used to compare the predicted and the measured \gls{pcv}
         
@@ -112,56 +113,233 @@
     
     If the $r_{pcv}$ is small, the wheel encoder measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel encoder measurements are inconsistent with the filter's prediction. This could mean wheel encoder measurements may be affected by errors such as wheel slip, an inconsistent contact assumption or noise in wheel encoder measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
 
-    \section{Measurement Model and Jacobian} \label{sec:measurementModelAndJacobian}
-        
-    The measurement model, also referred to as the measurement function $h(x)$, is given by Equation~\ref{eq:measurementFunction}. The $h(x)$ corresponds to the predicted \gls{pcv} which is used by \gls{inekf} to calculate the predicted measurement from its state vector that can be compared to a measured \gls{pcv} derived from the wheel encoder measurements. The $h(x)$ is also used to derive the measurement Jacobian. For better readability, the measurement function is rewritten in Equation~\ref{eq:measurementFunction-2}. The $\omega_{body}^{body}$ is the angular velocity of the body frame expressed in the body frame with the gyroscope bias removed. This is shown in Equation~\ref{eq:gyroBiasRemoved}.    
-    The measurement Jacobian $H$ is the partial derivative of the measurement function $h(x)$ with respect to the error state $\xi$ variables evaluated at the current state $\hat{X}$ as shown in Equation~\ref{eq:MeasurementJacobian-1}. The measurement Jacobian linearizes the measurement function at the current state. The measurement Jacobian describes the relationship between a small perturbation in the state vector and the predicted \gls{pcv} value. The measurement Jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
-        
-        \begin{equation}
-            h(x) = -([R_{body}^{odom}]^T \cdot v_{body}^{odom} + (\omega_{body}^{body} \times r_{pc}^{body}))
-            \label{eq:measurementFunction-2}
-        \end{equation}
-        
-        \begin{equation}
-            \omega_{body}^{body} = \omega_{meas}^{body} - b_g
-            \label{eq:gyroBiasRemoved}
-        \end{equation}
+    \section{Measurement Model and Jacobian}
+    \label{sec:measurementModelAndJacobian}
 
-        \begin{equation}
-            \xi = \begin{bmatrix}
-            \delta R \\
+    The measurement model, also referred to as the measurement function $h(x)$, corresponds to the predicted \gls{pcv}. It is used by the \gls{inekf} to calculate a predicted measurement from the filter state. This predicted measurement is compared with the measured \gls{pcv} obtained from the wheel encoder measurements. The measurement function given in Equation~\ref{eq:measurementFunction} is rewritten as
+
+    \begin{equation}
+        h(x)
+        =
+        -\left(
+            [R_{body}^{odom}]^{T}v_{body}^{odom}
+            +
+            \left(
+                \omega_{body}^{body}
+                \times
+                r_{pc}^{body}
+            \right)
+        \right),
+        \label{eq:measurementFunction-2}
+    \end{equation}
+
+    Where, $x$ represents the complete filter state used by the measurement function. The angular velocity $\omega_{body}^{body}$ is the
+    bias-corrected gyroscope measurement expressed in the body frame:
+
+    \begin{equation}
+        \omega_{body}^{body}
+        =
+        \omega_{meas}^{body}
+        -
+        b_g.
+        \label{eq:gyroBiasRemoved}
+    \end{equation}
+
+    The complete filter state consists of the Lie-group state $X$ and the gyroscope and accelerometer biases:
+
+    \begin{equation}
+        x
+        =
+        \left(
+            X,
+            b_g,
+            b_a
+        \right).
+        \label{eq:completeFilterState}
+    \end{equation}
+
+    The Lie-group state $X$ contains the rotation, velocity, and position, while $b_g$ and $b_a$ are Euclidean variables. During the correction step, the current state estimate is the propagated state $\hat{x}_{k+1}^{-}$. For compactness, this state is denoted by
+    $\hat{x}$ in the remainder of this section:
+
+    \begin{equation}
+        \hat{x}
+        =
+        \hat{x}_{k+1}^{-}
+        =
+        \left(
+            \hat{X},
+            \hat{b}_g,
+            \hat{b}_a
+        \right),
+        \label{eq:estimatedCompleteFilterState}
+    \end{equation}
+
+    Where, $\hat{X}$ is the propagated estimate of the Lie-group state, and $\hat{b}_g$ and $\hat{b}_a$ are the current gyroscope and accelerometer bias estimates. The predicted measurement at the current state estimate is therefore
+
+    \begin{equation}
+        h(\hat{x})
+        =
+        -\left(
+            [\hat{R}_{body}^{odom}]^{T}
+            \hat{v}_{body}^{odom}
+            +
+            \left[
+                \left(
+                    \omega_{meas}^{body}
+                    -
+                    \hat{b}_g
+                \right)
+                \times
+                r_{pc}^{body}
+            \right]
+        \right).
+        \label{eq:predictedMeasurementAtEstimate}
+    \end{equation}
+
+    The measurement Jacobian describes how the predicted \gls{pcv} changes when a small perturbation is applied to the current state estimate. The local perturbation vector is defined as
+
+    \begin{equation}
+        \xi
+        =
+        \begin{bmatrix}
+            \delta\theta & \delta V & \delta P & \delta b_g & \delta b_a
+        \end{bmatrix} ^{T},
+        \label{eq:ErrorStateVector}
+    \end{equation}
+
+    Where, $\delta\theta\in\mathbb{R}^{3}$ is the local rotation perturbation, $\delta V$ is the velocity perturbation, $\delta P$ is the position perturbation, $\delta b_g$ is the gyroscope bias perturbation, and $\delta b_a$ is the accelerometer bias perturbation. The symbol $\delta\theta$ is used instead of $\delta R$ because the rotation perturbation is represented by a three-dimensional vector and not directly by a rotation matrix. The first three elements of $\xi$ are associated with the Lie-group state and are grouped as
+    
+    \begin{equation}
+        \xi_X
+        =
+        \begin{bmatrix}
+            \delta\theta \\
             \delta V \\
-            \delta P \\
-            \delta gyro\_bias \\
-            \delta acc\_bias
-            \end{bmatrix}
-            \label{eq:ErrorStateVector}
-        \end{equation}
-        
-        \begin{equation}
-            H = \frac{\partial h(x)}{\partial \xi}\bigg|_{\hat{X}}
-            \label{eq:MeasurementJacobian-1}
-        \end{equation}
-        
-        where, $\xi$ is the left invariant error state, refer to Section~\ref{subsec:background_invariant_errors} for details, $\hat{X}$ is the current state estimate, and $h(x)$ is the measurement function. The evaluation of Equation~\ref{eq:MeasurementJacobian-2} to get the result in Equation~\ref{eq:MeasurementJacobian-3} is discussed in detail in the appendix \ref{appendix:MeasurementJacobianDerivation}.
-        
-        \begin{equation}
-            H = \begin{bmatrix}
-            \frac{\partial h(x)}{\partial \delta R} & \frac{\partial h(x)}{\partial \delta V} & \frac{\partial h(x)}{\partial \delta P} & \frac{\partial h(x)}{\partial \delta gyro\_bias} & \frac{\partial h(x)}{\partial \delta acc\_bias}
-            \end{bmatrix}
-            \label{eq:MeasurementJacobian-2}
-        \end{equation}
-        
-        \begin{equation}
-            H = \begin{bmatrix}
-                -[[R_{body}^{odom}]^T \cdot v_{body}^{odom}]_\times & -\mathbf{I} & \mathbf{0} & -[r_{pc}^{body}]_\times & \mathbf{0}
-            \end{bmatrix}
-            \label{eq:MeasurementJacobian-3}      
-        \end{equation}
-        
-        The validity of the measurement Jacobian is verified by comparing the analytical Jacobian with a numerical Jacobian. The numerical Jacobian is calculated by perturbing the state vector and calculating the change in the measurement function. The analytical and numerical Jacobians are found to be consistent with each other. The numerical Jacobian calculation is provided in the appendix \ref{appendix:NumericalJacobianCalculation}. 
-        % \todo[inline]{Provide the numerical jacobian calculation in the appendix}
-       
+            \delta P
+        \end{bmatrix}.
+        \label{eq:LieGroupErrorState}
+    \end{equation}
+
+    The matrix left-invariant error $\eta^{L}$ defined in
+    Section~\ref{subsec:background_invariant_errors} is a Lie-group
+    element. In contrast, $\xi_X$ is a vector containing local coordinates
+    used to represent a small increment of the Lie-group state. For the
+    Jacobian calculation, a state close to the current estimate is defined
+    by applying this increment through right multiplication:
+
+    \begin{equation}
+        X(\xi_X)
+        =
+        \hat{X}
+        \operatorname{Exp}(\xi_X),
+        \label{eq:perturbedLieGroupState}
+    \end{equation}
+
+    Where, $\operatorname{Exp}(\xi_X)$ maps the local perturbation coordinates to a Lie-group increment. This increment contains the small changes associated with rotation, velocity, and position. Equation~\ref{eq:perturbedLieGroupState} does not define an additional filter state. It only defines a state close to $\hat{X}$ for the linearization of the measurement function. The gyroscope and accelerometer biases are Euclidean variables. Therefore, their perturbations are applied using vector addition:
+
+    \begin{align}
+        b_g(\xi)
+        &=
+        \hat{b}_g+\delta b_g,
+        \label{eq:perturbedGyroBias}
+        \\
+        b_a(\xi)
+        &=
+        \hat{b}_a+\delta b_a.
+        \label{eq:perturbedAccelerometerBias}
+    \end{align}
+
+    Using Equations~\ref{eq:perturbedLieGroupState}--
+    \ref{eq:perturbedAccelerometerBias}, the complete perturbed state is
+    defined as
+
+    \begin{equation}
+        x(\xi)
+        =
+        \left(
+            \hat{X}\operatorname{Exp}(\xi_X),
+            \hat{b}_g+\delta b_g,
+            \hat{b}_a+\delta b_a
+        \right).
+        \label{eq:perturbedCompleteState}
+    \end{equation}
+
+    The notation $x(\xi)$ therefore represents the state obtained after applying the perturbation $\xi$ to the current estimate $\hat{x}$. When the perturbation is zero, the Lie-group increment is the identity and the bias perturbations are zero. Consequently,
+
+    \begin{equation}
+        x(0)=\hat{x},
+        \qquad
+        h(x(0))=h(\hat{x}).
+        \label{eq:zeroPerturbationState}
+    \end{equation}
+
+    The measurement Jacobian can now be defined with respect to the local perturbation vector:
+
+    \begin{equation}
+        H
+        =
+        \left.
+        \frac{\partial h\left(x(\xi)\right)}
+            {\partial \xi}
+        \right|_{\xi=0}.
+        \label{eq:MeasurementJacobian-1}
+    \end{equation}
+
+    The derivative is evaluated at $\xi=0$ because this corresponds to linearizing the measurement function around the current propagated state estimate $\hat{x}$. The Jacobian therefore describes the first-order change in the predicted \gls{pcv} caused by small changes in the rotation, velocity, position, and bias estimates. Using the perturbation ordering defined in Equation~\ref{eq:ErrorStateVector}, the measurement Jacobian consists of the following blocks:
+
+    \begin{equation}
+        H
+        =
+        \left.
+        \begin{bmatrix}
+            \dfrac{\partial h(x(\xi))}
+                {\partial\delta\theta}
+            &
+            \dfrac{\partial h(x(\xi))}
+                {\partial\delta V}
+            &
+            \dfrac{\partial h(x(\xi))}
+                {\partial\delta P}
+            &
+            \dfrac{\partial h(x(\xi))}
+                {\partial\delta b_g}
+            &
+            \dfrac{\partial h(x(\xi))}
+                {\partial\delta b_a}
+        \end{bmatrix}
+        \right|_{\xi=0}.
+        \label{eq:MeasurementJacobian-2}
+    \end{equation}
+
+    Evaluating these partial derivatives gives
+
+    \begin{equation}
+        H
+        =
+        \begin{bmatrix}
+            -\left[
+                [\hat{R}_{body}^{odom}]^{T}
+                \hat{v}_{body}^{odom}
+            \right]_{\times}
+            &
+            -\mathbf{I}
+            &
+            \mathbf{0}
+            &
+            -[r_{pc}^{body}]_{\times}
+            &
+            \mathbf{0}
+        \end{bmatrix}.
+        \label{eq:MeasurementJacobian-3}
+    \end{equation}
+
+    The rotation block describes how a small change in the estimated orientation changes the body-frame velocity used in the predicted \gls{pcv}. The velocity block is $-\mathbf{I}$ because the predicted \gls{pcv} directly depends on the negative body-frame velocity. The position block is zero because the measurement function does not directly depend on the rover position. The gyroscope bias block is non-zero because the bias affects the bias-corrected angular velocity in Equation~\ref{eq:gyroBiasRemoved}. The accelerometer bias block is zero because the accelerometer bias does not directly appear in the measurement function.
+
+    The detailed evaluation of Equation~\ref{eq:MeasurementJacobian-2}, resulting in Equation~\ref{eq:MeasurementJacobian-3}, is provided in Appendix~\ref{appendix:MeasurementJacobianDerivation}.
+
+    The validity of the measurement Jacobian is verified by comparing the analytical Jacobian with a numerical Jacobian. The numerical Jacobian is calculated by applying small perturbations to the variables in Equation~\ref{eq:ErrorStateVector} and evaluating the resulting change in the measurement function. The analytical and numerical Jacobians are found to be consistent. The numerical Jacobian calculation is provided in Appendix~\ref{appendix:NumericalJacobianCalculation}.
+
+
         \section{Slip-aware Measurement Rejection} \label{sec:sliprejection}
         
         The measured \gls{pcv}, calculated from the joint encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
@@ -189,13 +367,7 @@
         
         \section{Contact Estimation} \label{sec:ContactEstimation}
         
-        The residual consistency measure used in the slip-aware measurement rejection is also used to estimate which spoke of a wheel is in contact. The rimless wheel motion can be described as a combination of the swing phase and the contact phase. 
-        
-        Estimating which spoke tip is currently in contact for a given wheel is important for the Contact Velocity Odometry estimation. 
-        
-        Correctly identifying the contact spoke is important because the \gls{pcv} residual is calculated for a specific spoke tip. Selecting the wrong spoke can make a valid wheel measurement appear inconsistent, leading to an incorrect measurement rejection.
-        
-        The contact estimation is performed using two methods, the lowest-foot method and the \gls{md}-based method. 
+        The residual consistency measure used in the slip-aware measurement rejection is also used to estimate which spoke of a wheel is in contact. The rimless wheel motion can be described as a combination of the swing phase and the contact phase. Correctly identifying the contact spoke is important because the \gls{pcv} residual is calculated for a specific spoke tip. Selecting the wrong spoke can make a valid wheel measurement appear inconsistent, leading to an incorrect measurement rejection. The contact estimation is performed using two methods, the lowest-foot method and the \gls{md}-based method. 
         
         \subsection{Lowest-Foot-based Contact Estimation}
         
@@ -205,14 +377,5 @@
         
         The use of \gls{inekf} for odometry estimation provides an opportunity to estimate the spokes that are in contact. With the squared \gls{md} calculated in the previous section, the contact spokes can be estimated by calculating the squared \gls{md} value for each spoke and selecting the spoke with the least squared \gls{md} as the spoke in contact. This is based on the assumption that the spoke tip in contact with the ground produces the smallest difference between the predicted and measured \gls{pcv}. Therefore, the spoke with the lowest squared \gls{md} value is selected as the most likely contact spoke. This method can also be used to estimate multiple contact spokes by selecting the spokes with squared \gls{md} value below a certain threshold. The implementation details related to the approach discussed in this chapter is presented in the Implementation Chapter~\ref{chap:implementation}.
         
-        % \todo[inline]{Do we need more explanation on the contact estimation? Probably}
-                
 
-        % \section{Limitations of the Proposed Approach}
-        
-        % The limitations of the proposed approach are discussed in this section. 
-
-        
-        
-    
 \end{document}
