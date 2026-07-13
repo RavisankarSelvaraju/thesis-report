@@ -256,7 +256,25 @@
 
     \section{Contact Estimation Comparison} \label{sec:contactEstimationComparison}
     
-    \todo[inline]{Provide the contact estimation comparison mahalanobis distance and lowest foot contact}
+    This section provides contact estimation comparison between the \gls{md} based and \gls{lf} based estimation. This is not provided in the main report because the contact estimation cannot be verified with ground truth. The ground truth can be obtained from the videos collected during the experiments. Due to the lack of time, the videos were not analyzed to get the ground truth. The comparison provided in this section uses the \gls{lf} method as a pseudo ground truth. The \gls{lf} method is used as the reference because its geometric assumption is expected to be more reliable on flat solid terrain. 
+    
+    The goal of this section is to show that the contact estimation problem has been worked on and evaluate the level of agreement between the \gls{md} based and \gls{lf} based contact estimates. Since the filter state is corrected using the \gls{lf} selected contacts during this comparison, the resulting \gls{md} estimates are not independent of the \gls{lf} method.
+    
+    For the comparison, the contact estimation is evaluated for the dataset \texttt{DATA\_04\_02}. Figure~\ref{fig:contactEstimationComparison} shows the contact estimates for each leg of the Coyote~3 rover over time. The $X$ marks the contact selected by the \gls{md} method and the $O$ marks the contact selected by the \gls{lf} method. It can be observed from the plot that, when the rover is stationary, the \gls{md} method is uncertain on which spoke is in contact. When the rover is moving, the \gls{md} method is able to select the same spoke that is selected by the \gls{lf} method. The contact estimation metrics are shown in Figure~\ref{fig:contactEstimationComparisonLegend}. The metrics are calculated over the entire dataset. Precision measures the proportion of MD-selected contacts that are also selected by the LF method. Recall measures the proportion of LF-selected contacts recovered by the MD method. The Jaccard index measures the overlap between the complete LF and MD contact sets, while the exact-match rate measures the percentage of synchronized wheel samples for which both methods select identical contact sets.
+    
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{media/results/04_contact_estimation/Contact_Selection_Metrics_DATA_04_02.png}
+        \caption[Bar plot of contact estimation metrics]{Bar plot of contact estimation metrics. }
+        \label{fig:contactEstimationComparisonLegend}
+    \end{figure}
+    
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{media/results/04_contact_estimation/Contact_Selection_LF_vs_MD_DATA_04_02.png}
+        \caption[Contact estimation comparison between the \gls{md} and \gls{lf} methods.]{Contact estimation comparison between the \gls{md} and \gls{lf} methods. The contact estimates are shown for each leg of the robot over time. The \gls{lf} method is used as a pseudo ground truth for this comparison.}
+        \label{fig:contactEstimationComparison}
+    \end{figure}
         
     \chapter{Parameters}
 
@@ -314,16 +332,101 @@
     --------------------------------------------------
     \end{lstlisting}
     
-    \chapter{[in the case of using AI-assistants] Description of AI-Generated Content}
-    Describe in detail what content was generated using an AI assistant.
-    Name the AI assistant and how it was used (e.g. which prompts were used, and for which parts of the project).
+    % \chapter{[in the case of using AI-assistants] Description of AI-Generated Content}
+    % Describe in detail what content was generated using an AI assistant.
+    % Name the AI assistant and how it was used (e.g. which prompts were used, and for which parts of the project).
     
-    ChatGPT plus was used. 
+    % ChatGPT plus was used. 
     
-    - the UML diagrams, 
-    - grammar and sentence structure corrections,
-    - latex table from excel data,
-    - latex code for equations from a rudimentary description of the equations,
-    - coherence and flow checking of the report
-    Summarizing overview of results and conclusion from the results and discussion chapter.
+    % - the UML diagrams, 
+    % - grammar and sentence structure corrections,
+    % - latex table from excel data,
+    % - latex code for equations from a rudimentary description of the equations,
+    % - coherence and flow checking of the report
+    % Summarizing overview of results and conclusion from the results and discussion chapter.
+    
+    
+    
+\chapter{Description of AI-Generated Content}
+\label{app:aiGeneratedContent}
+
+Artificial intelligence assistants were used as supporting tools during the implementation and writing of this thesis. The AI assistants were mainly used for language review, technical discussions, code review, debugging, equation derivation, and the preparation of evaluation scripts. All AI-generated suggestions were critically reviewed before being included in the implementation or the report. The author remains responsible for the correctness of the implementation, experiments, results, and written content.
+
+\section{ChatGPT}
+
+ChatGPT, developed by OpenAI, was used during different stages of the project. Its use can be grouped into the following areas.
+
+\subsection{Language and Report Structure}
+
+ChatGPT was used to check paragraphs for grammar, spelling, coherence, and technical clarity. It was also used to suggest improvements to sentence structure, figure captions, section outlines, and LaTeX formatting. The generated suggestions were manually reviewed and modified to maintain a consistent writing style throughout the report.
+
+Representative prompt included: ``Check this paragraph for coherence, technical correctness, grammar, and spelling. Do not rewrite it unless restructuring is necessary.''
+
+This assistance was used throughout the report, particularly in the Background, State of the Art, Methodology, Implementation, Evaluation and Results, and Conclusions chapters.
+
+\subsection{Technical Discussions and Equation Verification}
+
+ChatGPT was used to discuss and verify technical concepts related to the \gls{inekf}, rigid-body kinematics, potential contact velocity, Mahalanobis distance, contact estimation, slip rejection, and odometry evaluation metrics.
+
+It was also used to assist with the presentation and verification of the measurement model and its Jacobian. Representative prompts included:
+
+\begin{itemize}
+    \item ``Derive the measurement Jacobian of the potential contact velocity measurement with respect to the filter error state.''
+    \item ``Check the signs and coordinate frames used in the predicted and measured potential contact velocity equations.''
+    \item ``Explain the rotation, velocity, position, accelerometer-bias, and gyroscope-bias blocks of the measurement Jacobian.''
+\end{itemize}
+
+\subsection{Programming Assistance}
+
+ChatGPT was used to review and debug parts of the C++ implementation of the contact velocity odometry and its Orocos component. It was also used to assist with Python scripts for dataset processing, trajectory alignment, evaluation metric calculation, plot generation, and numerical verification. All generated or modified code was reviewed, executed, and tested using the collected datasets before being used in the project. ChatGPT was not used to generate experimental measurements or ground-truth trajectories.
+
+Representative prompts included:
+
+\begin{itemize}
+    \item ``Review this C++ implementation of the contact velocity measurement update and identify possible frame, sign, or indexing errors.''
+    \item ``Check whether the measurement covariance and innovation covariance are calculated correctly.''
+    \item `` Create plantUML script for the contact velocity odometry estimator component and its input/output ports from the provided C++ code.''
+\end{itemize}
+
+\subsection{Evaluation and Result Review}
+
+ChatGPT was used to compare written interpretations against generated plots and metric tables. This included checking whether statements about trajectory error, yaw error, translational drift, rotational drift, and contact-selection performance were supported by the corresponding results. The final interpretation and conclusions were determined by the author based on the experimental results.
+Representative prompts included:
+
+\begin{itemize}
+    \item ``Compare this written interpretation with the attached trajectory plot and metric table.''
+    \item ``Identify statements that are not supported by the reported evaluation metrics.''
+    \item ``Check whether the dataset, figure, and table references are consistent.''
+\end{itemize}
+
+\section{Gemini CLI}
+
+Gemini CLI, developed by Google, was used as a programming and technical reasoning assistant during the derivation and implementation of the potential contact velocity measurement Jacobian. It was used to inspect the measurement function, derive intermediate expressions, and compare the derivation with the C++ implementation.
+
+Representative prompts included:
+
+\begin{itemize}
+    \item ``Derive the analytical Jacobian of this contact velocity measurement model with respect to the error-state variables.''
+    \item ``Check whether the implemented Jacobian corresponds to the stated measurement function.''
+    \item ``Identify possible sign or coordinate-frame inconsistencies in the measurement update.''
+\end{itemize}
+
+The output from Gemini CLI was treated as an intermediate suggestion. The resulting Jacobian was manually reviewed and numerically verified before being included in the implementation and Appendix~\ref{appendix:MeasurementJacobianDerivation}.
+
+\section{Verification and Author Responsibility}
+
+AI-generated outputs were not accepted without review. The following verification steps were applied:
+
+\begin{itemize}
+    \item Mathematical expressions were checked against the measurement model and coordinate-frame definitions.
+    \item The measurement Jacobian was verified using numerical differentiation.
+    \item Generated and modified code was compiled, executed, and tested on recorded datasets.
+    \item Explanations of evaluation results were compared with the corresponding plots and metric tables.
+    \item Literature-related statements were checked against the original cited publications.
+    \item The final report text was reviewed and edited by the author.
+\end{itemize}
+
+The AI assistants were not used to collect experimental data, generate ground-truth measurements, or independently determine the final scientific conclusions. All decisions concerning the methodology, implementation, experimental design, evaluation, and conclusions were made by the author.
+    
+    
 \end{document}
