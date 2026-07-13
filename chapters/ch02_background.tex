@@ -23,10 +23,31 @@
 \label{sec:background_rimless_wheeled_locomotion}
 
     The \gls{rwr} at DFKI is developed with the objective of traversing harsh terrain. The first iteration of \gls{rwr} is called ASGUARD which is described in the paper \cite{Eich2008AsguardFirstPaper}. Since then, many iterations of \gls{rwr} are developed at DFKI. Coyote~3 is one such version, developed to traverse challenging terrain with rubble, sand, and rocks. This system is also capable of traversing a model Crater developed based on a Crater at Lunar South Pole at DFKI Space Exploration Hall designed to mimic Lunar Environment. 
+    
+    \begin{figure}[!htbp]
+        \centering
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \makebox[\linewidth][c]{%
+                \includegraphics[height=5cm]{media/images/asguard.jpg}
+            }
+            \caption*{Asguard rover. Photograph by Raúl Domínguez.}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \makebox[\linewidth][c]{%
+                \includegraphics[height=5cm]{media/images/coyote3.jpg}
+            }
+            \caption*{Coyote~3 rover.}
+        \end{minipage}
 
-    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the RIC (Robotic Innovation Center) of DFKI (German Research Center for Artificial Intelligence) to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure \ref{fig:coyote3_sima}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can overcome challenging obstacles effectively. 
+        \caption[Asguard and Coyote~3 rovers]{Rimless wheeled rovers at DFKI}
+        \label{fig:asguard_and_coyote3}
+    \end{figure}
 
-    \section{Wheel slip and its effect}
+    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the RIC (Robotic Innovation Center) of DFKI (German Research Center for Artificial Intelligence) to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure \ref{fig:coyote3_with_vicon_markers}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can overcome challenging obstacles effectively. 
+\section{Wheel slip and its effect}
 
     A traditional or rimless wheeled mobile rover in motion experiences two types of slippage at the wheels: Longitudinal slippage (slip) and lateral slip (skid). Slip happens in the direction of motion of wheels, and skid happens perpendicular to the motion of the wheel \cite{naveedTutorial2023}. Unlike traditional wheeled systems, slip in \gls{rwr} is more similar to legged robots. Wheeled systems have continuous contact with the surface, making the slip continuous, but in the \gls{rw} system, slip happens only during contact phases when the spokes touch the terrain.
 
@@ -137,11 +158,18 @@
     \label{eq:TwistTransformationEquation}
     \end{equation}
 
+\subsection{IMU biases and Units}
+
+The \gls{imu} sensor is composed of an accelerometer and a gyroscope. The accelerometer provides the linear acceleration data including the gravity component in $\mathrm{m/s^2}$ and the gyroscope measures the angular velocity data in $\mathrm{rad/s}$. 
+Both sensors are affected by measurement noise and bias. The accelerometer bias is expressed in $\mathrm{m/s^2}$, while the gyroscope bias is expressed in $\mathrm{rad/s}$. These biases are subtracted from the corresponding measurements before they are used in the propagation step of the \gls{inekf}. The initial bias values are estimated during the initialization process. During this process, the rover is kept stationary for a few seconds, and the average of the IMU measurements is calculated. The average values are then used as the initial bias values for the gyroscope. The accelerometer bias is not estimated in this work and are set to zero during initialization. 
+
 % -------------------------------------------------------------------------
+
+
 \section{Lie-Group Foundations of the Invariant Extended Kalman Filter}
 \label{sec:background_lie_groups_inekf}
 
-This section provides a brief overview of the Lie group, Lie algebra, and the Invariance property of the \gls{inekf}. This section is organized into three subsections: Rotations on $SO(3)$, Left- and Right-Invariant Errors, and Invariance in the InEKF.
+This section provides a brief overview of the Lie group, Lie algebra, and the Invariance property of the \gls{inekf}. This section is organized into three subsections: Rotations on $SO(3)$, Left and Right Invariant Errors, and Invariance in the InEKF.
 
 \subsection{Rotations on \texorpdfstring{$SO(3)$}{SO(3)}}
 \label{subsec:background_so3}
@@ -155,10 +183,10 @@ This section provides a brief overview of the Lie group, Lie algebra, and the In
 
     When using Kalman filter for sensor fusion, updating the state with a rotation matrix is not straightforward. Since, rotation matrices are not normal vectors, the change in rotation cannot be added to the rotation matrix directly. The change in rotation can be represented as a vector in the tangent space of the rotation matrix. This tangent space is called Lie algebra and is denoted as $so(3)$. A vector in the Lie algebra $so(3)$ can be mapped to a rotation matrix in $SO(3)$ using the exponential map. Similarly, a rotation matrix in $SO(3)$ can be mapped to a vector in the Lie algebra $so(3)$ using the logarithmic map. 
         
-\subsection{Left- and Right-Invariant Errors}
+\subsection{Left and Right Invariant Errors}
 \label{subsec:background_invariant_errors}
 
-    In a Kalman filter, the estimation error is commonly defined using vector subtraction. However, subtraction is not generally suitable for states that evolve on a Lie group. Let $\boldsymbol{X}\in G$ denote the true state and $\hat{\boldsymbol{X}}\in G$ denote its estimate, where $G$ is a matrix Lie group. The left- and right-invariant errors are defined as follows \cite{barrauInvariantExtendedKalman2017}. The left and right invariant errors are shown in equation \ref{eq:left_invariant_error}.
+    In a Kalman filter, the estimation error is commonly defined using vector subtraction. However, subtraction is not generally suitable for states that evolve on a Lie group. Let $\boldsymbol{X}\in G$ denote the true state and $\hat{\boldsymbol{X}}\in G$ denote its estimate, where $G$ is a matrix Lie group. The left and right invariant errors are defined as follows \cite{barrauInvariantExtendedKalman2017}. The left and right invariant errors are shown in equation \ref{eq:left_invariant_error}.
 
     \begin{equation}
         \boldsymbol{\eta}^{L}
@@ -171,7 +199,7 @@ This section provides a brief overview of the Lie group, Lie algebra, and the In
         \label{eq:left_invariant_error}
     \end{equation}
 
-    The term \emph{invariant} indicates that the error remains unchanged when the true and estimated states undergo the same group transformation. The left-invariant error is invariant under left multiplication, while the right-invariant error is invariant under right multiplication. In this thesis, left invariant errors are used for the filter update.
+    The term \emph{invariant} indicates that the error remains unchanged when the true and estimated states undergo the same group transformation. The left invariant error is invariant under left multiplication, while the right-invariant error is invariant under right multiplication. In this thesis, left invariant errors are used for the filter update.
 
 \subsection{Invariant Error Representation in the InEKF}
 \label{subsec:background_inekf}

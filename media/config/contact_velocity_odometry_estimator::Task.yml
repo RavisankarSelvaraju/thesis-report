@@ -1,0 +1,103 @@
+--- name:default
+
+noise_parameters:
+  noise_gyroscope               : 0.0013397210417743768
+  noise_accelerometer           : 0.6046472855187208
+  noise_gyroscope_bias          : 2.9168610926943368e-05
+  noise_accelerometer_bias      : 0.002145896931535473
+measurement_noise             : 0.0464669854928193
+
+contact_md2_threshold: 0.002
+chi_squared_threshold: 7.815
+set_initial_acc_bias_estimate: false
+set_initial_gyro_bias_estimate: true
+gyro_bias_estimation_time : 3.0
+bias_estimation_in_propagation_step: false
+enable_pcv_gyro_bias_correction: false
+estimate_contacts: false 
+enable_multi_contact_estimation: false
+enable_debug: false
+reject_slipping_spokes: true
+
+# Hardware configuration parameters
+robot_configuration:
+  number_of_wheels: 4
+  number_of_contacts_per_wheel: 5
+  robot_urdf_path: "/opt/workspace/models/robots/coyote3/urdf/coyote3_star_wheels.urdf"
+
+body_frame: "coyote3_base_link"
+world_frame: "coyote3_contact_odometry"
+
+# Names of the contact frames. Dynamic input ports will be created with names pose_contact_<name> accordingly.
+contact_frame_names: [
+  "coyote3_link_wheel_front_left_01",  "coyote3_link_wheel_front_left_02",  "coyote3_link_wheel_front_left_03",  "coyote3_link_wheel_front_left_04",  "coyote3_link_wheel_front_left_05",
+
+  "coyote3_link_wheel_rear_left_01",  "coyote3_link_wheel_rear_left_02",  "coyote3_link_wheel_rear_left_03",  "coyote3_link_wheel_rear_left_04",  "coyote3_link_wheel_rear_left_05",
+
+  "coyote3_link_wheel_rear_right_01",  "coyote3_link_wheel_rear_right_02",  "coyote3_link_wheel_rear_right_03",  "coyote3_link_wheel_rear_right_04",  "coyote3_link_wheel_rear_right_05",
+
+  "coyote3_link_wheel_front_right_01",  "coyote3_link_wheel_front_right_02",  "coyote3_link_wheel_front_right_03",  "coyote3_link_wheel_front_right_04",  "coyote3_link_wheel_front_right_05"
+]
+
+# The inital pose of base link in odometry frame(usually the z axis is the only value that have any value)
+initial_pose:
+  position:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  orientation:
+    im:
+    - 0.0
+    - 0.0
+    - 0.0
+    re: 1.0
+
+# This wheel frame names list is used to get the wheel velocities from the joint data
+wheel_frame_names: [
+  "coyote3_motor_wheel_front_left",
+  "coyote3_motor_wheel_rear_left",
+  "coyote3_motor_wheel_rear_right",
+  "coyote3_motor_wheel_front_right"
+]
+
+wheel_frame_fixed_names: [
+  "coyote3_motor_wheel_front_left_fixed",
+  "coyote3_motor_wheel_rear_left_fixed",
+  "coyote3_motor_wheel_rear_right_fixed",
+  "coyote3_motor_wheel_front_right_fixed"]
+
+# These names below is for transformer to get the corresponding frame names mentioned in the .orogen file
+wheel_fl_frame: "coyote3_motor_wheel_front_left"
+wheel_rl_frame: "coyote3_motor_wheel_rear_left"
+wheel_rr_frame: "coyote3_motor_wheel_rear_right"    
+wheel_fr_frame: "coyote3_motor_wheel_front_right"
+
+wheel_fl_fixed_frame: "coyote3_motor_wheel_front_left_fixed"
+wheel_fr_fixed_frame: "coyote3_motor_wheel_front_right_fixed"
+wheel_rl_fixed_frame: "coyote3_motor_wheel_rear_left_fixed"
+wheel_rr_fixed_frame: "coyote3_motor_wheel_rear_right_fixed"
+
+foot_fl01_frame: "coyote3_link_wheel_front_left_01"
+foot_fl02_frame: "coyote3_link_wheel_front_left_02"
+foot_fl03_frame: "coyote3_link_wheel_front_left_03"
+foot_fl04_frame: "coyote3_link_wheel_front_left_04"
+foot_fl05_frame: "coyote3_link_wheel_front_left_05"
+
+foot_rl01_frame: "coyote3_link_wheel_rear_left_01"
+foot_rl02_frame: "coyote3_link_wheel_rear_left_02"
+foot_rl03_frame: "coyote3_link_wheel_rear_left_03"
+foot_rl04_frame: "coyote3_link_wheel_rear_left_04"
+foot_rl05_frame: "coyote3_link_wheel_rear_left_05"
+
+foot_rr01_frame: "coyote3_link_wheel_rear_right_01"
+foot_rr02_frame: "coyote3_link_wheel_rear_right_02"
+foot_rr03_frame: "coyote3_link_wheel_rear_right_03"
+foot_rr04_frame: "coyote3_link_wheel_rear_right_04"
+foot_rr05_frame: "coyote3_link_wheel_rear_right_05"
+
+foot_fr01_frame: "coyote3_link_wheel_front_right_01"
+foot_fr02_frame: "coyote3_link_wheel_front_right_02"
+foot_fr03_frame: "coyote3_link_wheel_front_right_03"
+foot_fr04_frame: "coyote3_link_wheel_front_right_04"
+foot_fr05_frame: "coyote3_link_wheel_front_right_05"  

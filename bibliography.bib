@@ -114,18 +114,16 @@
   doi={10.1109/M2VIP62491.2024.10746072}
 }
 
-@article{Iagnemma2009,
-  author = {Karl Iagnemma and Chris C. Ward},
-  doi = {10.1007/S10514-008-9105-8},
-  issn = {09295593},
-  issue = {1},
-  journal = {Autonomous Robots},
-  month = {Jan},
-  pages = {33-46},
-  publisher = {Springer},
-  title = {{Classification-based wheel slip detection and detector fusion for mobile robots on outdoor terrain}},
-  year = {2009}
-}
+@INPROCEEDINGS{Ward2009,
+  author={Ward, Chris C. and Iagnemma, Karl},
+  booktitle={Proceedings 2007 IEEE International Conference on Robotics and Automation}, 
+  title={Classification-Based Wheel Slip Detection and Detector Fusion for Outdoor Mobile Robots}, 
+  year={2007},
+  volume={},
+  number={},
+  pages={2730-2735},
+  keywords={Wheels;Detectors;Mobile robots;Support vector machines;Support vector machine classification;Extraterrestrial measurements;Statistics;Velocity measurement;Orbital robotics;Detection algorithms},
+  doi={10.1109/ROBOT.2007.363878}}
 
 @article{Valente2019,
   author = {Michelle Valente and Cyril Joly and Atnaud De La Fortelle},
@@ -292,9 +290,190 @@ doi = {10.1109/ACCESS.2022.3188990}
   }
   
   
+@article{Li2023,
+	title = {Center of {Mass} {Dynamics} and {Contact}-{Aided} {Invariant} {Filtering} for {Biped} {Robot} {State} {Estimation}},
+	volume = {23},
+	issn = {1558-1748},
+	url = {https://ieeexplore.ieee.org/document/10262268},
+	doi = {10.1109/JSEN.2023.3317286},
+	abstract = {Due to the complexity and uncertainty of the actual working environments, relying solely on proprioceptive sensors to obtain accurate floating base and center of mass (CoM) estimates is of great significance for biped robots. In this article, a biped locomotion state estimator aided by both CoM dynamics and leg forward kinematics is proposed. The main contribution of this estimator is the use of contact force measurements that are not considered in existing methods. Contact force measurements can be used to predict CoM motions and update the floating base estimates with CoM forward kinematics. Compared with the leg forward kinematics, the CoM dynamics prediction and the CoM forward kinematics update are more robust to contact slippage and highly dynamic motions. The simulation results show that the estimator proposed in this article improves the estimation accuracy of the floating base in the slippage direction under various reference speeds. In addition, the introduction of CoM dynamics enables the filter to directly output the CoM state in the world coordinate system, avoiding the complicated cascade design of the existing CoM state estimators.},
+	number = {22},
+	urldate = {2026-07-11},
+	journal = {IEEE Sensors Journal},
+	author = {Li, Jingchao and Yuan, Zhaohui and Sang, Xiaoyue and Zhou, Qingqing and Zhang, Jingqin},
+	month = nov,
+	year = {2023},
+	keywords = {Biped locomotion, biped robot, Cameras, center of mass (CoM) dynamics, Dynamics, Kinematics, Legged locomotion, Robot kinematics, Robots, Sensors, state estimation},
+	pages = {27531--27539},
+	file = {Full Text PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/378BNVBN/Li et al. - 2023 - Center of Mass Dynamics and Contact-Aided Invariant Filtering for Biped Robot State Estimation.pdf:application/pdf},
+}
 
-  
-  
+@inproceedings{Ramadoss2022,
+	title = {Estimation of {Human} {Base} {Kinematics} using {Dynamical} {Inverse} {Kinematics} and {Contact}-{Aided} {Lie} {Group} {Kalman} {Filter}},
+	issn = {2164-0580},
+	url = {https://ieeexplore.ieee.org/document/10000199},
+	doi = {10.1109/Humanoids53995.2022.10000199},
+	abstract = {Full body motion estimation of a human through wearable sensing technologies is challenging in the absence of position sensors since base kinematics is usually not directly measurable. This paper contributes to the development of a model-based floating base kinematics estimation algorithm using wearable distributed inertial and force-torque sensing. This is done by extending the existing dynamical optimization-based Inverse Kinematics (IK) approach for joint state estimation, in cascade, to include a center of pressure based contact detector and a contact-aided Kalman filter on Lie groups for floating base pose estimation. The proposed method is tested in an experimental scenario where a human equipped with a sensorized suit and shoes performs walking motions. The proposed method is demonstrated to obtain a reliable reconstruction of the whole-body human motion.},
+	urldate = {2026-07-11},
+	booktitle = {2022 {IEEE}-{RAS} 21st {International} {Conference} on {Humanoid} {Robots} ({Humanoids})},
+	author = {Ramadoss, Prashanth and Rapetti, Lorenzo and Tirupachuri, Yeshasvi and Grieco, Riccardo and Milani, Gianluca and Valli, Enrico and Dafarra, Stefano and Traversaro, Silvio and Pucci, Daniele},
+	month = nov,
+	year = {2022},
+	note = {ISSN: 2164-0580},
+	keywords = {Humanoid robots, Kinematics, Legged locomotion, Robot sensing systems, Sensors, Tracking, Trajectory},
+	pages = {364--369},
+	file = {Full Text PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/LUADCLYV/Ramadoss et al. - 2022 - Estimation of Human Base Kinematics using Dynamical Inverse Kinematics and Contact-Aided Lie Group K.pdf:application/pdf},
+}
+
+@article{Zhou2025,
+	title = {Proprioceptive-{Based} {Multimode} {State} {Estimation} for {Wheeled}-{Quadruped} {Robot}},
+	volume = {25},
+	issn = {1558-1748},
+	url = {https://ieeexplore.ieee.org/document/11031117},
+	doi = {10.1109/JSEN.2025.3576923},
+	abstract = {This article presents a novel multimode proprioceptive state estimation framework integrated with motor encoders and an inertial measurement unit (IMU) for wheeled-quadruped robot operating over long distances. The standard assumption of using nonslipping stance legs for state estimation in legged robots becomes invalid for wheeled-quadruped platforms due to their hybrid wheeled-legged morphology. To address this issue, a probabilistic slip model (PSM) that accounts for the additional displacement caused by wheeled motion is proposed. In addition, by constructing an offset wheeled-legged contact model, we estimate the contact position and velocity to reduce the accumulated errors resulting from inaccurate contact point estimation. Based on these foundations, we integrate wheel rotation measurements with the displacement induced by the wheeled configuration and employ a Kalman filter for state estimation. By incorporating reliable contact constraint (CC) into the observation model, our approach simultaneously compensates for vertical drift while maintaining estimation accuracy. To accurately assess wheel-ground contact status, a generalized momentum-based normalized method for contact detection is applied. The cumulative errors caused by premature or delayed landings of the stance legs are thereby minimized. Finally, our multimode state estimation methods show superior performance in indoor and outdoor scenarios, achieving at least a 1.75 times reduction in the root mean square error (RMSE) across all directions compared with existing methods.},
+	number = {14},
+	urldate = {2026-07-11},
+	journal = {IEEE Sensors Journal},
+	author = {Zhou, Shichao and Xiang, Beichen and Xie, Zhongqu and Chen, Lingkun and Gu, Chengjie and Ma, Puzhi and Wang, Yulin},
+	month = jul,
+	year = {2025},
+	keywords = {Legged locomotion, Mathematical models, Multimode motion, Probabilistic logic, Propioception, proprioceptive state estimation, Robot kinematics, Robot sensing systems, Robots, sensor fusion, Sensors, State estimation, wheeled–quadruped robot, Wheels},
+	pages = {27587--27595},
+	file = {Full Text PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/KYCEPBQE/Zhou et al. - 2025 - Proprioceptive-Based Multimode State Estimation for Wheeled-Quadruped Robot.pdf:application/pdf},
+}
+
+@inproceedings{Zhang2025,
+	title = {A {Multi}-{Modal} {Fusion} {Framework} for {State} {Estimation} in {Four}-{Wheel}-{Legged} {Robots}},
+	url = {https://ieeexplore.ieee.org/document/11135741},
+	doi = {10.1109/MRAI65197.2025.11135741},
+	abstract = {The wheel-legged composite robot combines the advantages of efficient wheeled movement and legged obstacle crossing, but its state estimation accuracy is limited by sensors dependent on contact detection and the challenge of multi-source data fusion. Aiming at the four-legged wheel-legged robot, we proposed a contact estimator based on multi-probability model fusion and a position and velocity estimator based on odometry to achieve high-precision state estimation with low hardware cost. The contact estimator constructed a three-layer probability model: the gait planning model dynamically estimated the contact probability based on phase information, the knee flexion and extension joint torque model used the mutation characteristics of joint torque to establish a Gaussian distribution mapping, the wheel bottom height model constructed a probability relationship through the geometric constraint of ground clearance height, and then fused the three-layer output through Kalman filter to solve the problems of high cost and difficult wiring of traditional sensors. The position and velocity estimator fused motor encoder and IMU data, constructs Kalman filter state equation and observation equation, calculated the pose state of the wheel bottom and the centroid in the world coordinate system, and improved the estimation efficiency under nonholonomic constraints. Simulation results showed that the contact state discrimination results of the contact estimator in pure rolling and mixed motion are highly consistent with the real contact state, and the estimation results of the position and velocity estimator in the X, Y and Z directions are in good agreement with the real values, and the estimation error is always kept within a small range. This method provides reliable state feedback for the dynamic control of the wheel-legged robot.},
+	urldate = {2026-07-11},
+	booktitle = {2025 {International} {Conference} on {Mechatronics}, {Robotics}, and {Artificial} {Intelligence} ({MRAI})},
+	author = {Zhang, Qian and Zhao, Apeng and Cui, Xiulong and Fan, Jizhuang and Zhao, Jie},
+	month = jun,
+	year = {2025},
+	keywords = {Accuracy, contact estimation, Costs, Kalman filter, Kalman filters, Mathematical models, Mobile robots, multi-probability model fusion, position and velocity estimation, Robot kinematics, Robot sensing systems, State estimation, Torque, wheel-legged robot, Wheels},
+	pages = {288--293},
+	file = {Full Text PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/EDPYJQX8/Zhang et al. - 2025 - A Multi-Modal Fusion Framework for State Estimation in Four-Wheel-Legged Robots.pdf:application/pdf},
+}
+
+@misc{Kim2025,
+	title = {Adaptive {Invariant} {Extended} {Kalman} {Filter} for {Legged} {Robot} {State} {Estimation}},
+	url = {http://arxiv.org/abs/2510.16755},
+	doi = {10.48550/arXiv.2510.16755},
+	abstract = {State estimation is crucial for legged robots as it directly affects control performance and locomotion stability. In this paper, we propose an Adaptive Invariant Extended Kalman Filter to improve proprioceptive state estimation for legged robots. The proposed method adaptively adjusts the noise level of the contact foot model based on online covariance estimation, leading to improved state estimation under varying contact conditions. It effectively handles small slips that traditional slip rejection fails to address, as overly sensitive slip rejection settings risk causing filter divergence. Our approach employs a contact detection algorithm instead of contact sensors, reducing the reliance on additional hardware. The proposed method is validated through real-world experiments on the quadruped robot LeoQuad, demonstrating enhanced state estimation performance in dynamic locomotion scenarios.},
+	urldate = {2026-07-11},
+	publisher = {arXiv},
+	author = {Kim, Kyung-Hwan and Ahn, DongHyun and Lee, Dong-hyun and Yoon, JuYoung and Hyun, Dong Jin},
+	month = oct,
+	year = {2025},
+	note = {arXiv:2510.16755 [cs.RO]},
+	keywords = {Computer Science - Robotics, Electrical Engineering and Systems Science - Systems and Control},
+	file = {Preprint PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/5J5W5KEK/Kim et al. - 2025 - Adaptive Invariant Extended Kalman Filter for Legged Robot State Estimation.pdf:application/pdf;Snapshot:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/69SNAIBS/2510.html:text/html},
+}
+
+
+@misc{Taborelli2026,
+  author = {Taborelli, Stefano},
+  title = {{State Estimation for Legged Robots: Fusion of Inertial Sensing and Model-Based Control Information}},
+  year = {2026},
+  month = mar,
+  howpublished = {Master's thesis},
+  url = {https://www.politesi.polimi.it/handle/10589/252418}
+}
+
+@inproceedings{Xu2024,
+  author = {Xu, Jinglan and Song, Zhicheng and Zheng, Chunxin and Ma, Jun},
+  title = {{State Estimation for Wheeled-Legged Robot with Slip Detection}},
+  booktitle = {2024 IEEE International Conference on Robotics and Biomimetics (ROBIO)},
+  year = {2024},
+  month = dec,
+  pages = {2049--2055},
+  doi = {10.1109/ROBIO64047.2024.10907492},
+  url = {https://ieeexplore.ieee.org/document/10907492}
+}
+
+@article{Ward2008,
+  author = {Ward, Chris C. and Iagnemma, Karl},
+  title = {{A Dynamic-Model-Based Wheel Slip Detector for Mobile Robots on Outdoor Terrain}},
+  journal = {IEEE Transactions on Robotics},
+  volume = {24},
+  number = {4},
+  pages = {821--831},
+  year = {2008},
+  month = aug,
+  doi = {10.1109/TRO.2008.924945},
+  url = {https://ieeexplore.ieee.org/document/4559359}
+}
+
+
+@inproceedings{ward_classification2007,
+	title = {Classification-{Based} {Wheel} {Slip} {Detection} and {Detector} {Fusion} for {Outdoor} {Mobile} {Robots}},
+	issn = {1050-4729},
+	url = {https://ieeexplore.ieee.org/document/4209496},
+	doi = {10.1109/ROBOT.2007.363878},
+	abstract = {This paper introduces a signal-recognition based approach for detecting autonomous mobile robot immobilization on outdoor terrain. The technique utilizes a support vector machine classifier to form class boundaries in a feature space composed of statistics related to inertial and (optional) wheel speed measurements. The proposed algorithm is validated using experimental data collected with an autonomous robot operating in an outdoor environment. Additionally, two detector fusion techniques are proposed to combine the outputs of multiple immobilization detectors. One technique is proposed to minimize false immobilization detections. A second technique is proposed to increase overall detection accuracy while maintaining rapid detector response. The two fusion techniques are demonstrated experimentally using the detection algorithm proposed in this work and a dynamic model-based algorithm. It is shown that the proposed techniques can be used to rapidly and robustly detect mobile robot immobilization in outdoor environments, even in the absence of absolute position information.},
+	urldate = {2026-07-11},
+	booktitle = {Proceedings 2007 {IEEE} {International} {Conference} on {Robotics} and {Automation}},
+	author = {Ward, Chris C. and Iagnemma, Karl},
+	month = apr,
+	year = {2007},
+	note = {ISSN: 1050-4729},
+	keywords = {Detection algorithms, Detectors, Extraterrestrial measurements, Mobile robots, Orbital robotics, Statistics, Support vector machine classification, Support vector machines, Velocity measurement, Wheels},
+	pages = {2730--2735},
+	file = {Full Text PDF:/home/dfki.uni-bremen.de/rselvaraju/Zotero/storage/EXX43UHL/Ward and Iagnemma - 2007 - Classification-Based Wheel Slip Detection and Detector Fusion for Outdoor Mobile Robots.pdf:application/pdf},
+}
+
+@article{Zarei2024Journal,
+  author = {Zarei, Mahboubeh and Chhabra, Robin and Mottaghi, Mohammadreza},
+  title = {{Sequential Track Fusion in Multi-Sensor Networks of Unscented Kalman Filters: A Case of Slip Estimation in Planetary Mobile Robots}},
+  journal = {Acta Astronautica},
+  volume = {219},
+  pages = {555--568},
+  year = {2024},
+  month = jun,
+  doi = {10.1016/j.actaastro.2024.03.046},
+  url = {https://www.sciencedirect.com/science/article/pii/S0094576524001723}
+}
+
+@article{Yoon2024,
+  author = {Yoon, Ziwon and Kim, Joon-Ha and Park, Hae-Won},
+  title = {{Invariant Smoother for Legged Robot State Estimation With Dynamic Contact Event Information}},
+  journal = {IEEE Transactions on Robotics},
+  volume = {40},
+  pages = {193--212},
+  year = {2024},
+  doi = {10.1109/TRO.2023.3328202},
+  url = {https://ieeexplore.ieee.org/document/10301546}
+}
+
+@article{Gargiulo2021,
+  author = {Gargiulo, Anna Maria and di Stefano, Ivan and Genova, Antonio},
+  title = {{Model-Based Slippage Estimation to Enhance Planetary Rover Localization with Wheel Odometry}},
+  journal = {Applied Sciences},
+  volume = {11},
+  number = {12},
+  pages = {5490},
+  year = {2021},
+  month = jan,
+  doi = {10.3390/app11125490},
+  url = {https://www.mdpi.com/2076-3417/11/12/5490}
+}
+
+@inproceedings{Schlee2024,
+  author = {Schlee, Dennis and Vyas, Shubham and Domínguez, Raúl and Kirchner, Frank},
+  title = {{Gait Analysis and Control of Rimless Wheel Rovers for Planetary Exploration}},
+  booktitle = {2024 International Conference on Space Robotics (iSpaRo)},
+  year = {2024},
+  month = jun,
+  pages = {139--144},
+  doi = {10.1109/iSpaRo60631.2024.10688005},
+  url = {https://ieeexplore.ieee.org/document/10688005}
+}
+
+
+
 % software and datasheet references
 
 @misc{SITE-mathworks-mahalanobis,
@@ -352,6 +531,24 @@ year = {2026},
   howpublished = {\url{https://www.orocos.org/rtt/}},
   note         = {Accessed: 2026-06-26}
 }
+
+@misc{geminicli2026,
+  title = {Gemini CLI},
+  author = {{Google}},
+  year = {2026},
+  url = {https://geminicli.com/},
+  note = {Accessed: 2026-06-26}
+}
+
+@misc{openai_chatgpt_jacobian_2026,
+    author       = {{OpenAI}},
+    title        = {ChatGPT, GPT-5.6 Thinking},
+    year         = {2026},
+    howpublished = {\url{https://chatgpt.com/}},
+    note         = {Used to assist with the derivation and presentation of the
+                    measurement and numerical Jacobian equations. Accessed: 12 July 2026}
+}
+
 % Book references
 
 @book{BOOK-RigidBodyDynamicsAlgorithms,

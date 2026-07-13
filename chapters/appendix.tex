@@ -2,378 +2,318 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
 
-    \chapter{Design Details}
-    Your first appendix
-    
-    \section{measurement jacobian derivation}\label{appendix:MeasurementJacobianDerivation}
-
-    The equation \ref{eq:MeasurementJacobian-2} contains five partial derivatives, each corresponding to one of the error state variables. This section provides the detailed derivation of each partial derivative so that the resulting measurement jacobian will be the one shown in equation \ref{eq:MeasurementJacobian-3}.
-    
-    \subsection{Rotation matrix}
-    
-    \todo[inline]{Outdated information, FIX IT}
-        The orientation of the body is not related to the velocity at the point of contact, the rotation matrix block of measurement jacobian will be $0_{3\times3}$
-    \subsection{Velocity}
-        When the measurement function is differentiated with respect to the body velocity,
-        
-    $$\frac{\partial h}{\partial v_{body}^{body}} = - \frac{\partial v_{body}^{body}}{\partial v_{body}^{body}} - \frac{\partial (\omega_{body}^{body} \times r_{pc}^{body})}{\partial v_{body}^{body}} = -I - 0 = -I_{3\times3}$$
-
-
-    \subsection{Position}
-        Since the position of body does not affect the velocity at the point of contact, this block will also be $0_{3\times3}$
-    \subsection{Accelerometer bias}
-        The acceleration term is not included in the measurement equation, this block will also be $0_{3\times3}$
-    \subsection{Gyroscope bias}
-    
-    \todo[inline]{Provide the gyro bias estimation calculation}
-    
-    \section{Numerical Jacobian} \label{appendix:NumericalJacobianCalculation}
-    \todo[inline]{Provide the numerical jacobian calculation}
-    
-    
     \chapter{Additional Implementation Details}
     
+    This chapter provides additional implementation details of the \gls{cvo} approach. It includes the derivation of the measurement Jacobian, the numerical Jacobian calculation, and a comparison of contact estimation methods. 
+    
+    \section{Measurement Jacobian Derivation} \label{appendix:MeasurementJacobianDerivation}
+    
+    This section provides the derivation of the measurement Jacobian presented in Section~\ref{sec:measurementModelAndJacobian}. The Jacobian is derived by calculating the partial derivatives of the measurement function $h(x)$ with respect to each error-state variable. This analytical derivation used to get the Jacobian matrix is derived with AI assistance using Gemini CLI~\cite{geminicli2026}. The presented equations in the following sections are generated using the AI assistant ChatGPT~\cite{openai_chatgpt_jacobian_2026}, and they have been manually verified for correctness. 
+    
+    \subsection*{Rotation Matrix}
+
+    The rotation matrix block of the measurement Jacobian is derived from the measurement function $h(x)$, which is defined as follows:
+
+    \begin{equation}
+    h(x) =
+    -\left(
+    [R_{body}^{odom}]^{T}v_{body}^{odom}
+    +
+    \left(\omega_{body}^{body}\times r_{pc}^{body}\right)
+    \right)
+    \end{equation}
+
+    For a small rotation error $\delta R$, the first-order approximation of the body velocity is
+        
+    \begin{equation}
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        \approx
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        +
+        \left[
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        \right]_{\times}\delta R
+    \end{equation}
+
+    Substituting this approximation into the measurement function $h(x)$, we get,
+
+    \begin{align}
+        h(x,\delta R)
+        &\approx
+        -\left(
+        [R_{body}^{odom}]^{T}v_{body}^{odom} + \left[ [R_{body}^{odom}]^{T}v_{body}^{odom} \right]_{\times}\delta R +
+        \left(
+        \omega_{body}^{body}\times r_{pc}^{body}
+        \right)
+        \right)
+        \\
+        &=
+        -\left(
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        +
+        \left(
+        \omega_{body}^{body}\times r_{pc}^{body}
+        \right)
+        \right)
+        -
+        \left[
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        \right]_{\times}\delta R
+        \\
+        &=
+        h(x)
+        -
+        \left[
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        \right]_{\times}\delta R.
+    \end{align}
+        
+    Therefore, the partial derivative of the measurement function with respect to the rotation error is
+    
+    \begin{equation}
+    \frac{\partial h(x,\delta R)}
+    {\partial \delta R}
+    \bigg|_{\delta R=0}
+    =
+    -\left[
+    [R_{body}^{odom}]^{T}v_{body}^{odom}
+    \right]_{\times}.
+    \end{equation} 
+    
+    \subsection*{Velocity}
+
+    A small velocity error $\delta V$ changes the measurement function as
+
+    \begin{equation}
+        h(x,\delta V)
+        =
+        -\left(
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        +
+        \delta V
+        +
+        \left(
+        \omega_{body}^{body}\times r_{pc}^{body}
+        \right)
+        \right).
+    \end{equation}
+
+    Using the definition of $h(x)$, this can be written as
+
+    \begin{equation}
+        h(x,\delta V)
+        =
+        h(x)-\delta V.
+    \end{equation}
+
+    Differentiating with respect to $\delta V$ gives
+
+    \begin{equation}
+        \frac{\partial h(x,\delta V)}
+        {\partial \delta V}\bigg|_{\delta V=0}
+        =
+        -\mathbf{I}.
+    \end{equation}
+
+    \subsection*{Position}
+
+    The body position does not appear in the measurement function. Therefore, adding a small position error $\delta P$ does not change the predicted measurement:
+
+    \begin{equation}
+        h(x,\delta P)=h(x).
+    \end{equation}
+
+    Differentiating with respect to $\delta P$ gives
+
+    \begin{equation}
+        \frac{\partial h(x,\delta P)}
+        {\partial \delta P}\bigg|_{\delta P=0}
+        =
+        \mathbf{0}.
+    \end{equation}
+
+    \subsection*{Gyroscope Bias}
+
+    The gyroscope bias is included in the bias-corrected angular velocity:
+
+    \begin{equation}
+        \omega_{body}^{body}
+        =
+        \omega_{meas}^{body}-b_g.
+    \end{equation}
+
+    After adding a small gyroscope-bias error $\delta b_g$, the measurement function becomes
+
+    \begin{align}
+        h(x,\delta b_g)
+        &=
+        -\left(
+        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        +
+        \left(
+        \omega_{meas}^{body}
+        -
+        b_g
+        -
+        \delta b_g
+        \right)
+        \times r_{pc}^{body}
+        \right)
+        \\
+        &=
+        h(x)
+        +
+        \delta b_g\times r_{pc}^{body}
+        \\
+        &=
+        h(x)
+        -
+        [r_{pc}^{body}]_{\times}\delta b_g.
+    \end{align}
+
+    Differentiating with respect to $\delta b_g$ gives
+
+    \begin{equation}
+        \frac{\partial h(x,\delta b_g)}
+        {\partial \delta b_g}\bigg|_{\delta b_g=0}
+        =
+        -[r_{pc}^{body}]_{\times}.
+    \end{equation}
+
+    \subsection*{Accelerometer Bias}
+
+    The accelerometer bias does not appear directly in the measurement function. Therefore, adding a small accelerometer-bias error $\delta b_a$ does not change the predicted measurement:
+
+    \begin{equation}
+        h(x,\delta b_a)=h(x).
+    \end{equation}
+
+    Differentiating with respect to $\delta b_a$ gives
+
+    \begin{equation}
+        \frac{\partial h(x,\delta b_a)}
+        {\partial \delta b_a}\bigg|_{\delta b_a=0}
+        =
+        \mathbf{0}.
+    \end{equation}
+
+    \section{Numerical Jacobian} \label{appendix:NumericalJacobianCalculation}
+
+    The analytical measurement Jacobian derived in Appendix~\ref{appendix:MeasurementJacobianDerivation} is verified using a numerical Jacobian. Each error-state variable is perturbed independently, and the corresponding change in the measurement function is calculated using the central difference approximation. This numerical Jacobian validation implementation and the following equations were developed with the help of AI assistant ChatGPT~\cite{openai_chatgpt_jacobian_2026}. The script is carefully reviewed and verified for correctness. 
+
+    For the $i$-th error-state variable, the corresponding column of the numerical
+    Jacobian is calculated as
+
+    \begin{equation}
+        H_{\mathrm{num},i}
+        =
+        \frac{
+            h\left(x\boxplus\epsilon_i e_i\right)
+            -
+            h\left(x\boxplus(-\epsilon_i e_i)\right)
+        }{2\epsilon_i},
+        \label{eq:numericalJacobianCentralDifference}
+    \end{equation}
+
+    where, $e_i$ is the unit vector corresponding to the $i$-th error-state variable, $\epsilon_i$ is the applied perturbation, and $\boxplus$ represents the addition of the perturbation to the state. The rotation perturbation is applied on $SO(3)$ using
+
+    \begin{equation}
+        R^{+}
+        =
+        R\exp\left([\delta R]_{\times}\right),
+    \end{equation}
+
+    while the velocity, position, and bias perturbations are added directly to their corresponding state variables. For the selected test state and perturbation values, the analytical and numerical Jacobians were consistent. The Python implementation used for this verification is provided in Listing~\ref{lst:numericalJacobianVerification}.
+
+    \lstinputlisting[
+        language=Python,
+        caption={Numerical verification of the measurement Jacobian using central differences.},
+        label={lst:numericalJacobianVerification},
+        frame=single,
+    ]{media/config/numerical_jacobian.py}
+
+    The analytical and numerical Jacobians obtained for the selected test state are shown in Listing~\ref{lst:numericalJacobianOutput}. Both Jacobians contain the same values, which verifies the analytical derivation for this test case.
+
+    
+    \begin{lstlisting}[
+        caption={Comparison of the analytical and numerical measurement Jacobians.},
+        label={lst:numericalJacobianOutput},
+        basicstyle=\ttfamily\footnotesize
+    ]
+    
+    Expected Jacobian:
+
+    0 -0.2 -0.5 -1.0    0    0    0    0    0    0  0.8 -0.4    0    0    0
+    0.2    0  1.0    0 -1.0    0    0    0    0 -0.8    0  0.5    0    0    0
+    0.5 -1.0    0    0    0 -1.0    0    0    0  0.4 -0.5    0    0    0    0
+
+    Computed numerical Jacobian:
+
+    0 -0.2 -0.5 -1.0    0    0    0    0    0    0  0.8 -0.4    0    0    0
+    0.2    0  1.0    0 -1.0    0    0    0    0 -0.8    0  0.5    0    0    0
+    0.5 -1.0    0    0    0 -1.0    0    0    0  0.4 -0.5    0    0    0    0
+    \end{lstlisting}
+
     \section{Contact Estimation Comparison} \label{sec:contactEstimationComparison}
     
     \todo[inline]{Provide the contact estimation comparison mahalanobis distance and lowest foot contact}
-    
-    \section{Contact Velocity Odometry Estimator}
-
-        \begin{lstlisting}[style=orogenstyle, caption=orogen file of the \gls{cvoe} component, label={code:orogenfileCVOE}]
-
-            name "contact_velocity_odometry_estimator"
-
-            import_types_from "contact_velocity_odometry/ContactVelocityOdometry_Types.hpp"
-            import_types_from "std"
-            import_types_from "base"
-            import_types_from "odometry"
-
-            using_library "contact_velocity_odometry"
-            using_library "odometry"
-            using_library 'urdfdom'
-
-
-            task_context "Task" do
-                needs_configuration
-
-                # ********************* Properties *********************
-                property('world_frame', '/std/string', 'world').
-                    doc 'Name of the world coordinate frame.'
-
-                property('body_frame', '/std/string').
-                    doc 'Name of the robot root coordinate frame.'
-
-                property('enable_debug', '/bool', false).
-                    doc 'Whether to enable debug output and ports.'
-
-                property('noise_parameters', '/contact_velocity_odometry/NoiseParams').
-                    doc 'Filter parameters.'
-
-                property('initial_pose', '/base/Pose').
-                    doc 'Initial pose of the body link in world frame. If not set, the filter will use the first input pose as initial state.'
-                    
-                property('measurement_noise', '/double').
-                    doc 'Measurement noise for the wheel angular velocity measurements used in the contact velocity estimation.'
-                    
-                property('chi_squared_threshold', '/double').
-                    doc 'confidence threshold for the Mahalanois distance for slip elimination.'
-                
-                property('contact_md2_threshold', '/double', 2.0).
-                    doc 'threshold to determine if multiple spokes are in contact based on their MD squared distance difference.'
-                
-                property('estimate_contacts', 'bool', false).
-                    doc 'Whether to estimate the contact points using mahalanobis distance .'
-
-                property('gyro_bias_estimation_time', '/double', 2.0).
-                    doc 'Time window for gyro bias estimation in seconds.'
-
-                property('bias_estimation', 'bool', false).
-                    doc 'Whether to estimate the bias of the IMU measurements in the filter propagation step.'
-
-                property('contact_frame_names', '/std/vector<std/string>').
-                    doc 'Names of the contact frames. Dynamic input ports will be created with names pose_contact_<name> accordingly.'
-                    
-                property('wheel_frame_names', '/std/vector<std/string>').
-                    doc 'Names of the wheel frames. These names will be used to get the transformations from the wheel frames to the body frame.
-                        The order of the names must be the same as the order of the contact_frame_names. Counter clockwise from front left wheel.'
-
-                property('wheel_frame_fixed_names', '/std/vector<std/string>').
-                    doc 'Names of the wheel frames fixed. These names will be used to get the transformations from the fixed wheel frames to the foot frame.
-                        The order of the names must be the same as the order of the contact_frame_names. Counter clockwise from front left wheel.'
-
-                property('robot_configuration', '/contact_velocity_odometry/RobotConfiguration').
-                    doc 'Hardware configuration parameters for the robot.'
-
-                # ********************* Input Ports *********************
-                input_port('measurement_imu', '/base/samples/IMUSensors').
-                    doc 'Input for acceleration and gyro sensor measurement from the IMU.'
-
-                input_port('pose_imu', '/base/samples/RigidBodyState').
-                    doc 'Pose of the IMU wrt. to the body link.'
-                    
-                input_port('joint_state', '/base/samples/Joints').
-                    doc 'Input for the joint state of the robot. Used to get the wheel velocity.'
-
-                # *********************** Output Ports *********************
-                output_port( "pose_body_estimated", "base/samples/RigidBodyState" ).
-                    doc 'The estimated pose of the body link wrt. to world.'
-
-                output_port( "pose_body_estimated_local", "base/samples/RigidBodyState" ).
-                    doc 'The estimated pose transformed to body frame.'
-                
-                output_port('imu_body_estimated', '/base/samples/IMUSensors').
-                    doc 'The measured gyro and acc. transformed to body and corrected by estimated bias.'
-
-                output_port('imu_world_estimated', '/base/samples/IMUSensors').
-                    doc 'For debugging: The measured acc. - gravity in world frame.'
-
-                output_port('imu_bias_estimated', '/base/samples/IMUSensors').
-                    doc 'The estimated bias of acc. and gyro measurement.'
-                    
-                # *********************** Debug Ports *********************
-                output_port("debug_lf_contact_points", "/odometry/BodyContactState").
-                    doc '[debug port] The selected contact points for visualization and analysis.'
-
-                output_port("debug_md_contact_points", "/odometry/BodyContactState").
-                    doc '[debug port] The selected contact points for visualization and analysis.'
-
-                output_port('debug_measurement_imu', '/base/samples/IMUSensors').
-                    doc '[debug port]Input for acceleration and gyro sensor measurement from the IMU.'
-                    
-                output_port('debug_state_covariance_propagation', '/base/MatrixXd').
-                    doc '[debug port] The state covariance after the propagation step.'
-                    
-                output_port('debug_state_covariance_correction', '/base/MatrixXd').
-                    doc '[debug port] The state covariance after the correction step.'
-                    
-                output_port('debug_kalman_gain', '/base/MatrixXd').
-                    doc '[debug port] The Kalman gain matrix.'
-                    
-                output_port('debug_innovations', '/base/MatrixXd').
-                    doc '[debug port] The innovation matrix from the last correction step.'
-
-                transformer do
-
-                    transform "foot_fl01", "body"
-                    transform "foot_fl02", "body"
-                    transform "foot_fl03", "body"
-                    transform "foot_fl04", "body"
-                    transform "foot_fl05", "body"
-
-                    transform "foot_fr01", "body"
-                    transform "foot_fr02", "body"
-                    transform "foot_fr03", "body"
-                    transform "foot_fr04", "body"
-                    transform "foot_fr05", "body"
-
-                    transform "foot_rl01", "body"
-                    transform "foot_rl02", "body"
-                    transform "foot_rl03", "body"
-                    transform "foot_rl04", "body"
-                    transform "foot_rl05", "body"
-
-                    transform "foot_rr01", "body"
-                    transform "foot_rr02", "body"
-                    transform "foot_rr03", "body"
-                    transform "foot_rr04", "body"
-                    transform "foot_rr05", "body"
-
-                    transform "wheel_fl", "body"
-                    transform "wheel_fr", "body"
-                    transform "wheel_rl", "body"
-                    transform "wheel_rr", "body" 
-                    
-                    transform "wheel_fl_fixed", "body"
-                    transform "wheel_fr_fixed", "body"
-                    transform "wheel_rl_fixed", "body"
-                    transform "wheel_rr_fixed", "body" 
-                    
-                    transform "foot_fl01", "wheel_fl_fixed"
-                    transform "foot_fl02", "wheel_fl_fixed"
-                    transform "foot_fl03", "wheel_fl_fixed"
-                    transform "foot_fl04", "wheel_fl_fixed"
-                    transform "foot_fl05", "wheel_fl_fixed"
-
-                    transform "foot_fr01", "wheel_fr_fixed"
-                    transform "foot_fr02", "wheel_fr_fixed"
-                    transform "foot_fr03", "wheel_fr_fixed"
-                    transform "foot_fr04", "wheel_fr_fixed"
-                    transform "foot_fr05", "wheel_fr_fixed"
-
-                    transform "foot_rl01", "wheel_rl_fixed"
-                    transform "foot_rl02", "wheel_rl_fixed"
-                    transform "foot_rl03", "wheel_rl_fixed"
-                    transform "foot_rl04", "wheel_rl_fixed"
-                    transform "foot_rl05", "wheel_rl_fixed"
-
-                    transform "foot_rr01", "wheel_rr_fixed"
-                    transform "foot_rr02", "wheel_rr_fixed"
-                    transform "foot_rr03", "wheel_rr_fixed"
-                    transform "foot_rr04", "wheel_rr_fixed"
-                    transform "foot_rr05", "wheel_rr_fixed"
-
-                    align_port("joint_state", 0.025)
-                    align_port("measurement_imu", 0.01)
-                    
-                    max_latency 0.01
-                end
-                port_driven
-            end        
         
-        \end{lstlisting}
-        
-        
-        \begin{lstlisting}[style=yamlstyle, caption={Contact Velocity Odometry Estimator YAML configuration file}, label={code:YAMLConfigfileCVOE}]
---- name:default
-
-    # noise based on the IMU datasheet
-    noise_parameters:
-    noise_gyroscope: 0.00012217
-    noise_accelerometer: 0.00058840
-    noise_gyroscope_bias: 0.00003879
-    noise_accelerometer_bias: 0.00014710
-    measurement_noise: 0.001
-
-    # threshold to determine if multiple spokes are in contact based on their MD squared distance difference
-    contact_md2_threshold: 0.002
-    chi_squared_threshold: 7.815 
-
-    gyro_bias_estimation_time : 2.0
-    enable_debug: false
-    estimate_contacts: false # Estimate contacts with mahalanobis distance if true else use the contact state from the lowest foot as contact
-    bias_estimation: true # Estimate the IMU bias in the prediction step if true else bias block are set to zero in the prediction step of the filter 
-
-    # Names of the contact frames. Dynamic input ports will be created with names pose_contact_<name> accordingly.
-    contact_frame_names: [
-    "coyote3_link_wheel_front_left_01",   "coyote3_link_wheel_front_left_02",   "coyote3_link_wheel_front_left_03",   "coyote3_link_wheel_front_left_04",   "coyote3_link_wheel_front_left_05",
-    "coyote3_link_wheel_rear_left_01",    "coyote3_link_wheel_rear_left_02",    "coyote3_link_wheel_rear_left_03",    "coyote3_link_wheel_rear_left_04",    "coyote3_link_wheel_rear_left_05",
-    "coyote3_link_wheel_rear_right_01",   "coyote3_link_wheel_rear_right_02",   "coyote3_link_wheel_rear_right_03",   "coyote3_link_wheel_rear_right_04",   "coyote3_link_wheel_rear_right_05",
-    "coyote3_link_wheel_front_right_01",  "coyote3_link_wheel_front_right_02",  "coyote3_link_wheel_front_right_03",  "coyote3_link_wheel_front_right_04",  "coyote3_link_wheel_front_right_05"
-    ]
-
-    # This wheel frame names list is used to get the wheel velocities from the joint data.
-    wheel_frame_names: [
-    "coyote3_motor_wheel_front_left",
-    "coyote3_motor_wheel_rear_left",
-    "coyote3_motor_wheel_rear_right",
-    "coyote3_motor_wheel_front_right"
-    ]
-
-    # This wheel frame names list is used to get the position of the spokes relative to a fixed frame of reference on the wheel. 
-    wheel_frame_fixed_names: [
-    "coyote3_motor_wheel_front_left_fixed",
-    "coyote3_motor_wheel_rear_left_fixed",
-    "coyote3_motor_wheel_rear_right_fixed",
-    "coyote3_motor_wheel_front_right_fixed"]
-
-
-    # The inital pose of base link in odometry frame(usually the z axis is the only value that have any value)
-    initial_pose:
-    position:
-        data:
-        - 0.0
-        - 0.0
-        - 0.0
-    orientation:
-        im:
-        - 0.0
-        - 0.0
-        - 0.0
-        re: 1.0
-
-    # Hardware configuration parameters
-    robot_configuration:
-    number_of_wheels: 4
-    number_of_contacts_per_wheel: 5
-    robot_urdf_path: "/opt/workspace/models/robots/coyote3/urdf/coyote3_star_wheels.urdf"
-
-    body_frame: "coyote3_base_link"
-    world_frame: "coyote3_contact_odometry"
-
-    # These names below is for transformer to get the corresponding frame names mentioned in the .orogen file
-    wheel_fl_frame: "coyote3_motor_wheel_front_left"
-    wheel_fr_frame: "coyote3_motor_wheel_front_right"
-    wheel_rl_frame: "coyote3_motor_wheel_rear_left"
-    wheel_rr_frame: "coyote3_motor_wheel_rear_right"
-
-    wheel_fl_fixed_frame: "coyote3_motor_wheel_front_left_fixed"
-    wheel_fr_fixed_frame: "coyote3_motor_wheel_front_right_fixed"
-    wheel_rl_fixed_frame: "coyote3_motor_wheel_rear_left_fixed"
-    wheel_rr_fixed_frame: "coyote3_motor_wheel_rear_right_fixed"
-
-    foot_fl01_frame: "coyote3_link_wheel_front_left_01"
-    foot_fl02_frame: "coyote3_link_wheel_front_left_02"
-    foot_fl03_frame: "coyote3_link_wheel_front_left_03"
-    foot_fl04_frame: "coyote3_link_wheel_front_left_04"
-    foot_fl05_frame: "coyote3_link_wheel_front_left_05"
-
-    foot_rl01_frame: "coyote3_link_wheel_rear_left_01"
-    foot_rl02_frame: "coyote3_link_wheel_rear_left_02"
-    foot_rl03_frame: "coyote3_link_wheel_rear_left_03"
-    foot_rl04_frame: "coyote3_link_wheel_rear_left_04"
-    foot_rl05_frame: "coyote3_link_wheel_rear_left_05"
-
-    foot_rr01_frame: "coyote3_link_wheel_rear_right_01"
-    foot_rr02_frame: "coyote3_link_wheel_rear_right_02"
-    foot_rr03_frame: "coyote3_link_wheel_rear_right_03"
-    foot_rr04_frame: "coyote3_link_wheel_rear_right_04"
-    foot_rr05_frame: "coyote3_link_wheel_rear_right_05"
-
-    foot_fr01_frame: "coyote3_link_wheel_front_right_01"
-    foot_fr02_frame: "coyote3_link_wheel_front_right_02"
-    foot_fr03_frame: "coyote3_link_wheel_front_right_03"
-    foot_fr04_frame: "coyote3_link_wheel_front_right_04"
-    foot_fr05_frame: "coyote3_link_wheel_front_right_05"  
-
-        \end{lstlisting}
-
-\begin{lstlisting}[style=consoleoutput, caption={Sample summary of the statistical error metrics.}, label={lst:statistical-error-metrics}]
-    
---------------------------------------------------
-Position error metrics
---------------------------------------------------
-Max position error          : 0.92 m
-Mean position error         : 0.32 m
-Min position error          : 0.00 m
-Std dev of position error   : 0.32 m
-RMSE of position error      : 0.45 m    
---------------------------------------------------
-Orientation Geodesic angle error metrics
---------------------------------------------------
-Max geodesic angle error        : 9.36 degrees
-Mean geodesic angle error       : 4.80 degrees
-Min geodesic angle error        : 0.00 degrees
-Std dev of geodesic angle error : 2.65 degrees
-RMSE of geodesic angle error    : 5.49 degrees
---------------------------------------------------
---------------------------------------------------
-Relative Pose Error (RPE) Translation metrics
---------------------------------------------------
-Max translation error                   : 0.05 m
-Mean translation error                  : 0.04 m
-Std dev of translation error            : 0.00 m
-RMSE of translation error               : 0.04 m
-
-Mean translation error per meter        : 0.15 m/m
-Std dev of translation error per meter  : 0.01 m/m
-RMSE of translation error per meter     : 0.15 m/m
---------------------------------------------------
-Relative Pose Error (RPE) Rotation metrics
---------------------------------------------------
-Max rotation error                  : 3.59 degrees
-Mean rotation error                 : 0.91 degrees
-Std dev of rotation error           : 0.92 degrees
-RMSE of rotation error              : 1.29 degrees
-
-Mean rotation error per meter       : 3.62 degrees/m
-Std dev of rotation error per meter : 3.70 degrees/m
-RMSE of rotation error per meter    : 5.18 degrees/m
---------------------------------------------------
-\end{lstlisting}
-    
     \chapter{Parameters}
-    Your second chapter appendix
 
+    This chapter provides the OroGen and YAML configuration files of the \gls{cvoe} component. These are the configurations used in the experiments and evaluations presented in this thesis. The OroGen file defines the component's structure, including its input and output ports, operations, and properties. The YAML configuration file specifies the parameters for the component, such as filter settings, hardware configurations, and frame names. The OroGen file is provided in Listing~\ref{code:orogenfileCVOE}, while the YAML configuration file is presented in Listing~\ref{code:YAMLConfigfileCVOE}. Additionally, a sample summary of the statistical error metrics obtained from the evaluation of the \gls{cvoe} component is provided in Listing~\ref{lst:statistical-error-metrics}.
+    
+    \lstinputlisting[style=orogenstyle,
+    caption={OroGen file of the \gls{cvoe} component},
+    label={code:orogenfileCVOE}]{media/config/contact_velocity_odometry_estimator.orogen}
+
+    \lstinputlisting[style=yamlstyle,
+    caption={Contact Velocity Odometry Estimator YAML configuration file},
+    label={code:YAMLConfigfileCVOE}]{media/config/contact_velocity_odometry_estimator::Task.yml}
+        
+    \begin{lstlisting}[style=consoleoutput, caption={Sample summary of the statistical error metrics.}, label={lst:statistical-error-metrics}]
+    
+    --------------------------------------------------
+    Position error metrics
+    --------------------------------------------------
+    Max position error          : 0.92 m
+    Mean position error         : 0.32 m
+    Min position error          : 0.00 m
+    Std dev of position error   : 0.32 m
+    RMSE of position error      : 0.45 m    
+    --------------------------------------------------
+    Orientation Geodesic angle error metrics
+    --------------------------------------------------
+    Max geodesic angle error        : 9.36 degrees
+    Mean geodesic angle error       : 4.80 degrees
+    Min geodesic angle error        : 0.00 degrees
+    Std dev of geodesic angle error : 2.65 degrees
+    RMSE of geodesic angle error    : 5.49 degrees
+    --------------------------------------------------
+    --------------------------------------------------
+    Relative Pose Error (RPE) Translation metrics
+    --------------------------------------------------
+    Max translation error                   : 0.05 m
+    Mean translation error                  : 0.04 m
+    Std dev of translation error            : 0.00 m
+    RMSE of translation error               : 0.04 m
+
+    Mean translation error per meter        : 0.15 m/m
+    Std dev of translation error per meter  : 0.01 m/m
+    RMSE of translation error per meter     : 0.15 m/m
+    --------------------------------------------------
+    Relative Pose Error (RPE) Rotation metrics
+    --------------------------------------------------
+    Max rotation error                  : 3.59 degrees
+    Mean rotation error                 : 0.91 degrees
+    Std dev of rotation error           : 0.92 degrees
+    RMSE of rotation error              : 1.29 degrees
+
+    Mean rotation error per meter       : 3.62 degrees/m
+    Std dev of rotation error per meter : 3.70 degrees/m
+    RMSE of rotation error per meter    : 5.18 degrees/m
+    --------------------------------------------------
+    \end{lstlisting}
+    
     \chapter{[in the case of using AI-assistants] Description of AI-Generated Content}
     Describe in detail what content was generated using an AI assistant.
     Name the AI assistant and how it was used (e.g. which prompts were used, and for which parts of the project).

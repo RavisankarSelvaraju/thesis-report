@@ -21,7 +21,7 @@
     
     A \texttt{MTi-680(G)} \cite{DT-IMU-datasheet} series IMU is used to measure the linear acceleration and angular velocity of the robot body. The \gls{imu} sensor is located inside the main body of the rover. For the Vicon motion capture system to track the rover, four reflective markers are placed on the rover body. The Coyote~3 rover is equipped with an onboard computer with \texttt{Intel Core i7-3555LE @ 2.5 GHz} processor. The rover is controlled using an \texttt{Xbox} gamepad and powered using $2 \times 4500$~mAh LiPo batteries. The rimless wheels are equipped with rubber feet for better friction with the ground and to reduce impact forces during wheel-ground contact. The coyote system does not have a suspension system, so the forces during the contact phase of the wheels are directly felt by the IMU. The rubber foot smooths this effect. The components described in this section are annotated in Figure~\ref{fig:annotated-coyote3-components}.
 
-    \todo[inline]{Check if different trajectory types and the reason behind using those should be explained}
+    % \todo[inline]{Check if different trajectory types and the reason behind using those should be explained}
 
     \section{Experiment Site and Terrain Conditions} \label{sec:experiment-site-terrain}
     
@@ -33,7 +33,7 @@
     
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\linewidth]{media/images/flat_floor_terrain_1.png}
+        \includegraphics[width=0.75\linewidth]{media/images/flat_floor_terrain_1.png}
         \caption{The flat floor area in the Multi Function Hall where the experiments are conducted}
         \label{fig:Flat-Floor-Terrain-in-Multifunctional-Hall}
     \end{figure}
@@ -80,7 +80,7 @@
     
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\linewidth]{media/images/sand_terrain.png}
+        \includegraphics[width=0.75\linewidth]{media/images/sand_terrain.png}
         \caption{The sand area in the Multifunctional Hall where the experiments are conducted }
         \label{fig:Sand-Terrain-in-Multifunctional-Hall}
     \end{figure}
@@ -119,7 +119,7 @@
     
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=0.6\linewidth]{media/images/crater_terrain.png}
+        \includegraphics[width=0.75\linewidth]{media/images/crater_terrain.png}
         \caption{The crater area in the Multifunctional Hall where the experiments are conducted }
         \label{fig:Crater-Terrain-in-Multifunctional-Hall}
     \end{figure}
@@ -211,7 +211,7 @@
     \begin{figure}[ht!]
         \centering
         \includegraphics[width=0.6\textwidth]{media/plots/APE_explanation_plot_1.png}
-        \caption{Absolute Pose Error (APE) between estimated and ground truth trajectories. The errors between the corresponding poses are shown as e1, e2, e3, ..., en.}
+        \caption[Absolute Pose Error (APE) explanation plot]{Absolute Pose Error (APE) between estimated and ground truth trajectories. The errors between the corresponding poses are shown as e1, e2, e3, ..., en.}
         \label{fig:ape_explanation_plot_1}  
     \end{figure}  
 
@@ -229,7 +229,7 @@
         \centering
         \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_1.png}
         \includegraphics[width=0.6\textwidth]{media/plots/rpe_explanation_plot_2.png}
-        \caption{Sliding Window based Relative Pose Error (RPE) calculation between estimated and ground truth trajectories. The relative poses are transformed into their coordinate local frame and the error between the relative poses are calculated. }
+        \caption[Sliding Window based Relative Pose Error (RPE) explanation plot ]{Sliding Window based Relative Pose Error (RPE) calculation between estimated and ground truth trajectories. The relative poses are transformed into their coordinate local frame and the error between the relative poses are calculated. }
         \label{fig:rpe_explanation_plot}  
     \end{figure}
     
@@ -349,6 +349,6 @@
     The evaluation metrics are calculated for the collected datasets and the results are visualized using plots. This helps to visualize the performance of the proposed \gls{cvo} approach against the ground truth trajectory. The evaluation plots are generated using the \texttt{matplotlib} Python library. Key evaluation plots used in this work include the \texttt{x y} trajectory plots with heading vectors, the position comparison between the estimated and ground truth trajectories in $x$, $y$, and $z$ axes, the orientation comparison between the estimated and ground truth trajectories in roll, pitch, and yaw angles, the translational and rotational \gls{ape} plots, and the translational and rotational \gls{rpe} plots. These evaluation plots are used to visualize and compare the performance of the proposed \gls{cvo} approach against the baseline odometry and the ground truth trajectory in the next chapter.
         
     Other evaluation plots are also generated to tune the \gls{cvo} parameters and to debug the implementation of the \gls{cvo} library. These plots include time-colored trajectory plots, Position covariance as ellipse overlay on the \texttt{x y} trajectory plot, Error histogram of Roll, Pitch, and Yaw angles, Position error plot in $x$, $y$, and $z$ axes, Orientation error plot in roll, pitch, and yaw angles, \gls{imu} acceleration and gyroscope bias evolution over elapsed time and Contact selection comparison between the \gls{lf} and \gls{md} methods. These plots are not included in this thesis report but are developed and used during the development of the \gls{cvo} library and the evaluation of the proposed approach.
-
-    \todo[inline]{write about the travel distance and final position errors and its significance }
+    
+    Some key evaluation metrics such as the travel distance and final position errors are also calculated to evaluate the performance of the proposed \gls{cvo} approach. The travel distance is calculated as the sum of the Euclidean distances between consecutive 3D positions in a trajectory. The travel distance error is calculated as the difference between the estimated and ground truth travel distances. A negative travel distance error indicates that the estimated trajectory underestimates the distance travelled by the rover, while a positive value indicates an overestimation. Since the calculation uses the three-dimensional position, changes in the \texttt{z}-position are also included. This is important for evaluating trajectories on inclined and uneven terrain. The final position error is the Euclidean distance between the final estimated position and the final ground truth position. The final position error indicates the accumulated position error at the end of the trajectory. 
 \end{document}

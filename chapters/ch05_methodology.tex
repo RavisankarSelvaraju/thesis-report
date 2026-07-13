@@ -10,16 +10,14 @@
     \begin{figure}[!h]
         \begin{center}
         \includegraphics[width=0.8\linewidth]{media/plots/thesis_proposed_approach.png}
-        \caption{Flow diagram to present an overview of the proposed approach.}
+        \caption[Flow diagram to present an overview of the proposed approach.]{ Flow diagram of the proposed approach overview. The predicted and measured PCV are explained in Subsection~\ref{subsec:predictedPCV} and \ref{subsec:measuredPCV} respectively. The slip rejection is explained in Section~\ref{sec:sliprejection}}
         \label{fig:proposedApproachOverviewFlowDiagram}
         \end{center}
     \end{figure}
     
-    \todo[inline]{Make this flow diagram standard and use the caption to link to different section that is show in the chart and that is explained below}
-    
     \begin{figure}[!h]
         \begin{center}
-        \includegraphics[width=0.8\linewidth]{media/plots/approach_explanation_plot.png}
+        \includegraphics[width=0.75\linewidth]{media/plots/approach_explanation_plot.png}
         \caption{Predicted and Measured PCV overlaid on the Front Left wheel of the Coyote~3 rover.}
         \label{fig:approachPCVexplanation}
         \end{center}
@@ -57,7 +55,6 @@
     \subsection{Filter State Vector}    
     The state vector $X$ contains the quantities that need to be estimated by the filter. In this work, the state vector contains position, orientation, velocity and \gls{imu} sensor biases. These quantities are required to estimate the rover motion. The filter state is constructed as shown in the Equation~\ref{eq:stateVector}. 
     
-    \todo[inline]{Explain the IMU biases and their units in the background chapter.}
     \begin{equation}
         X = [R, V, P, b_g, b_a]
         \label{eq:stateVector}
@@ -115,7 +112,7 @@
     
     If the $r_{pcv}$ is small, the wheel encoder measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel encoder measurements are inconsistent with the filter's prediction. This could mean wheel encoder measurements may be affected by errors such as wheel slip, an inconsistent contact assumption or noise in wheel encoder measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
 
-    \section{Measurement Model and Jacobian}
+    \section{Measurement Model and Jacobian} \label{sec:measurementModelAndJacobian}
         
     The measurement model, also referred to as the measurement function $h(x)$, is given by Equation~\ref{eq:measurementFunction}. The $h(x)$ corresponds to the predicted \gls{pcv} which is used by \gls{inekf} to calculate the predicted measurement from its state vector that can be compared to a measured \gls{pcv} derived from the wheel encoder measurements. The $h(x)$ is also used to derive the measurement Jacobian. For better readability, the measurement function is rewritten in Equation~\ref{eq:measurementFunction-2}. The $\omega_{body}^{body}$ is the angular velocity of the body frame expressed in the body frame with the gyroscope bias removed. This is shown in Equation~\ref{eq:gyroBiasRemoved}.    
     The measurement Jacobian $H$ is the partial derivative of the measurement function $h(x)$ with respect to the error state $\xi$ variables evaluated at the current state $\hat{X}$ as shown in Equation~\ref{eq:MeasurementJacobian-1}. The measurement Jacobian linearizes the measurement function at the current state. The measurement Jacobian describes the relationship between a small perturbation in the state vector and the predicted \gls{pcv} value. The measurement Jacobian calculation and its results for this measurement function is shown in equations \ref{eq:MeasurementJacobian-2} and \ref{eq:MeasurementJacobian-3} respectively.
@@ -165,7 +162,7 @@
         The validity of the measurement Jacobian is verified by comparing the analytical Jacobian with a numerical Jacobian. The numerical Jacobian is calculated by perturbing the state vector and calculating the change in the measurement function. The analytical and numerical Jacobians are found to be consistent with each other. The numerical Jacobian calculation is provided in the appendix \ref{appendix:NumericalJacobianCalculation}. 
         % \todo[inline]{Provide the numerical jacobian calculation in the appendix}
        
-        \section{Slip-aware Measurement Rejection}
+        \section{Slip-aware Measurement Rejection} \label{sec:sliprejection}
         
         The measured \gls{pcv}, calculated from the joint encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
         
@@ -176,6 +173,8 @@
         When the squared \gls{md} is higher than a threshold value (details are provided in the Implementation Chapter~\ref{chap:implementation}) then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent joint encoder measurements from a slip event \cite{chang2014MahalanobisFormula}. 
         % \todo[inline]{Include the chi2 threshold in the implementation chapter}
 
+        
+        \todo[inline]{Check the variable names and do not reuse them}
         \begin{equation}
         S = HPH^T + R
         \label{eq:innovationCovariance}

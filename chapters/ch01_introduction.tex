@@ -4,17 +4,15 @@
     \chapter{Introduction} \label{chap:introduction}
         
     For any mobile robot, a reliable estimate of its pose relative to its environment is crucial for autonomous navigation. In general, mobile robots estimate their pose by integrating the incremental motion calculated using proprioceptive sensors such as \gls{imu} and wheel encoders~\cite{BOOK-Siegwart2011Introduction}. In this context, the term wheel encoder refers to the wheel joint encoder, which measures the rotation of the wheel. This pose estimation technique is called dead-reckoning based odometry. In robotic platforms with limited onboard computational power, this method of odometry is particularly important due to its simplicity and computational efficiency \cite{Agostinho2022}. This approach is vital in scenarios where positioning systems like \gls{gps}/\gls{gnss} and Motion capture systems are unavailable. Odometry estimate based on a single source of sensor measurement is susceptible to sensor drift over time and wheel slip related errors. While these errors are prevalent across mobile robots, their effects are particularly evident in the systems operating in slip-prone terrain.
-    
-    
+        
     \begin{figure}[!ht]
         \begin{center}
             \includegraphics[width=0.5\linewidth]{media/images/coyote3_with_vicon_markers_in_sand.jpg}
-            \caption{Coyote~3 rover with reflective markers in a sand terrain used in the experiments for this thesis.}
+            \caption[Coyote~3 rover with reflective markers]{Coyote~3 rover with reflective markers in a sand terrain used in the experiments for this thesis.}
             \label{fig:coyote3_with_vicon_markers}
         \end{center}
     \end{figure}
     
-
     One such system is the Coyote~3 rover, shown in Figure~\ref{fig:coyote3_with_vicon_markers}. This rover uses a non-traditional wheel type, the \gls{rw}, which provides a hybrid form of locomotion that combines wheeled and legged locomotion. The spokes provide a foot-like terrain interaction while the overall wheel structure keeps the motion and control simple. This rover, due to its spoked wheels, can traverse diverse terrains like soft and coarse sand terrain, rocky terrain and inclined terrain. Unlike traditional wheeled rover, \gls{rwr} can overcome challenging obstacles effectively \cite{Brinkmann2018}.
     
     This hybrid locomotion capability of the \gls{rwr} system comes at a cost. The spokes of the \gls{rwr} system change the wheel-ground interaction from smooth rolling motion to discontinuous contact-based motion. The current baseline odometry in the Coyote~3 rover assumes a circular wheel model and uses wheel odometry for translational estimation and \gls{imu} data for orientation estimation. Since the translation and rotation are decoupled, this is commonly referred to as decoupled odometry. This approach provides a simple means of odometry estimation without complex state estimation techniques. Any slippage that occurs when traversing slip-prone terrain is not accounted for and the pose error from the slippage propagates to the odometry estimate. To address this problem, sensor fusion techniques are often employed.
@@ -37,7 +35,7 @@
     
     \begin{itemize}
         \item[] Chapter \ref{chap:background} presents the background details on the Coyote~3 \gls{rwr} system, the \gls{inekf}, wheel slip, the notations and conventions used in this report.
-        \item[] Chapter \ref{chap:SOTA} provides information on previous works related to proprioceptive odometry, \gls{inekf} based sensor fusion techniques and other relevant odometry estimation techniques and their limitations.
+        \item[] Chapter \ref{chap:sota} provides information on previous works related to proprioceptive odometry, \gls{inekf} based sensor fusion techniques and other relevant odometry estimation techniques and their limitations.
         \item[] Chapter \ref{chap:problem_statement} focuses on the problem in Coyote~3 odometry system, limitations of baseline odometry and challenges in solving this problem.
         \item[] Chapter \ref{chap:methodology} describes the proposed slip-aware odometry using contact point velocity, the Mahalanobis-distance-based measurement rejection and the contact estimation.
         \item[] Chapter \ref{chap:implementation} presents the implementation details of the proposed odometry approach, including the \gls{cvoe} component, the construction of wheel and contact kinematics, the \gls{pcv} calculation, the slip rejection and contact selection methods, and the ROCK replay-based evaluation workflow.
