@@ -20,7 +20,7 @@
 *.glg
 *.glo
 *.gls
-
+*.pdf
 .vscode/
 files-sent-for-review/
 comments-reviewed-files/
