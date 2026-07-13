@@ -8,7 +8,7 @@ To test the proposed methodology, the approach discussed in Chapter~\ref{chap:me
 
 \section{Software Framework}
 
-The proposed approach is implemented as a library which depends on the \gls{inekf} implementation developed by Ross Hartley~\cite{REPO-inekf-github}. The developed library is called \gls{cvo}. The Coyote~3 software system uses the ROCK~\cite{SW-rockrobotics} framework for development and deployment of its libraries. The functionalities can be developed as libraries independent of the ROCK framework and can later be integrated into the oroGen component based framework. The component based systems are built by Orocos Real Time Toolkit (Orocos RTT)~\cite{SW-orocos-rtt}. The Orocos RTT have a state machine representation using Hook methods as mentioned in rock-robotics documentation~\cite{SW-rockrobotics}. These methods are explained in Section~\ref{subsec:hookMethods}. Since this thesis implementation does not modify or add functionalities to the ROCK framework, the details on these systems are not provided. Readers who are interested in these systems can refer the rock-robotics documentation~\cite{SW-rockrobotics} for further details. The oroGen components that are relevant to this thesis implementation are shown in Figure~\ref{fig:component_map_implementation}. The data path between the components is also shown in the figure. 
+The proposed approach is implemented as a library which depends on the \gls{inekf} implementation developed by Ross Hartley~\cite{REPO-inekf-github}. The developed library is called \gls{cvo}. The Coyote~3 software system uses the ROCK~\cite{SW-rockrobotics} framework for development and deployment of its libraries. The functionalities implemented in the thesis have been developed in a library independent of the ROCK framework. The library has been integrated into an Orocos component, using oroGen to generate the component's skeleton. The component based systems are built by Orocos Real Time Toolkit (Orocos RTT)~\cite{SW-orocos-rtt}. The Rock framework components are therefore an instance of the Orocos Real Time Toolkit (Orocos RTT) components. The Orocos RTT/Rock components are composed by tasks which have a state machine representation using common methods(known as Hook methods) as mentioned in rock-robotics documentation~\cite{SW-rockrobotics}. These methods are explained in Section~\ref{subsec:hookMethods}. OroGen is a specification language and code generator for the Orocos Realtime Toolkit (RTT). Since this thesis implementation does not modify or add functionalities to the ROCK framework, the details on these systems are not provided. Readers who are interested in these systems can refer the rock-robotics documentation~\cite{SW-rockrobotics} for further details. The oroGen components that are relevant to this thesis implementation are shown in Figure~\ref{fig:component_map_implementation}. The data path between the components is also shown in the figure. 
 
 \begin{figure}[ht]
     \centering
@@ -17,7 +17,7 @@ The proposed approach is implemented as a library which depends on the \gls{inek
     \label{fig:component_map_implementation}
 \end{figure}
 
-The \gls{cvo} library is developed along with the component and integrated into the framework using the oroGen component called \gls{cvoe}. The software that is developed and modified in context of this thesis is shown as a structural Unified Markup Language (UML) diagram in Figure~\ref{fig:software_implementation_uml}. The following sections describe the packages, libraries, components and external dependencies used in this implementation. 
+The \gls{cvo} library is developed along with the component and integrated into the framework using the oroGen component called \gls{cvoe}. The library and the component are developed using \texttt{C++}. Additionally, \texttt{Python} based evaluation scripts are developed to analyze the performance of the implemented approach. These evaluation scripts can also be used to compare the performance of other new alternate approaches. The software that is developed and modified in context of this thesis is shown as a structural Unified Markup Language (UML) diagram in Figure~\ref{fig:software_implementation_uml}. The following sections describe the packages, libraries, components and external dependencies used in this implementation. 
 
 \section{Contact Velocity Odometry Estimator Component}
 
@@ -41,17 +41,17 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
 
     The oroGen component framework uses a state machine representation for the components. Every component can define the following hook methods: \texttt{configureHook}, \texttt{startHook}, \texttt{updateHook}, \texttt{errorHook}, \texttt{stopHook}, \texttt{cleanupHook}. Each method is called when the component transitions from one state to another. Components can be in one of the following states: \texttt{PreOperational}, \texttt{Stopped}, \texttt{Running}, \texttt{Exception}. Detailed information is available in the rock-robotics documentation~\cite{SW-rockrobotics}. A brief explanation of the methods necessary to understand the thesis implementation process flow is explained here. 
 
-    The \texttt{configureHook} method is the first hook method called after the construction of the component. This method reads the properties that are defined in the \texttt{.orogen} file and set the class member variables of the component. Sanity checks on the property variables are also done in this method. Next, the \texttt{startHook} is called, for this implementation, \texttt{startHook} is not used. The \texttt{updateHook} is called after the \texttt{startHook}. This \texttt{updateHook} is continuously called until the state changes from \texttt{Running} to \texttt{Stopped}. The \texttt{errorHook}, \texttt{stopHook} and \texttt{cleanupHook} are also not used in this implementation. The preprocessing steps and triggering the \gls{cvo} library were done in the \texttt{updateHook} which was triggered at 100Hz. This implementation technique does not align the input data streams, so the implementation is moved into the \gls{imu} transformer callback method. This is further explained in Section~\ref{subsec:StreamAlignerandTransformerCallbacks}. 
+    The \texttt{configureHook} method is the first hook method called after the construction of the component. This method reads the properties that are defined in the \texttt{.orogen} file and set the class member variables of the component. Sanity checks on the property variables are also done in this method. Next, the \texttt{startHook} is called, for this implementation, \texttt{startHook} is not used. The \texttt{updateHook} is called after the \texttt{startHook}. This \texttt{updateHook} is continuously called until the state changes from \texttt{Running} to \texttt{Stopped}. The \texttt{errorHook}, \texttt{stopHook} and \texttt{cleanupHook} are also not used in this implementation. The preprocessing steps and triggering the \gls{cvo} library were done in the \texttt{updateHook} which was triggered at 100Hz. This implementation aligns the input data streams via the IMU transformer callback method. This is further explained in Section~\ref{subsec:StreamAlignerandTransformerCallbacks}. 
 
     \subsection{Data Stream Alignment and Transformer Callbacks} \label{subsec:StreamAlignerandTransformerCallbacks}
 
-    The \gls{imu} and joint encoder data arrive at the \gls{cvoe} component from different components, which can have different computation times. The data samples received at the \gls{cvoe} component may not arrive at the same order in which they were sensed. Hence, ROCK provides a \texttt{C++} library called \textit{stream aligner} which process the data streams in the correct temporal order. A data sample is sent to the corresponding callback methods in the component only when the \textit{stream aligner} decides that no samples from the other streams that are aligned can arrive with an earlier timestamp than the current sample. 
+    The \gls{imu} and joint encoder data arrive at the \gls{cvoe} component from different components, which can have different computation times. The data samples received at the \gls{cvoe} component may not arrive at the same order in which they were sensed. Hence, ROCK provides a \texttt{C++} library called \textit{stream aligner} which arranges the data streams in the correct temporal order. A data sample is sent to the corresponding callback methods in the component only when the \textit{stream aligner} decides that no samples from the other streams that are aligned can arrive with an earlier timestamp than the current sample. 
 
     This \textit{stream aligner} can be defined in the \texttt{.orogen} file as \verb|align_port <port name>, <period>| as shown in Listing~\ref{code:orogenfileCVOE}. In the \gls{cvoe} component, it is defined inside the transformer block for the \texttt{measurement\_imu} port and \texttt{joint\_state} port. More details on the \textit{stream aligner} can be found in rock-robotics documentation~\cite{SW-rockrobotics}. This creates two callback methods: \texttt{measurement\_imuTransformerCallback} and \texttt{joint\_stateTransformerCallback}. These callbacks are used for the data preprocessing steps and triggering the \gls{cvo} library. The initial gyroscope bias estimation, and filter propagation step are performed in the \texttt{measurement\_imuTransformerCallback} method. Wheel and contact kinematics are calculated inside the \texttt{joint\_stateTransformerCallback} method.     
 
     \subsection{Initial Gyro Bias Estimation}
 
-    When the \gls{imu} data is received in the \texttt{measurement\_imuTransformerCallback} method, the first step is to calculate the bias in the gyroscope. The \texttt{IMUSensors} type contains the linear acceleration from the accelerometer and the angular velocity from the gyroscope. The rover is stationary when this step is performed. When the rover is stationary, the angular velocity that the gyroscope senses is the sensor bias. The bias estimation is done for a fixed duration which is defined in the \texttt{.orogen} file. The average of the gyroscope measurements in this duration is estimated as the gyroscope bias. Gyroscope measurements with norm below a threshold are considered for the estimation to avoid measurements recorded when the rover is moving. This bias is subtracted when the measured angular velocity is used in the \gls{inekf}. Initially, the estimated gyroscope bias is expressed in the \gls{imu} reference frame. The pose estimation calculations use the body frame of reference, so the bias estimate is transformed to the body frame using the static transformation from the \texttt{pose\_imu} input port. 
+    When the \gls{imu} data is received in the \texttt{measurement\_imuTransformerCallback} method, the first step is to calculate the bias in the gyroscope. The \texttt{IMUSensors} type contains the linear acceleration from the accelerometer and the angular velocity from the gyroscope. The rover is assumed to be stationary when this step is performed. In case the rover started moving in this time window, the measurement samples higher than a small threshold values are dropped. When the rover is stationary, the true angular velocity is assumed to be zero. Hence, the mean of angular velocities that the gyroscope senses during that period is considered sensor bias. The bias estimation is done for a fixed duration which is defined in the \texttt{.orogen} file. The average of the gyroscope measurements in this duration is estimated as the gyroscope bias. Gyroscope measurements with norm below a threshold are considered for the estimation to avoid measurements recorded when the rover is moving. This bias is subtracted when the measured angular velocity is used in the \gls{inekf}. Initially, the estimated gyroscope bias is expressed in the \gls{imu} reference frame.  The pose estimation calculations use the body frame of reference, so the bias estimate is transformed to the body frame using the static transformation from \texttt{imu} to \texttt{body} frame. 
 
     \subsection{Wheel and Contact Kinematics} \label{subsec:wheelAndContactKinematics}
 
@@ -81,25 +81,36 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     where $i_{\mathrm{global}}$ is the global contact index, $i_{\mathrm{wheel}}$ is the wheel index, $N_{\mathrm{contacts}}$ is the number of contacts per wheel, and $i_{\mathrm{contact}}$ is the contact index within the wheel. The robot \gls{urdf} model is parsed to extract the rotation axis of each wheel joint. This axis is multiplied with the wheel speed from the joint data to construct the wheel angular velocity vector.
     
 
-    \begin{lstlisting}[language=C++,
-                   directivestyle={\color{black}}
-                   emph={int,char,double,float,unsigned},
-                   emphstyle={\color{blue}},
-                   caption={Kinematics data structure}, label={code:vectorKinematicsDatastructure}]
-    class Kinematics {
-    public:
-        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-        Kinematics( int id_in, 
-                    Eigen::Matrix4d pose_in, 
-                    Eigen::Matrix<double,6,6> covariance_in) : 
-                    id(id_in), 
-                    pose(pose_in), 
-                    covariance(covariance_in) { }
-        int id;
-        Eigen::Matrix4d pose;
-        Eigen::Matrix<double,6,6> covariance;
-    };        
-    \end{lstlisting}
+\begin{lstlisting}[
+    language=C++,
+    directivestyle={\color{black}},
+    emph={int,char,double,float,unsigned},
+    emphstyle={\color{blue}},
+    basicstyle=\ttfamily\footnotesize,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=8pt,
+    frame=single,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    caption={Kinematics data structure},
+    label={code:vectorKinematicsDatastructure}
+]
+class Kinematics {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    Kinematics( int id_in, 
+                Eigen::Matrix4d pose_in, 
+                Eigen::Matrix<double,6,6> covariance_in) : 
+                id(id_in), 
+                pose(pose_in), 
+                covariance(covariance_in) { }
+    int id;
+    Eigen::Matrix4d pose;
+    Eigen::Matrix<double,6,6> covariance;
+};        
+\end{lstlisting}
        
     \subsection{Potential Contact Velocity Calculation}
     
@@ -130,13 +141,26 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     
     \subsection{Innovation and Jacobian Calculation}  
     
-    Once the \gls{pcv} vectors are calculated, a data structure is created to store the quantities associated with each spoke is created. This data structure is called \texttt{SpokeData} and is shown in Listing~\ref{code:spokeDataStructure}. A nested \texttt{for} loop is created to iterate through all the wheels and spokes. A \texttt{std::map} of \texttt{SpokeData} is created with the global contact index as the key. This map is updated inside the loop with the calculated innovation, Jacobian, and noise matrices. Inside the for loop, the \gls{pcv} vectors are extracted for the corresponding global contact index. The innovation is calculated by subtracting the predicted \gls{pcv} from the measured \gls{pcv} as shown in Equation~\ref{eq:pcvResidual}. 
+    Once the \gls{pcv} vectors are calculated, a data structure is created to store the quantities associated with each spoke is created. This data structure is called \texttt{SpokeData} and is shown in Listing~\ref{code:spokeDataStructure}. The \texttt{in\_contact} and \texttt{non\_slipping} variables are \texttt{double} type to allow for three possible values: 1 if the spoke is in contact or non-slipping, 0 if the spoke is not in contact or slipping, and -99 if the contact or slip status is not determined yet.
     
-    \begin{lstlisting}[language=C++,
-                   directivestyle={\color{black}}
-                   emph={int,char,double,float,unsigned},
-                   emphstyle={\color{blue}},
-                   caption={Spoke data structure}, label={code:spokeDataStructure}]
+    A nested \texttt{for} loop is created to iterate through all the wheels and spokes. A \texttt{std::map} of \texttt{SpokeData} is created with the global contact index as the key. This map is updated inside the loop with the calculated innovation, Jacobian, and noise matrices. Inside the for loop, the \gls{pcv} vectors are extracted for the corresponding global contact index. The innovation is calculated by subtracting the predicted \gls{pcv} from the measured \gls{pcv} as shown in Equation~\ref{eq:pcvResidual}. 
+        
+    \begin{lstlisting}[
+        language=C++,
+        directivestyle={\color{black}},
+        emph={int,char,double,float,unsigned},
+        emphstyle={\color{blue}},
+        basicstyle=\ttfamily\footnotesize,
+        numbers=left,
+        numberstyle=\tiny,
+        numbersep=8pt,
+        frame=single,
+        breaklines=true,
+        showstringspaces=false,
+        tabsize=4,
+        caption={Spoke data structure},
+        label={code:spokeDataStructure}
+    ]
     struct SpokeData {
         
         // 1 if in contact, 0 if not in contact, -99 if not determined yet
@@ -161,9 +185,14 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     
     The \gls{pc} selection is done based on two methods: the \gls{lf} and the \gls{md}. The method used to update the \gls{inekf} is decided based on the configuration flag \texttt{estimate\_contacts}. If this flag is true, the \gls{md} method is used to select the \gls{pc}. If this flag is false, the \gls{lf} method is used to select the \gls{pc}. 
     
-    The \gls{md} method of contact estimation selects the spoke with the lowest squared \gls{md} value and also checks the spoke with the second-lowest squared \gls{md} value. If the difference between the lowest and the second-lowest squared \gls{md} values is below the \texttt{contact\_md2\_threshold}, both spokes are selected as \glspl{pc}. Otherwise, only the spoke with the lowest squared \gls{md} is selected. In the experiments, this threshold value is configured as \texttt{0.002}.
+    The \gls{md}-based contact estimation method selects the spoke with the lowest squared \gls{md}. It also considers the spoke with the second-lowest squared \gls{md}. The difference between these two values is calculated as
     
-    In the \gls{lf} method of contact estimation, initially, the spoke with the lowest \texttt{z} position is selected as the \gls{pc} then a threshold region is created in the \texttt{z} position of the spoke tip in the body frame. The threshold region is created by adding \texttt{0.02 m} to the \texttt{z} position of the selected spoke tip. Spokes with \texttt{z} position below this threshold are also selected as \glspl{pc}. The threshold value of \texttt{0.02 m} is experimentally selected in a flat and solid terrain. 
+    $\Delta d_M^2 = d_{M,2}^2-d_{M,1}^2.$
+    
+    If this difference is below the configured \texttt{contact_md2_threshold}, both spokes are selected as \glspl{pc}. Otherwise, only the spoke with the lowest squared \gls{md} is selected. In the experiments, the threshold is configured as \texttt{0.002}, a unitless value. 
+
+    
+    In the \gls{lf} method of contact estimation, initially, the spoke with the lowest \texttt{z} position is selected as the \gls{pc} then a threshold region is created in the \texttt{z} position of the spoke tip in the body frame. The threshold region is created by adding \texttt{0.02 m} to the \texttt{z} position of the selected spoke tip. Spokes with \texttt{z} position below this threshold are also selected as \glspl{pc}. The threshold value of \texttt{0.02 m} is experimentally selected in a flat and non-deformable terrain. 
     
     Once the slip rejection and contact selection are done, the \texttt{SpokeData} map is updated with the contact and slip status of each spoke. 
     For updating the \gls{inekf}, the innovation, Jacobian, and noise matrices of the \glspl{pc} which are non-slipping and in contact are extracted from the \texttt{SpokeData} map and stored in \texttt{Eigen::VectorXd}, \texttt{Eigen::MatrixXd}, and \texttt{Eigen::MatrixXd}.
@@ -172,7 +201,9 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     
     \section{ROCK Replay for Evaluation}
     
-    To evaluate the performance of the proposed approach, several experiments are conducted in a lab environment. The data collected from the experiments are stored as log files which can be replayed using the \texttt{rock-replay2} tool provided in the ROCK framework. The evaluation workflow is shown in Figure~\ref{fig:replay-evaluation-workflow}. The \texttt{validation\_toolset} behaves as the orchestrator of the evaluation workflow. It is responsible for calling the bash scripts that start the \texttt{rock-replay2} tool and the CND file that deploys the replay setup and the \gls{cvoe} component. Once the replay is finished, the \texttt{validation\_toolset} calls the bash script that starts the Python evaluation script, which calculates the error metrics between the estimated rover pose and the ground truth rover pose. The \texttt{validation\_toolset} also stops and cleans up the replay process once they are completed.
+    To evaluate the performance of the proposed approach, several experiments are conducted in a lab environment. The data collected from the experiments are stored as log files which can be replayed using the \texttt{rock-replay2} tool provided in the ROCK framework. The evaluation workflow is shown in Figure~\ref{fig:replay-evaluation-workflow}. The scripts to replay the log files, evaluate the generated pose estimates, and the corresponding validation tool set pipeline are developed as part of this thesis implementation. The validation tool set library exists as part of an automated testing framework. The odometry validation part of the validation tool set is developed as part of this thesis.
+    
+    The \texttt{validation\_toolset} behaves as the orchestrator of the evaluation workflow. It is responsible for calling the bash scripts that start the \texttt{rock-replay2} tool and the CND file that deploys the replay setup and the \gls{cvoe} component. Once the replay is finished, the \texttt{validation\_toolset} calls the bash script that starts the Python evaluation script, which calculates the error metrics between the estimated rover pose and the ground truth rover pose. The \texttt{validation\_toolset} also stops and cleans up the replay process once they are completed.
     
     \begin{figure}[!ht]
         \centering
@@ -184,6 +215,10 @@ These include \gls{imu} and joint encoder data preprocessing, IMU frame transfor
     The \gls{cvoe} component is connected to the \texttt{rock-replay2} tool, which provide the necessary input for the component to estimate the odometry. When the \gls{imu} and the joint state data are replayed, the \gls{cvoe} component produces the estimated pose of the rover which is also stored in a log file in an evaluation folder. The log file generated by the \gls{cvoe} component is called \path{coyote3_contact_velocity_odometry_estimator_Logger.0.log}. During the experiments, the ground truth pose of the rover is also recorded using a motion capture system. The ground truth data is also stored as a \texttt{.log} file called \texttt{coyote3\_vicon\_Logger.0.log}. The ground truth log file, \path{coyote3_vicon_Logger.0.log}, and the baseline odometry log file, \texttt{coyote3\_odometry\_Logger.0.log}, associated with the replayed dataset are also copied to the evaluation folder. 
     
     The \texttt{validation\_toolset} calls the evaluation bash script with the evaluation folder path as an argument \texttt{--log-dir-path}. The \texttt{pocolog2msgpack} command line tool is used to convert the \texttt{log} files into \texttt{msgpack} files with \path{.msgpack} file extension and later the \texttt{msgpack} files are converted to \texttt{.relational} file using the \texttt{pocolog2msgpack.object2relational} function. The relational file is loaded in Python using the \texttt{msgpack} and \texttt{pandas} libraries. It is first converted to a \texttt{pandas.DataFrame} and then stored as a dictionary with timestamps as keys. Once both the estimated rover pose and the ground truth rover pose are converted to \texttt{pandas.DataFrame}, the data is aligned based on the timestamps. After alignment, the error between the estimated pose and the ground truth pose is calculated using various metrics which are explained in the Background Chapter~\ref{chap:background} and the Evaluation Chapter~\ref{chap:experimentandevaluation}. 
+    
+    \section{Automated Noise Parameter Tuning}
+    
+    The evaluation pipeline using the validation tool set presented an opportunity to automate the noise parameter tuning process. A \texttt{Python} script is developed to read the evaluation results after the evaluation pipeline is completed. This script can also modify the noise parameters in the configuration YAML file and rerun the evaluation pipeline. With this setup, the \texttt{CMA-ES} library is used to optimize the noise parameters to minimize the error of selected metrics between the estimated pose and the ground truth pose. \texttt{CMA-ES} is an abbreviation for "Covariance Matrix Adaptation Evolution Strategy". This is used as a \texttt{Python} library \cite{nomura2026cmaes}. This noise parameter tuning process is done to optimize the performance of the proposed approach in the Coyote~3 rover system across multiple datasets. Since, there are no detailed results to compare the performance before and after tuning the noise parameters, the results of this tuning process are not included and discussed further.
 
 \end{document}
      

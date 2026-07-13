@@ -1,0 +1,17 @@
+\begin{table}[ht]
+\centering
+\caption{Odometry evaluation metrics for DATA\_29\_01.}
+\label{tab:odometry_metrics_data-29-01}
+\begin{tabular}{lll}
+\hline
+Metric & Baseline odometry & Contact velocity odometry \\
+\hline
+Travel distance error & 0.82~m & -3.87~m \\
+Final position error & 2.92~m & 0.81~m \\
+Yaw RMSE & 25.78~$^\circ$ & 2.79~$^\circ$ \\
+Z position RMSE & 0.03~m & 0.51~m \\
+RPE translational drift RMSE & 0.14~m/m & 0.17~m/m \\
+RPE rotational drift RMSE & 4.87~$^\circ$/m & 5.86~$^\circ$/m \\
+\hline
+\end{tabular}
+\end{table}
