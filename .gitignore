@@ -21,6 +21,7 @@
 *.glo
 *.gls
 *.pdf
+*.bak
 .vscode/
 files-sent-for-review/
 comments-reviewed-files/

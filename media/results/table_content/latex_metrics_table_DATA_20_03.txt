@@ -6,12 +6,12 @@
 \hline
 Metric & Baseline odometry & Contact velocity odometry \\
 \hline
-Travel distance error & 0.09~m & -0.23~m \\
-Final position error & 0.11~m & 0.39~m \\
-Yaw RMSE & 0.46~$^\circ$ & 23.22~$^\circ$ \\
-Z position RMSE & 0.04~m & 0.11~m \\
-RPE translational drift RMSE & 0.36~m/m & 0.20~m/m \\
-RPE rotational drift RMSE & 7.33~$^\circ$/m & 27.83~$^\circ$/m \\
+Travel distance error & \textbf{0.09}~m & -0.23~m \\
+Final position error & \textbf{0.11}~m & 0.39~m \\
+Yaw RMSE & \textbf{0.46}~$^\circ$ & 23.22~$^\circ$ \\
+Z position RMSE & \textbf{0.04}~m & 0.11~m \\
+RPE translational drift RMSE & 0.36~m/m & \textbf{0.20}~m/m \\
+RPE rotational drift RMSE & \textbf{7.33}~$^\circ$/m & 27.83~$^\circ$/m \\
 \hline
 \end{tabular}
 \end{table}
