@@ -497,7 +497,7 @@
     
     \begin{table}[!htbp]
         \centering
-        \caption[Summary of Flat Floor Terrain Metrics]{Summary of translational and rotational \gls{rpe} drift, 
+        \caption[Summary of flat floor terrain metrics]{Summary of translational and rotational \gls{rpe} drift, 
         \texttt{z}-position, and yaw error metrics for the selected flat-floor 
         terrain trajectories. Bold values indicate the lower error between the 
         baseline odometry and \gls{cvo} for each dataset and metric. The evaluation results for the datasets marked with \textsuperscript{*} are provided in Appendix Chapter~\ref{chap:additionalResultsAppendix}.}
@@ -1029,7 +1029,7 @@
     
     \begin{table}[!htbp]
         \centering
-        \caption[]{Summary of translational and rotational \gls{rpe} drift, \texttt{z}-position, and yaw error metrics for the selected sand-terrain trajectories. Bold values indicate the lower error between the baseline odometry and \gls{cvo} for each dataset and metric. The evaluation results for the datasets marked with \textsuperscript{*} are provided in Appendix Chapter~\ref{chap:additionalResultsAppendix}.}
+        \caption[Summary of Sand terrain metrics]{Summary of translational and rotational \gls{rpe} drift, \texttt{z}-position, and yaw error metrics for the selected sand-terrain trajectories. Bold values indicate the lower error between the baseline odometry and \gls{cvo} for each dataset and metric. The evaluation results for the datasets marked with \textsuperscript{*} are provided in Appendix Chapter~\ref{chap:additionalResultsAppendix}.}
         \label{tab:sand_terrain_metric_summary}
 
         \scriptsize
@@ -1472,7 +1472,7 @@
     
     \begin{table}[!htbp]
     \centering
-    \caption{Summary of translational and rotational \gls{rpe} drift,
+    \caption[Summary of Crater Terrain Metrics]{Summary of translational and rotational \gls{rpe} drift,
     \texttt{z}-position, and yaw error metrics for the selected crater-terrain
     trajectories. Bold values indicate the lowest error among the baseline
     odometry, \gls{cvo} before slip elimination, and \gls{cvo} after slip
@@ -1578,5 +1578,7 @@
         A different trend is observed on sand terrain. The \gls{cvo} approach produces a lower translational \gls{rpe} drift in six of the seven selected sand datasets, indicating that the \gls{pcv}-based update can improve local translational motion estimation on deformable terrain. However, the rotational \gls{rpe} drift is higher for the \gls{cvo} approach in six of the seven selected sand datasets, showing that local rotational estimation remains a weakness of the proposed approach.
 
         In the crater experiments, enabling slip elimination substantially reduces both the translational and rotational \gls{rpe} drift in \texttt{DATA\_26\_01}, whereas it produces little change in \texttt{DATA\_26\_04}. Compared with the baseline odometry, the \gls{cvo} approach with slip elimination provides lower translational \gls{rpe} drift in both selected crater datasets but higher rotational \gls{rpe} drift. Overall, the results indicate that the proposed approach is most beneficial for local translational motion estimation on deformable terrain and under pronounced slip conditions. However, consistent improvement in rotational estimation and reliable performance across all terrains and motion types were not achieved.
+        
+        Since, the ground truth data to evaluate the contact estimation using \gls{md} method is not available, the contact estimation results are not discussed in this chapter. However, a sample comparison between the \gls{lf} method and \gls{md} method is presented in Appendix Section~\ref{sec:contactEstimationComparison}.
 
 \end{document}
