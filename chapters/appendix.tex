@@ -10,6 +10,9 @@
     
     This section provides the derivation of the measurement Jacobian presented in Section~\ref{sec:measurementModelAndJacobian}. The Jacobian is derived by calculating the partial derivatives of the measurement function $h(x)$ with respect to each error-state variable. This analytical derivation used to get the Jacobian matrix is derived with AI assistance using Gemini CLI~\cite{geminicli2026}. The presented equations in the following sections are generated using the AI assistant ChatGPT~\cite{openai_chatgpt_jacobian_2026}, and they have been manually verified for correctness. 
     
+    \section{Measurement Jacobian Derivation} \label{appendix:MeasurementJacobianDerivation}
+    
+    
     \subsection*{Rotation Matrix}
 
     The rotation matrix block of the measurement Jacobian is derived from the measurement function $h(x)$, which is defined as follows:
@@ -23,111 +26,169 @@
     \right)
     \end{equation}
 
-    For a small rotation error $\delta R$, the first-order approximation of the body velocity is
+    The frame notations for the quantities in the measurement function do not change in this derivation, so the frame names are dropped for compactness. The $\widehat{\phantom{x}}$ represents that the quantity is part of the estimated state $\hat x$.
+    For a small rotation error $\xi^R$, the first-order approximation of the body velocity is
         
     \begin{equation}
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        [\hat R_{\mathrm{pert}}]^{T}\hat v
         \approx
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        [\hat R]^{T}\hat v
         +
         \left[
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
-        \right]_{\times}\delta R
+        [\hat R]^{T}\hat v
+        \right]_{\times}\xi^R
     \end{equation}
 
     Substituting this approximation into the measurement function $h(x)$, we get,
 
     \begin{align}
-        h(x,\delta R)
+        h(\hat x_{\mathrm{pert}}(\xi^R))
         &\approx
         -\left(
-        [R_{body}^{odom}]^{T}v_{body}^{odom} + \left[ [R_{body}^{odom}]^{T}v_{body}^{odom} \right]_{\times}\delta R +
+        [\hat R]^{T}\hat v + \left[ [\hat R]^{T}\hat v \right]_{\times}\xi^R +
         \left(
-        \omega_{body}^{body}\times r_{pc}^{body}
+        \hat \omega\times r
         \right)
         \right)
         \\
         &=
         -\left(
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        [\hat R]^{T}\hat v
         +
         \left(
-        \omega_{body}^{body}\times r_{pc}^{body}
+        \hat \omega\times r
         \right)
         \right)
         -
         \left[
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
-        \right]_{\times}\delta R
+        [\hat R]^{T}\hat v
+        \right]_{\times}\xi^R
         \\
         &=
-        h(x)
+        h(\hat x)
         -
         \left[
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
-        \right]_{\times}\delta R.
+        [\hat R]^{T}\hat v
+        \right]_{\times}\xi^R.
     \end{align}
-        
-    Therefore, the partial derivative of the measurement function with respect to the rotation error is
+
+    Where, the notation  $x_{\mathrm{pert}}(\xi^R)$ can be defined as 
+    \begin{equation}
+        \hat x_{\mathrm{pert}}(\xi^R)
+        =
+        \left(
+            \hat{X}
+            \operatorname{Exp}
+            \left(
+                \begin{bmatrix}
+                    \xi^R \\
+                    \mathbf{0} \\
+                    \mathbf{0}
+                \end{bmatrix}
+            \right),
+            \hat{b}
+        \right).
+        \label{eq:rotationPerturbedState}
+    \end{equation}
+
+    A small rotation error $\xi^R$ perturbs the estimated state $\hat x$. Therefore, the partial derivative of the measurement function with respect to the rotation error is
     
     \begin{equation}
-    \frac{\partial h(x,\delta R)}
-    {\partial \delta R}
-    \bigg|_{\delta R=0}
+    \frac{\partial h(\hat x_{\mathrm{pert}}(\xi^R))}
+    {\partial \xi^R}
+    \bigg|_{\xi^R=0}
     =
     -\left[
-    [R_{body}^{odom}]^{T}v_{body}^{odom}
+    [\hat R]^{T}\hat v
     \right]_{\times}.
     \end{equation} 
     
     \subsection*{Velocity}
-
-    A small velocity error $\delta V$ changes the measurement function as
+    A small velocity error $\xi^v$ changes the measurement function as
 
     \begin{equation}
-        h(x,\delta V)
+        h(\hat x_{\mathrm{pert}}(\xi^v))
         =
         -\left(
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
+        [\hat R]^{T}\hat v
         +
-        \delta V
+        \xi^v
         +
         \left(
-        \omega_{body}^{body}\times r_{pc}^{body}
+        \hat \omega\times r
         \right)
         \right).
+        \label{eq:velocityperturb}
     \end{equation}
-
-    Using the definition of $h(x)$, this can be written as
-
+   
+    Where, the notation $x_{\mathrm{pert}}(\xi^v)$ can be defined as 
     \begin{equation}
-        h(x,\delta V)
+        \hat x_{\mathrm{pert}}(\xi^v)
         =
-        h(x)-\delta V.
+        \left(
+            \hat{X}
+            \operatorname{Exp}
+            \left(
+                \begin{bmatrix}
+                    \mathbf{0} \\
+                    \xi^v \\
+                    \mathbf{0}
+                \end{bmatrix}
+            \right),
+            \hat{b}
+        \right).
+        \label{eq:velocityPerturbedState}
     \end{equation}
 
-    Differentiating with respect to $\delta V$ gives
+    Using the definition of $h(x)$, Equation~\ref{eq:velocityperturb} can be written as
 
     \begin{equation}
-        \frac{\partial h(x,\delta V)}
-        {\partial \delta V}\bigg|_{\delta V=0}
+        h(\hat x_{\mathrm{pert}}(\xi^v))
+        =
+        h(\hat x)-\xi^v.
+    \end{equation}
+
+    Differentiating with respect to $\xi^v$ gives
+
+    \begin{equation}
+        \frac{\partial h(x_{\mathrm{pert}}(\xi^v))}
+        {\partial \xi^v}\bigg|_{\xi^v=0}
         =
         -\mathbf{I}.
     \end{equation}
 
     \subsection*{Position}
 
-    The body position does not appear in the measurement function. Therefore, adding a small position error $\delta P$ does not change the predicted measurement:
+    The body position does not appear in the measurement function. Therefore, adding a small position error $\xi^p$ does not change the predicted measurement:
 
     \begin{equation}
-        h(x,\delta P)=h(x).
+        h(\hat x_{\mathrm{pert}}(\xi^p))=h(\hat x).
     \end{equation}
 
-    Differentiating with respect to $\delta P$ gives
+    Where, the notation $\hat x_{\mathrm{pert}}(\xi^p)$ can be defined as 
+    \begin{equation}
+        \hat x_{\mathrm{pert}}(\xi^p)
+        =
+        \left(
+            \hat{X}
+            \operatorname{Exp}
+            \left(
+                \begin{bmatrix}
+                    \mathbf{0} \\
+                    \mathbf{0} \\
+                    \xi^p
+                \end{bmatrix}
+            \right),
+            \hat{b}
+        \right).
+        \label{eq:positionPerturbedState}
+    \end{equation}
+
+    Differentiating with respect to $\xi^p$ gives
 
     \begin{equation}
-        \frac{\partial h(x,\delta P)}
-        {\partial \delta P}\bigg|_{\delta P=0}
+        \frac{\partial h(\hat x_{\mathrm{pert}}(\xi^p))}
+        {\partial \xi^p}\bigg|_{\xi^p=0}
         =
         \mathbf{0}.
     \end{equation}
@@ -137,47 +198,76 @@
     The gyroscope bias is included in the bias-corrected angular velocity:
 
     \begin{equation}
-        \omega_{body}^{body}
+        \hat \omega
         =
         \omega_{meas}^{body}-b_g.
     \end{equation}
 
-    After adding a small gyroscope-bias error $\delta b_g$, the measurement function becomes
+    After applying a small gyroscope-bias error $\zeta^{b_g}$, the measurement function becomes
 
-    \begin{align}
-        h(x,\delta b_g)
-        &=
-        -\left(
-        [R_{body}^{odom}]^{T}v_{body}^{odom}
+\begin{align}
+    h\left(\hat x_{\mathrm{pert}}(\zeta^{b_g})\right)
+    &=
+    -\left(
+        \hat{R}^{T}\hat{v}
         +
         \left(
-        \omega_{meas}^{body}
-        -
-        b_g
-        -
-        \delta b_g
+            \omega_{\mathrm{meas}}^{body}
+            -
+            \left(
+                \hat{b}_g+\zeta^{b_g}
+            \right)
         \right)
-        \times r_{pc}^{body}
-        \right)
-        \\
-        &=
-        h(x)
+        \times r
+    \right)
+    \\
+    &=
+    -\left(
+        \hat{R}^{T}\hat{v}
         +
-        \delta b_g\times r_{pc}^{body}
-        \\
-        &=
-        h(x)
-        -
-        [r_{pc}^{body}]_{\times}\delta b_g.
-    \end{align}
+        \left(
+            \omega_{\mathrm{meas}}^{body}
+            -
+            \hat{b}_g
+            -
+            \zeta^{b_g}
+        \right)
+        \times r
+    \right)
+    \\
+    &=
+    h(\hat{x})
+    +
+    \zeta^{b_g}\times r
+    \\
+    &=
+    h(\hat{x})
+    -
+    [r]_{\times}\zeta^{b_g}.
+\end{align}
 
-    Differentiating with respect to $\delta b_g$ gives
+    Where, the notation $\hat x_{\mathrm{pert}}(\zeta^{b_g})$ can be defined as 
+    
+\begin{equation}
+    \hat x_{\mathrm{pert}}(\zeta^{b_g})
+    =
+    \left(
+        \hat{X},
+        \begin{bmatrix}
+            \hat{b}_g+\zeta^{b_g} \\
+            \hat{b}_a
+        \end{bmatrix}
+    \right).
+    \label{eq:gyroBiasPerturbedState}
+\end{equation}
+
+    Differentiating with respect to $\zeta^{b_g}$ gives
 
     \begin{equation}
-        \frac{\partial h(x,\delta b_g)}
-        {\partial \delta b_g}\bigg|_{\delta b_g=0}
+        \frac{\partial h(\hat x_{\mathrm{pert}}(\zeta^{b_g}))}
+        {\partial \zeta^{b_g}}\bigg|_{\zeta^{b_g}=0}
         =
-        -[r_{pc}^{body}]_{\times}.
+        -[r]_{\times}.
     \end{equation}
 
     \subsection*{Accelerometer Bias}
@@ -185,18 +275,36 @@
     The accelerometer bias does not appear directly in the measurement function. Therefore, adding a small accelerometer-bias error $\delta b_a$ does not change the predicted measurement:
 
     \begin{equation}
-        h(x,\delta b_a)=h(x).
+       h\left(\hat x_{\mathrm{pert}}(\zeta^{b_a})\right)=h(\hat x).
     \end{equation}
+
+Where, the notation $\hat x_{\mathrm{pert}}(\zeta^{b_a})$ can be defined as 
+    
+\begin{equation}
+    \hat x_{\mathrm{pert}}(\zeta^{b_a})
+    =
+    \left(
+        \hat{X},
+        \begin{bmatrix}
+            \hat{b}_g \\
+            \hat{b}_a +\zeta^{b_a}
+        \end{bmatrix}
+    \right).
+    \label{eq:accBiasPerturbedState}
+\end{equation}
 
     Differentiating with respect to $\delta b_a$ gives
 
     \begin{equation}
-        \frac{\partial h(x,\delta b_a)}
-        {\partial \delta b_a}\bigg|_{\delta b_a=0}
+        \frac{\partial h(\hat x_{\mathrm{pert}}(\zeta^{b_a}))}
+        {\partial \zeta^{b_a}}\bigg|_{\zeta^{b_a}=0}
         =
         \mathbf{0}.
     \end{equation}
 
+    
+    
+    
     \section{Numerical Jacobian} \label{appendix:NumericalJacobianCalculation}
 
     The analytical measurement Jacobian derived in Appendix~\ref{appendix:MeasurementJacobianDerivation} is verified using a numerical Jacobian. Each error-state variable is perturbed independently, and the corresponding change in the measurement function is calculated using the central difference approximation. This numerical Jacobian validation implementation and the following equations were developed with the help of AI assistant ChatGPT~\cite{openai_chatgpt_jacobian_2026}. The script is carefully reviewed and verified for correctness. 
@@ -331,21 +439,7 @@
     RMSE of rotation error per meter    : 5.18 degrees/m
     --------------------------------------------------
     \end{lstlisting}
-    
-    % \chapter{[in the case of using AI-assistants] Description of AI-Generated Content}
-    % Describe in detail what content was generated using an AI assistant.
-    % Name the AI assistant and how it was used (e.g. which prompts were used, and for which parts of the project).
-    
-    % ChatGPT plus was used. 
-    
-    % - the UML diagrams, 
-    % - grammar and sentence structure corrections,
-    % - latex table from excel data,
-    % - latex code for equations from a rudimentary description of the equations,
-    % - coherence and flow checking of the report
-    % Summarizing overview of results and conclusion from the results and discussion chapter.
-    
-    
+      
     
 \chapter{Description of AI-Generated Content}
 \label{app:aiGeneratedContent}

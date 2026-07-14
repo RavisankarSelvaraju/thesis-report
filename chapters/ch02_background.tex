@@ -211,22 +211,41 @@ The \gls{inekf} extends the Extended Kalman Filter by representing suitable part
 \subsection{Invariant Extended Kalman Filter Algorithm}
 \label{subsec:background_inekf_algorithm}
 
-The \gls{inekf} follows the propagation and correction structure of a conventional Extended Kalman Filter. However, the rotation, velocity, and position components are represented on a matrix Lie group, and their estimation error is defined using an invariant error. Let $\hat{\boldsymbol{X}}^{+}_{k}$ and $\boldsymbol{P}^{+}_{k}$ denote the corrected state estimate and its covariance at time step $k$. The superscript $'-'$ denotes the predicted state before a measurement correction, while the superscript $'+'$ denotes the corrected state after the measurement has been applied.
-
-During the propagation step, the current corrected state is propagated from time step $k$ to $k+1$ using the system motion model:
+The \gls{inekf} algorithm consists of two steps, the propagation step and the update step. The propagation step uses the IMU measurements to predict the state at the next time step and the update step uses measurements from sensors to correct the predicted state. The state estimated by the \gls{inekf} is represented as a combination of the Lie group state and the \gls{imu} biases. The Lie group state includes the rotation, velocity, and position components and the IMU biases includes the gyroscope bias and accelerometer bias. The complete state representation is given below
 
 \begin{equation}
-    \hat{\boldsymbol{X}}^{-}_{k+1}
+    \hat{\boldsymbol{x}}_{k}
+    =
+    \left(
+        \hat{\boldsymbol{X}}_{k},
+        \hat{\boldsymbol{b}}_{k}
+    \right),
+    \qquad
+    \hat{\boldsymbol{b}}_{k}
+    =
+    \begin{bmatrix}
+        \hat{\boldsymbol{b}}_{g,k} \\
+        \hat{\boldsymbol{b}}_{a,k}
+    \end{bmatrix}.
+    \label{eq:inekfCompleteStateBackground}
+\end{equation}
+
+The propagation step of the \gls{inekf} uses the IMU measurements to predict the state at time step $k+1$ based on the corrected state at time step $k$. The state propagation function can be expressed as
+
+\begin{equation}
+    \hat{\boldsymbol{x}}^{-}_{k+1}
     =
     f\left(
-        \hat{\boldsymbol{X}}^{+}_{k},
-        \boldsymbol{u}_{k},
+        \hat{\boldsymbol{x}}^{+}_{k},
+        \tilde{\boldsymbol{u}}_{k},
         \Delta t
-    \right),
+    \right).
     \label{eq:inekfStatePropagationBackground}
 \end{equation}
 
-where $\boldsymbol{u}_{k}$ contains the bias-corrected gyroscope and accelerometer measurements, and $\Delta t$ is the time difference between two consecutive measurements. The corresponding covariance is propagated as
+Where, $\hat{\boldsymbol{x}}^{-}_{k+1}$ represents the predicted or propagated state at time step $k+1$, $\hat{\boldsymbol{x}}^{+}_{k}$ is the corrected state at time step $k$, $\tilde{\boldsymbol{u}}_{k}$ represents the input vector which contain the \gls{imu} measurements, and $\Delta t$ is the time difference between two consecutive measurements.
+
+The covariance propagation step of the \gls{inekf} is given by,
 
 \begin{equation}
     \boldsymbol{P}^{-}_{k+1}
@@ -235,51 +254,112 @@ where $\boldsymbol{u}_{k}$ contains the bias-corrected gyroscope and acceleromet
     \boldsymbol{P}^{+}_{k}
     \boldsymbol{\Phi}_{k}^{T}
     +
-    \boldsymbol{Q}_{d,k},
+    \boldsymbol{Q}_{d,k}.
     \label{eq:inekfCovariancePropagationBackground}
 \end{equation}
 
-Where, $\boldsymbol{\Phi}_{k}$ is the discrete state-transition matrix and $\boldsymbol{Q}_{d,k}$ is the discrete process-noise covariance. The predicted state $\hat{\boldsymbol{X}}^{-}_{k+1}$ is also called the prior state estimate because it is calculated before using the measurement available at time step $k+1$. When a measurement $\boldsymbol{z}_{k+1}$ becomes available, it is compared with the measurement predicted from the prior state. The measurement residual is calculated as
+Where, $\boldsymbol{P}^{-}_{k+1}$ is the predicted covariance at time step $k+1$, $\boldsymbol{P}^{+}_{k}$ is the corrected covariance at time step $k$, $\boldsymbol{\Phi}_{k}$ is the discrete state-transition matrix, and $\boldsymbol{Q}_{d,k}$ is the discrete process-noise covariance.
+
+The residual is calculated as the difference $\boldsymbol{z}_{k+1}$, the actual measurement, and the $\hat{\boldsymbol{x}}^{-}_{k+1}$, the predicted measurement based on the propagated state $\hat{\boldsymbol{x}}^{-}_{k+1}$. This is expressed as:
 
 \begin{equation}
-    \boldsymbol{r}_{k+1}
+    \boldsymbol{\nu}_{k+1}
     =
     \boldsymbol{z}_{k+1}
     -
-    h\left(\hat{\boldsymbol{X}}^{-}_{k+1}\right),
+    h\left(
+        \hat{\boldsymbol{x}}^{-}_{k+1}
+    \right).
     \label{eq:inekfResidualBackground}
 \end{equation}
 
-where $h(\cdot)$ is the measurement function. The residual covariance and the Kalman gain are then calculated as
+where, $h(\hat{\boldsymbol{x}}^{-}_{k+1})$ is the measurement function that maps the state $\hat{\boldsymbol{x}}^{-}_{k+1}$ to the measurement space. The perturbation of the state is defined as the difference between the true state $\boldsymbol{x}_{k}$ and the estimated state $\hat{\boldsymbol{x}}_{k}$. The perturbation or error vector $\boldsymbol{e}$ is expressed as:
 
-\begin{align}
+\begin{equation}
+    \boldsymbol{e}
+    =
+    \begin{bmatrix}
+        \boldsymbol{\xi} \\
+        \boldsymbol{\zeta}
+    \end{bmatrix},
+    \qquad
+    \boldsymbol{\xi}
+    =
+    \begin{bmatrix}
+        \boldsymbol{\xi}^{R} \\
+        \boldsymbol{\xi}^{v} \\
+        \boldsymbol{\xi}^{p}
+    \end{bmatrix},
+    \qquad
+    \boldsymbol{\zeta}
+    =
+    \begin{bmatrix}
+        \boldsymbol{\zeta}^{b_g} \\
+        \boldsymbol{\zeta}^{b_a}
+    \end{bmatrix}.
+    \label{eq:inekfLocalErrorCoordinatesBackground}
+\end{equation}
+
+where, $\boldsymbol{\xi}$ represents the Lie group part of the error, which includes the rotation error $\boldsymbol{\xi}^{R}$, velocity error $\boldsymbol{\xi}^{v}$, and position error $\boldsymbol{\xi}^{p}$. The vector $\boldsymbol{\zeta}$ represents the Euclidean part of the error, which includes the gyroscope bias error $\boldsymbol{\zeta}^{b_g}$ and accelerometer bias error $\boldsymbol{\zeta}^{b_a}$.
+
+Using the calculated perturbation vector $\boldsymbol{e}$, the measurement Jacobian $\boldsymbol{H}_{k+1}$ can be computed as the partial derivative of the measurement function $h(\cdot)$ with respect to the perturbation vector $\boldsymbol{e}$, evaluated at the zero perturbation. This is expressed as:
+
+\begin{equation}
+    \boldsymbol{H}_{k+1}
+    =
+    \left.
+    \frac{
+        \partial
+        h\left(
+            \boldsymbol{x}_{\mathrm{pert}}(\boldsymbol{e})
+        \right)
+    }{
+        \partial\boldsymbol{e}
+    }
+    \right|_{\boldsymbol{e}=\boldsymbol{0}}
+    \label{eq:inekfMeasurementJacobianBackground}
+\end{equation}
+
+The residual covariance $\boldsymbol{S}_{k+1}$ and the Kalman gain $\boldsymbol{K}_{k+1}$ are computed as follows:
+
+\begin{equation}
     \boldsymbol{S}_{k+1}
-    &=
+    =
     \boldsymbol{H}_{k+1}
     \boldsymbol{P}^{-}_{k+1}
     \boldsymbol{H}_{k+1}^{T}
     +
-    \boldsymbol{N}_{k+1},
+    \boldsymbol{N}_{k+1}.
     \label{eq:inekfInnovationCovarianceBackground}
-    \\
-    \boldsymbol{K}_{k+1}
-    &=
-    \boldsymbol{P}^{-}_{k+1}
-    \boldsymbol{H}_{k+1}^{T}
-    \boldsymbol{S}_{k+1}^{-1},
-    \label{eq:inekfKalmanGainBackground}
-\end{align}
+\end{equation}
 
-where $\boldsymbol{H}_{k+1}$ is the measurement Jacobian and $\boldsymbol{N}_{k+1}$ is the measurement-noise covariance. The correction vector is obtained from
+where, $\boldsymbol{N}_{k+1}$ is the measurement-noise covariance. The Kalman gain is then calculated using the predicted covariance $\boldsymbol{P}^{-}_{k+1}$, the measurement Jacobian $\boldsymbol{H}_{k+1}$, and the residual covariance $\boldsymbol{S}_{k+1}$. This equation is given by:
 
 \begin{equation}
-    \delta\boldsymbol{x}_{k+1}
+    \boldsymbol{K}_{k+1}
     =
-    \boldsymbol{K}_{k+1}\boldsymbol{r}_{k+1}.
+    \boldsymbol{P}^{-}_{k+1}
+    \boldsymbol{H}_{k+1}^{T}
+    \boldsymbol{S}_{k+1}^{-1}.
+    \label{eq:inekfKalmanGainBackground}
+\end{equation}
+
+Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correction vector $\boldsymbol{\hat e}_{k+1}$ is computed by multiplying the Kalman gain with the measurement residual $\boldsymbol{r}_{k+1}$. This correction vector is expressed as:
+
+\begin{equation} 
+    \boldsymbol{\hat e}_{k+1}
+    =
+    \begin{bmatrix}
+        \boldsymbol{\hat \xi}_{k+1} \\
+        \boldsymbol{\hat \zeta}_{k+1}
+    \end{bmatrix}
+    =
+    \boldsymbol{K}_{k+1}
+    \boldsymbol{r}_{k+1}.
     \label{eq:inekfCorrectionVectorBackground}
 \end{equation}
 
-Unlike a conventional vector-state update, the correction of the Lie-group state cannot be performed using direct vector addition. For the left-invariant formulation used in this thesis, the correction associated with the rotation, velocity, and position is mapped from the Lie algebra to the Lie group using the exponential map:
+Where, the vector $\boldsymbol{\hat \xi}_{k+1}$ represents the Lie group part of the estimated error based on the measurement residual, and the vector $\boldsymbol{\hat \zeta}_{k+1}$ represents the Euclidean biases part of the estimated error based on the measurement residual. With the calculated correction vector $\boldsymbol{\hat e}_{k+1}$, the state is updated using the exponential map to ensure that the updated state remains on the Lie group. The state update equation is given by:
 
 \begin{equation}
     \hat{\boldsymbol{X}}^{+}_{k+1}
@@ -287,12 +367,35 @@ Unlike a conventional vector-state update, the correction of the Lie-group state
     \hat{\boldsymbol{X}}^{-}_{k+1}
     \operatorname{Exp}
     \left(
-        \delta\boldsymbol{\xi}_{k+1}
-    \right),
+        \boldsymbol{\hat \xi}_{k+1}
+    \right).
     \label{eq:inekfStateCorrectionBackground}
 \end{equation}
 
-where $\delta\boldsymbol{\xi}_{k+1}$ is the Lie-group part of the correction vector. Euclidean state variables, such as the gyroscope and accelerometer biases, are corrected using vector addition. Finally, the corrected covariance is calculated using
+where, $\operatorname{Exp}(\cdot)$ is the exponential map that maps the Lie algebra element $\boldsymbol{\hat \xi}_{k+1}$ to the Lie group. The Euclidean biases are updated using vector addition as follows:
+
+\begin{equation}
+    \hat{\boldsymbol{b}}^{+}_{k+1}
+    =
+    \hat{\boldsymbol{b}}^{-}_{k+1}
+    +
+    \boldsymbol{\hat \zeta}_{k+1}.
+    \label{eq:inekfBiasCorrectionBackground}
+\end{equation}
+
+Once, both the Lie group state and the Euclidean biases are updated, the complete corrected state at time step $k+1$ is represented as:
+
+\begin{equation}
+    \hat{\boldsymbol{x}}^{+}_{k+1}
+    =
+    \left(
+        \hat{\boldsymbol{X}}^{+}_{k+1},
+        \hat{\boldsymbol{b}}^{+}_{k+1}
+    \right).
+    \label{eq:inekfCompleteStateCorrectionBackground}
+\end{equation}
+
+The corresponding state covariance is corrected using the calculated Kalman gain $\boldsymbol{K}_{k+1}$, the measurement Jacobian $\boldsymbol{H}_{k+1}$, and the predicted covariance $\boldsymbol{P}^{-}_{k+1}$. The corrected covariance is given by:
 
 \begin{equation}
     \boldsymbol{P}^{+}_{k+1}
@@ -300,13 +403,15 @@ where $\delta\boldsymbol{\xi}_{k+1}$ is the Lie-group part of the correction vec
     \left(
         \boldsymbol{I}
         -
-        \boldsymbol{K}_{k+1}\boldsymbol{H}_{k+1}
+        \boldsymbol{K}_{k+1}
+        \boldsymbol{H}_{k+1}
     \right)
     \boldsymbol{P}^{-}_{k+1}
     \left(
         \boldsymbol{I}
         -
-        \boldsymbol{K}_{k+1}\boldsymbol{H}_{k+1}
+        \boldsymbol{K}_{k+1}
+        \boldsymbol{H}_{k+1}
     \right)^{T}
     +
     \boldsymbol{K}_{k+1}

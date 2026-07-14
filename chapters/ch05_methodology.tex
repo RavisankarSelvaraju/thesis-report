@@ -82,7 +82,7 @@
         \label{eq:measurementFunction}
     \end{equation}
     
-        \begin{equation}
+    \begin{equation}
         \omega_{body}^{body}
         =
         \omega_{meas}^{body}
@@ -99,7 +99,6 @@
     
     To understand this negation, we should look at an example. Imagine we have rover that is moving forward with a velocity of $+2 m/s$, for the sake of simplicity, our imaginary rover does not have rotational velocity. According to rigid body kinematics, the velocity of a point attached to the rover will also be $+2 m/s$. From the rover's body frame of reference, the forward motion of the body will be seen as the ground moving backwards under the rover. Mathematically, this can be represented by the negation of Equation~\ref{eq:velocityOfaPointInRigidBody}, resulting in the velocity of the ground moving under the point of contact to be $-2 m/s$. This perspective is used to compare the predicted and the measured \gls{pcv}
         
-    
     \subsection{Measured Potential Contact Velocity} \label{subsec:measuredPCV}
     
     The measured \gls{pcv} is calculated using the wheel's angular velocity expressed as a vector and the position vector of \gls{pc}. The position vector is calculated from the wheel center to the tip of the spoke. The measured \gls{pcv} vector is perpendicular to the position vector and points in the direction of rotation of the wheel. The calculation of the measured \gls{pcv} is shown in Equation~\ref{eq:MeasuredPCVCalculation}. The measured \gls{pcv} vector is transformed to the body frame to be consistent with the predicted \gls{pcv} and before the residual calculation.
@@ -125,7 +124,7 @@
     \section{Measurement Model and Jacobian}
     \label{sec:measurementModelAndJacobian}
 
-    The measurement model, also referred to as the measurement function $h(x)$, corresponds to the predicted \gls{pcv}. It is used by the \gls{inekf} to calculate a predicted measurement from the filter state. This predicted measurement is compared with the measured \gls{pcv} obtained from the wheel encoder measurements. The measurement function given in Equation~\ref{eq:measurementFunction} is rewritten as
+    The measurement model, also referred to as the measurement function $h(x)$, corresponds to the predicted \gls{pcv}. It is used by the \gls{inekf} to calculate a predicted \gls{pcv} from the filter state. This predicted \gls{pcv} is compared with the measured \gls{pcv} obtained from the wheel encoder measurements. The measurement function given in Equation~\ref{eq:measurementFunction} is rewritten as
 
     \begin{equation}
         h(x)
@@ -138,25 +137,38 @@
                 \times
                 r_{pc}^{body}
             \right)
-        \right),
+        \right)
         \label{eq:measurementFunction-2}
     \end{equation}
 
-    Where, $x$ represents the complete filter state used by the measurement function. The complete filter state consists of the Lie-group state $X$ and the gyroscope and accelerometer biases:
+    Where $x$ represents the complete filter state used by the measurement function. The measurement function also depends on the current gyroscope measurements. For the compactness of the equations, it is not shown explicitly. The complete filter state consists of the Lie-group state $X$ and the bias states grouped as $b$, as shown in Equation~\ref{eq:State}
 
+    \begin{equation}
+        X
+        =
+        \left(
+            R,
+            v,
+            p
+        \right), \\ 
+        b = \left(
+            b_g,
+            b_a
+        \right)
+        \label{eq:State}
+    \end{equation}
+    
     \begin{equation}
         x
         =
         \left(
             X,
-            b_g,
-            b_a
+            b
         \right).
         \label{eq:completeFilterState}
     \end{equation}
-
-    The Lie-group state $X$ contains the rotation, velocity, and position, while $b_g$ and $b_a$ are Euclidean variables. During the correction step, the current state estimate is the propagated state $\hat{x}_{k+1}^{-}$. For compactness, this state is denoted by
-    $\hat{x}$ in the remainder of this section:
+ 
+    The Lie-group state $X$ contains the rotation, velocity, and position, while the bias state $b$ contains the gyroscope $b_g$ and acceleration $b_a$ biases as Euclidean variables. During the correction step, the current state estimate is the propagated state $\hat{x}_{k+1}^{-}$. For compactness, this state is denoted by $\hat{x}$ in the remainder of this section:
 
     \begin{equation}
         \hat{x}
@@ -165,13 +177,12 @@
         =
         \left(
             \hat{X},
-            \hat{b}_g,
-            \hat{b}_a
-        \right),
+            \hat{b}
+        \right)
         \label{eq:estimatedCompleteFilterState}
     \end{equation}
 
-    Where, $\hat{X}$ is the propagated estimate of the Lie-group state, and $\hat{b}_g$ and $\hat{b}_a$ are the current gyroscope and accelerometer bias estimates. The predicted measurement at the current state estimate is therefore
+    Where $\hat{X}$ is the propagated estimate of the Lie-group state, and $\hat{b}$ is the propagated bias estimate. The predicted measurement at the current state estimate is therefore
 
     \begin{equation}
         h(\hat{x})
@@ -193,81 +204,74 @@
         \label{eq:predictedMeasurementAtEstimate}
     \end{equation}
 
-    The measurement Jacobian describes how the predicted \gls{pcv} changes when a small perturbation is applied to the current state estimate. The local perturbation vector is defined as
+    The measurement Jacobian describes how the predicted \gls{pcv} changes when a small perturbation is applied to the current state estimate. The local perturbation vector $\xi$ is defined as
 
     \begin{equation}
         \xi
         =
         \begin{bmatrix}
-            \delta\theta & \delta V & \delta P & \delta b_g & \delta b_a
+            \xi^R &  \xi^v & \xi^p & \zeta^{b_g} & \zeta^{b_a}
         \end{bmatrix} ^{T},
         \label{eq:ErrorStateVector}
     \end{equation}
 
-    Where, $\delta\theta\in\mathbb{R}^{3}$ is the local rotation perturbation, $\delta V$ is the velocity perturbation, $\delta P$ is the position perturbation, $\delta b_g$ is the gyroscope bias perturbation, and $\delta b_a$ is the accelerometer bias perturbation. The symbol $\delta\theta$ is used instead of $\delta R$ because the rotation perturbation is represented by a three-dimensional vector and not directly by a rotation matrix. The first three elements of $\xi$ are associated with the Lie-group state and are grouped as
+    Where, $\xi^R$ is the local rotation perturbation, $\xi^v$ is the velocity perturbation, $\xi^p$ is the position perturbation, $\zeta^{b_g}$ is the gyroscope bias perturbation, and $\zeta^{b_a}$ is the accelerometer bias perturbation. The first three elements of $\xi$ are associated with the Lie-group state and are grouped as
     
     \begin{equation}
-        \xi_X
+        \xi^X
         =
         \begin{bmatrix}
-            \delta\theta \\
-            \delta V \\
-            \delta P
+            \xi^R \\
+            \xi^v \\
+            \xi^p
         \end{bmatrix}.
         \label{eq:LieGroupErrorState}
     \end{equation}
 
-    The matrix left-invariant error $\eta^{L}$ defined in
-    Section~\ref{subsec:background_invariant_errors} is a Lie-group
-    element. In contrast, $\xi_X$ is a vector containing local coordinates
-    used to represent a small increment of the Lie-group state. For the
-    Jacobian calculation, a state close to the current estimate is defined
-    by applying this increment through right multiplication:
+    For the Jacobian calculation, a state close to the current estimate is defined by applying this increment through right multiplication:
 
     \begin{equation}
-        X(\xi_X)
+        X_{pert}
         =
         \hat{X}
-        \operatorname{Exp}(\xi_X),
+        \operatorname{Exp}(\xi^X),
         \label{eq:perturbedLieGroupState}
     \end{equation}
 
-    Where, $\operatorname{Exp}(\xi_X)$ maps the local perturbation coordinates to a Lie-group increment. This increment contains the small changes associated with rotation, velocity, and position. Equation~\ref{eq:perturbedLieGroupState} does not define an additional filter state. It only defines a state close to $\hat{X}$ for the linearization of the measurement function. The gyroscope and accelerometer biases are Euclidean variables. Therefore, their perturbations are applied using vector addition:
+    Where, $\operatorname{Exp}(\xi^X)$ maps the local perturbation coordinates to a Lie-group increment. This increment contains the small changes associated with rotation, velocity, and position. Equation~\ref{eq:perturbedLieGroupState} does not define an additional filter state. It only defines a state close to $\hat{X}$ for the linearization of the measurement function. The gyroscope and accelerometer biases are Euclidean variables. Therefore, their perturbations are applied using vector addition:
 
     \begin{align}
-        b_g(\xi)
+        {b_{g, pert}}
         &=
-        \hat{b}_g+\delta b_g,
+        \hat{b}_g+ \zeta^{b_g},
         \label{eq:perturbedGyroBias}
         \\
-        b_a(\xi)
+        {b_{a, pert}}
         &=
-        \hat{b}_a+\delta b_a.
+        \hat{b}_a+\zeta^{b_a}.
         \label{eq:perturbedAccelerometerBias}
     \end{align}
-
-    Using Equations~\ref{eq:perturbedLieGroupState}--
-    \ref{eq:perturbedAccelerometerBias}, the complete perturbed state is
-    defined as
-
+        
     \begin{equation}
-        x(\xi)
+        b_{\mathrm{pert}}
         =
-        \left(
-            \hat{X}\operatorname{Exp}(\xi_X),
-            \hat{b}_g+\delta b_g,
-            \hat{b}_a+\delta b_a
-        \right).
-        \label{eq:perturbedCompleteState}
+        \begin{bmatrix}
+            b_{g,\mathrm{pert}} \\
+            b_{a,\mathrm{pert}}
+        \end{bmatrix}
+        \label{eq:perturbedBiases}
     \end{equation}
 
-    The notation $x(\xi)$ therefore represents the state obtained after applying the perturbation $\xi$ to the current estimate $\hat{x}$. When the perturbation is zero, the Lie-group increment is the identity and the bias perturbations are zero. Consequently,
+    Using Equations~\ref{eq:perturbedLieGroupState}-- \ref{eq:perturbedAccelerometerBias}, the complete perturbed state is defined as
 
     \begin{equation}
-        x(0)=\hat{x},
-        \qquad
-        h(x(0))=h(\hat{x}).
-        \label{eq:zeroPerturbationState}
+        x_{pert}
+        =
+        [
+            X_{pert},
+            b_{pert}
+        ].
+        \label{eq:perturbedState}
     \end{equation}
 
     The measurement Jacobian can now be defined with respect to the local perturbation vector:
@@ -276,12 +280,13 @@
         H
         =
         \left.
-        \frac{\partial h\left(x(\xi)\right)}
+        \frac{\partial h(
+        x_{pert})}
             {\partial \xi}
         \right|_{\xi=0}.
         \label{eq:MeasurementJacobian-1}
     \end{equation}
-
+    
     The derivative is evaluated at $\xi=0$ because this corresponds to linearizing the measurement function around the current propagated state estimate $\hat{x}$. The Jacobian therefore describes the first-order change in the predicted \gls{pcv} caused by small changes in the rotation, velocity, position, and bias estimates. Using the perturbation ordering defined in Equation~\ref{eq:ErrorStateVector}, the measurement Jacobian consists of the following blocks:
 
     \begin{equation}
@@ -289,20 +294,20 @@
         =
         \left.
         \begin{bmatrix}
-            \dfrac{\partial h(x(\xi))}
-                {\partial\delta\theta}
+            \dfrac{\partial h(x_{pert})}
+                {\partial\xi^{R}}
             &
-            \dfrac{\partial h(x(\xi))}
-                {\partial\delta V}
+            \dfrac{\partial h(x_{pert})}
+                {\partial\xi^{v}}
             &
-            \dfrac{\partial h(x(\xi))}
-                {\partial\delta P}
+            \dfrac{\partial h(x_{pert})}
+                {\partial\xi^p}
             &
-            \dfrac{\partial h(x(\xi))}
-                {\partial\delta b_g}
+            \dfrac{\partial h(x_{pert})}
+                {\partial\zeta^{b_g}}
             &
-            \dfrac{\partial h(x(\xi))}
-                {\partial\delta b_a}
+            \dfrac{\partial h(x_{pert})}
+                {\partial\zeta^{b_a}}
         \end{bmatrix}
         \right|_{\xi=0}.
         \label{eq:MeasurementJacobian-2}
