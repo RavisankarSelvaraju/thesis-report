@@ -58,7 +58,7 @@
         X = [R, V, P, b_g, b_a]
         \label{eq:stateVector}
     \end{equation}
-    where, $R$ is the rotation matrix, that represents the orientation of the body frame with respect to the odom frame. $V$ is the velocity vector of the body frame in the odom frame, $P$ is the position vector of the body frame in the odom frame, $b_g$ is the gyroscope bias, $b_a$ is the accelerometer bias. 
+    where, $R$ is the rotation matrix, that represents the orientation of the body frame with respect to the odom frame. $V$ is the velocity vector of the body in the odom frame, $P$ is the position vector of the body in the odom frame, $b_g$ is the gyroscope bias, $b_a$ is the accelerometer bias. 
     
     \subsection{Propagation step}
     
@@ -82,7 +82,16 @@
         \label{eq:measurementFunction}
     \end{equation}
     
-    where, $R_{body}^{odom}$ is the orientation of the body frame expressed in the odom frame and $[R_{body}^{odom}]^T$ transforms the $v_{body}^{odom}$ to the $v_{body}^{body}$. The $R_{body}^{odom}$ and the $v_{body}^{odom}$ are part of the filter's state vector shown in Equation~\ref{eq:stateVector}. $v_{body}^{odom}$ represents the linear velocity of the body frame expressed in the odom frame. $\omega_{body}^{body}$ is the angular velocity of the body expressed in the body frame. $r_{pc}^{body}$, is the position vector of the \gls{pc} from the body frame of the rover expressed in the body frame. The $v_{pc, rigid}^{body}$ is the rigid-body velocity of the potential contact point at the spoke tip, expressed in the body frame. It represents how fast the spoke tip would move if it were rigidly fixed to the rover body and the wheel were not rotating.
+        \begin{equation}
+        \omega_{body}^{body}
+        =
+        \omega_{meas}^{body}
+        -
+        b_g.
+        \label{eq:gyroBiasRemoved}
+    \end{equation}
+    
+    where, $R_{body}^{odom}$ is the orientation of the body frame expressed in the odom frame and $[R_{body}^{odom}]^T$ transforms the $v_{body}^{odom}$ to the $v_{body}^{body}$. The $R_{body}^{odom}$ and the $v_{body}^{odom}$ are part of the filter's state vector shown in Equation~\ref{eq:stateVector}. $v_{body}^{odom}$ represents the linear velocity of the body frame expressed in the odom frame. $\omega_{body}^{body}$ is the bias corrected angular velocity of the body expressed in the body frame. $r_{pc}^{body}$, is the position vector of the \gls{pc} from the body frame of the rover expressed in the body frame. The $v_{pc, rigid}^{body}$ is the rigid-body velocity of the potential contact point at the spoke tip, expressed in the body frame. It represents how fast the spoke tip would move if it were rigidly fixed to the rover body and the wheel were not rotating.
 
     This can be understood using the difference between an ice skate and a roller skate. A point on an ice skate blade is fixed relative to the boot, so its velocity is caused only by the translation and rotation of the skater. This is analogous to $v_{pc, rigid}^{body}$, which describes the motion of the spoke tip due only to the rover body motion. In contrast, a point on a roller-skate wheel also has an additional velocity component caused by the wheel rotation.
     
@@ -107,11 +116,11 @@
     The residual, also referred to as the innovation, is calculated as the difference between the measured and the predicted \gls{pcv}. Both quantities are expressed in the body frame of reference before comparison. The residual is used in the \gls{inekf} to update the state vector.
     
     \begin{equation}
-        r_{pcv} =  {v}_{pc, measured}^{body} - {v}_{pc, predicted}^{body} 
+        \boldsymbol{\nu}_{pcv} =  {v}_{pc, measured}^{body} - {v}_{pc, predicted}^{body} 
     \label{eq:pcvResidual}
     \end{equation}
     
-    If the $r_{pcv}$ is small, the wheel encoder measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel encoder measurements are inconsistent with the filter's prediction. This could mean wheel encoder measurements may be affected by errors such as wheel slip, an inconsistent contact assumption or noise in wheel encoder measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
+    If the $\boldsymbol{\nu}_{pcv}$ is small, the wheel encoder measurements are consistent with the filter's predicted rover motion. If the residual is large, then the wheel encoder measurements are inconsistent with the filter's prediction. This could mean wheel encoder measurements may be affected by errors such as wheel slip, an inconsistent contact assumption or noise in wheel encoder measurements. The residual is also used in the \gls{md} calculation which is later used in slip rejection and contact estimation.
 
     \section{Measurement Model and Jacobian}
     \label{sec:measurementModelAndJacobian}
@@ -133,19 +142,7 @@
         \label{eq:measurementFunction-2}
     \end{equation}
 
-    Where, $x$ represents the complete filter state used by the measurement function. The angular velocity $\omega_{body}^{body}$ is the
-    bias-corrected gyroscope measurement expressed in the body frame:
-
-    \begin{equation}
-        \omega_{body}^{body}
-        =
-        \omega_{meas}^{body}
-        -
-        b_g.
-        \label{eq:gyroBiasRemoved}
-    \end{equation}
-
-    The complete filter state consists of the Lie-group state $X$ and the gyroscope and accelerometer biases:
+    Where, $x$ represents the complete filter state used by the measurement function. The complete filter state consists of the Lie-group state $X$ and the gyroscope and accelerometer biases:
 
     \begin{equation}
         x
@@ -339,35 +336,33 @@
 
     The validity of the measurement Jacobian is verified by comparing the analytical Jacobian with a numerical Jacobian. The numerical Jacobian is calculated by applying small perturbations to the variables in Equation~\ref{eq:ErrorStateVector} and evaluating the resulting change in the measurement function. The analytical and numerical Jacobians are found to be consistent. The numerical Jacobian calculation is provided in Appendix~\ref{appendix:NumericalJacobianCalculation}.
 
-
-        \section{Slip-aware Measurement Rejection} \label{sec:sliprejection}
+    \section{Contact Estimation} \label{sec:ContactEstimation}
+            
+        From the residual $\boldsymbol{\nu}$ calculated in Subsection~\ref{subsec:residual}, the squared \gls{md} is calculated. The squared \gls{md} is a statistical measure of the distance between the predicted and measured \gls{pcv} vectors, taking into account the uncertainty in the filter state and the measurement noise. The squared \gls{md} measures residual between a measurement and its predicted values weighted by the inverse innovation covariance \cite{SITE-mathworks-mahalanobis}. The squared \gls{md} is calculated for all the spokes of the rover. It is calculated using the residual and its covariance. The residual covariance and the squared \gls{md} calculation is given by Equations~\ref{eq:innovationCovariance} and \ref{eq:mahalanobisDistanceSquared} respectively.
         
-        The measured \gls{pcv}, calculated from the joint encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Chapter~\ref{chap:background}. 
-        
-        In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the joint encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. This inconsistency can be calculated using the squared \gls{md}. 
-        
-        The squared \gls{md} measures residual between a measurement and its predicted values weighted by the inverse innovation covariance \cite{SITE-mathworks-mahalanobis}. The residual calculated in Section~\ref{subsec:residual} is used to calculate the squared \gls{md}. The innovation covariance $S$ is calculated using the Equation~\ref{eq:innovationCovariance} and the squared \gls{md} is calculated using Equation~\ref{eq:mahalanobisDistanceSquared}.
-        
-        When the squared \gls{md} is higher than a threshold value (details are provided in the Implementation Chapter~\ref{chap:implementation}) then the measured \gls{pcv} is rejected from the update step, thereby preventing the inconsistent joint encoder measurements from a slip event \cite{chang2014MahalanobisFormula}. 
-        % \todo[inline]{Include the chi2 threshold in the implementation chapter}
-
-        
-        \todo[inline]{Check the variable names and do not reuse them}
         \begin{equation}
-        S = HPH^T + R
+        \boldsymbol{\Sigma}_{\nu}
+        =
+        H P H^{T}
+        +
+        \boldsymbol{\Sigma}_{m}, 
         \label{eq:innovationCovariance}
         \end{equation}
         
         \begin{equation}
-        d_M^2 = r^T S^{-1} r
+        d_M^2
+        =
+        \boldsymbol{\nu}^{T}
+        \boldsymbol{\Sigma}_{\nu}^{-1}
+        \boldsymbol{\nu}
         \label{eq:mahalanobisDistanceSquared}
         \end{equation}
         
-        where $S$ is the residual or innovation covariance, $H$ is the measurement Jacobian calculated in the previous section, $P$ is the state covariance estimated by the filter, $R$ is the measurement noise covariance, and $r$ is the residual.
+        where $\boldsymbol{\Sigma}_{\nu}$ is the residual or innovation covariance, $H$ is the measurement Jacobian calculated in the previous section, $P$ is the state covariance estimated by the filter, $\boldsymbol{\Sigma}_{m}$ is the measurement noise covariance, and $\boldsymbol{\nu}$ is the residual.
+
+        Once the squared \gls{md} is calculated for all the spokes, it is used to estimate the spokes that are in contact with the ground. In the thesis, after some initial testing, it was found that using the \gls{md} method of contact estimation makes the filter unstable. The error in the contact estimation is feed to the filter which increase the state covariance, then that same value is used to calculate the \gls{md} in the next iteration. This leads to a feedback loop that makes the filter unstable. Therefore, the \gls{lf} method is used for contact estimation in the implemented filter. The \gls{md} method is still presented here as it is a valid approach and can be used in future work.        
         
-        \section{Contact Estimation} \label{sec:ContactEstimation}
-        
-        The residual consistency measure used in the slip-aware measurement rejection is also used to estimate which spoke of a wheel is in contact. The rimless wheel motion can be described as a combination of the swing phase and the contact phase. Correctly identifying the contact spoke is important because the \gls{pcv} residual is calculated for a specific spoke tip. Selecting the wrong spoke can make a valid wheel measurement appear inconsistent, leading to an incorrect measurement rejection. The contact estimation is performed using two methods, the lowest-foot method and the \gls{md}-based method. 
+        The rimless wheel motion can be described as a combination of the swing phase and the contact phase. Correctly identifying the contact spoke is important because the \gls{pcv} residual is calculated for a specific spoke tip. Selecting the wrong spoke can make a valid wheel measurement appear inconsistent, leading to an incorrect measurement rejection. The contact estimation is performed using two methods, the lowest-foot method and the \gls{md}-based method. 
         
         \subsection{Lowest-Foot-based Contact Estimation}
         
@@ -375,7 +370,17 @@
               
         \subsection{Mahalanobis-Distance-based Contact Estimation} \label{subsec:mahala-based-contact-estimation}
         
-        The use of \gls{inekf} for odometry estimation provides an opportunity to estimate the spokes that are in contact. With the squared \gls{md} calculated in the previous section, the contact spokes can be estimated by calculating the squared \gls{md} value for each spoke and selecting the spoke with the least squared \gls{md} as the spoke in contact. This is based on the assumption that the spoke tip in contact with the ground produces the smallest difference between the predicted and measured \gls{pcv}. Therefore, the spoke with the lowest squared \gls{md} value is selected as the most likely contact spoke. This method can also be used to estimate multiple contact spokes by selecting the spokes with squared \gls{md} value below a certain threshold. The implementation details related to the approach discussed in this chapter is presented in the Implementation Chapter~\ref{chap:implementation}.
+        The use of \gls{inekf} for odometry estimation provides an opportunity to estimate the spokes that are in contact. With the squared \gls{md} calculated in the previous section, the contact spokes can be estimated. The squared \gls{md} value for all the spoke tips for all the wheels is calculated. Once the calculation is done, the calculated squared \gls{md} values for each wheel are sorted. From this sorted array, the spoke with the least squared \gls{md} value is selected as the spoke \texttt{in\_contact}. This is based on the assumption that the spoke tip in contact with the ground produces the smallest difference between the predicted and measured \gls{pcv}. Therefore, the spoke with the lowest squared \gls{md} value is selected as the most likely contact spoke. This method can also be used to estimate multiple contact spokes. Once the first spoke in contact is estimated then the next smallest squared \gls{md} value is selected and the difference between the first and second smallest squared \gls{md} value is calculated. If this difference is below a certain threshold, then the second spoke is also estimated as in contact. The implementation details related to the approach discussed in this chapter is presented in the Implementation Chapter~\ref{chap:implementation}.
         
-
+    \section{Slip-aware Measurement Rejection} \label{sec:sliprejection}
+        
+        The measured \gls{pcv}, calculated from the joint encoder measurements, can be affected by wheel slip. This wheel slip can occur due to several factors such as slippery terrain, compliant terrain like soft sand, loose and uneven terrain like pebbles, inclined terrain, very high wheel speeds or a combination of these factors. The nature of slip and the details required to understand the wheel slip is discussed in Section~\ref{sec:background_wheelslip}. 
+        
+        In the \gls{inekf} framework, the slip-induced inconsistencies may be identified when the measured \gls{pcv} vector calculated from the joint encoders is inconsistent with the predicted \gls{pcv} computed from the filter state. This inconsistency can be calculated using the squared \gls{md} calculated in the previous section. 
+                
+        The squared \gls{md} calculated for all the spokes is compared with the chi-squared threshold value. The chi-squared threshold value is used because the residual is assumed to be Gaussian distributed. Therefore, the squared \gls{md} follows approximately a chi-squared distribution~\cite{barshalom2001estimation,chen2023kalman}. The degree of freedom for the chi-squared distribution is equal to the dimension of the residual. In this case, the residual is a 3D vector, so the degree of freedom is 3. The chi-squared threshold value is calculated using the chi-squared distribution with a confidence level of 95\%. Hence, the threshold value is 7.815. 
+        
+        The spokes that are selected as \texttt{in\_contact} based on the contact estimation method are checked for slip. If the squared \gls{md} for a spoke that is \texttt{in\_contact} is above the threshold, then it is considered to be \texttt{slipping}. For the update step, only the spokes that are \texttt{in\_contact} and \texttt{non-slipping} are used. The spokes that are \texttt{in\_contact} but \texttt{slipping} are rejected from the update step. The implementation details of the slip-aware measurement rejection is presented in Subsection~\ref{subsec:implementationSlipRejectionContactSelection}. 
+        
+                
 \end{document}

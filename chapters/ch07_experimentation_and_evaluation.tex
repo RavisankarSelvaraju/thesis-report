@@ -2,7 +2,7 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
 
-    \chapter{Experiments and evaluation} \label{chap:experimentandevaluation}
+    \chapter{Experiments and Evaluation} \label{chap:experimentandevaluation}
         
     The proposed \gls{cvo} approach is evaluated in the Coyote~3 \gls{rwr} with various experiments in diverse terrain and trajectory conditions. The \gls{cvo} estimates are compared against the ground truth pose estimates from the Vicon motion capture system. The \gls{cvo} estimates are also compared against the baseline odometry estimates to evaluate the difference in performance between the baseline odometry and the proposed \gls{cvo}. The \gls{cvo} approach is implemented in the Coyote~3 rover and the data necessary to run the \gls{cvoe} component are collected using the ROCK data logging components. The main logged data are the \gls{imu} and the joint encoder data. The Vicon pose estimates are also logged and used as ground truth in evaluation. Multiple experiments are conducted, and the mentioned data are logged. The evaluation focuses on the error between the estimated trajectory from the \gls{cvo} and the ground truth trajectory from the Vicon pose estimates. The evaluation uses metrics such as \gls{ape}, \gls{rpe}, translational and rotational drift rate, and statistical error values such as minimum, maximum, mean, and standard deviation. 
     
@@ -215,7 +215,7 @@
         \label{fig:ape_explanation_plot_1}  
     \end{figure}  
 
-    Here, $\mathbf{p}_{i}^{err}$ is the translational error vector, $\mathbf{q}_{i}^{err}$ is the orientation error quaternion, $e^{trans}_{i}$ is the scalar euclidean translational error, and $e^{rot}_{i}$ is the scalar geodesic rotational error. The \gls{ape} error calculation between the corresponding pose pairs is shown in Figure~\ref{fig:ape_explanation_plot_1}. This calculation is repeated for all corresponding pose pairs until the index $i$ reaches the end of the trajectory. The \gls{rmse} of the translational and rotational error is calculated to quantify the complete trajectory error. The \gls{ape} metric is useful for evaluating the global consistency of the odometry because it measures the pose error at each timestamp with respect to the corresponding ground-truth pose in the \texttt{odom} frame.
+    Here, $\mathbf{p}_{i}^{err}$ is the translational error vector, $\mathbf{q}_{i}^{err}$ is the orientation error quaternion, $e^{trans}_{i}$ is the scalar Euclidean translational error, and $e^{rot}_{i}$ is the scalar geodesic rotational error. The \gls{ape} error calculation between the corresponding pose pairs is shown in Figure~\ref{fig:ape_explanation_plot_1}. This calculation is repeated for all corresponding pose pairs until the index $i$ reaches the end of the trajectory. The \gls{rmse} of the translational and rotational error is calculated to quantify the complete trajectory error. The \gls{ape} metric is useful for evaluating the global consistency of the odometry because it measures the pose error at each timestamp with respect to the corresponding ground-truth pose in the \texttt{odom} frame.
     
     \subsection{Relative Pose Error} \label{sec:rpeMetrics}
     
