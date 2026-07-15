@@ -25,6 +25,7 @@
     
     The current baseline odometry in \gls{rwr} does not explicitly account for slip-related error. The wheel rotation, when the rover is slipping, is accounted as the change in pose of the rover while the rover is not actually moving. This leads to a significant error in the odometry estimate. This flaw makes the baseline odometry less reliable on slippery terrain, such as loose sand and inclined surfaces. Baseline odometry also ignores the hybrid nature of the \gls{rw} and assumes a circular wheel model with a constant wheel radius. This assumption fails to include the varying geometry of the \gls{rw} and the dynamics of making and breaking contacts. Using only \gls{imu} data causes sensor drift in orientation estimation. The use of wheel encoder data causes the slip-related errors to be included in the translation estimation in the baseline odometry. Using a magnetometer sensor could help reduce orientation drift in the \gls{imu}, but this method is unreliable due to magnetic interference from motor currents. Hence, a reliable odometry approach that is both slip-aware and accounts for the contact-point-based motion of the \gls{rw} remains a challenging problem for the \gls{rwr} in varied terrain conditions.
     
+    \FloatBarrier
     \section{Contributions}
     
     The author identifies the following as major contributions of this thesis work. 
