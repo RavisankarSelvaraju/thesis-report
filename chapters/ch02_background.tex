@@ -4,19 +4,18 @@
 \chapter{Background}
 \label{chap:background}
 
-This chapter provides the background information topic that are relevant to understand the report and the work presented in this thesis. The topics covered in this chapter are: Odometry and Sensor Fusion, Rimless-Wheeled Locomotion, Wheel slip and its effect, Coordinate Frames and Notation Conventions, Lie groups foundation, and Invariant Extended Kalman Filter.
+This chapter provides background information on topics relevant to understanding the report and the work presented in this thesis. The topics covered in this chapter are: Odometry and Sensor Fusion, Rimless-Wheeled Locomotion, Wheel slip and its effect, Coordinate Frames and Notation Conventions, Lie groups foundation, and Invariant Extended Kalman Filter.
 
-% -------------------------------------------------------------------------
 \section{Odometry and Sensor Fusion}
 \label{sec:background_odometry_sensor_fusion}
 
-    The process of estimating a robot's current pose from it previous pose using sensors which provide information on the robot's motion is called odometry \cite{BOOK-ModernRobotics}. This can be calculated using the rover's proprioceptive sensors, such as wheel encoders and IMU, as well as exteroceptive sensors like cameras and LiDARs. In situations like an underground cave, tunnels, and space exploration, Odometry plays a vital role in tracking the movements of mobile rovers when external positioning systems like GPS (Global Positioning System) and other motion capture systems might not be available. The use of an exteroceptive sensor can improve the state estimation; nevertheless, a reliable proprioceptive sensor-based state estimation provides a better starting point for odometry, which can then later be fused with other sources of odometry.
+    Odometry can be calculated using the rover's proprioceptive sensors, such as wheel encoders and \gls{imu}, as well as exteroceptive sensors like cameras and LiDARs. In situations like underground caves, tunnels, and space exploration, Odometry plays a vital role in tracking the movements of mobile rovers when external positioning systems like GPS (Global Positioning System) and other motion-capture systems may not be available. The use of an exteroceptive sensor can improve state estimation; nevertheless, reliable proprioception-based state estimation provides a better starting point for odometry, which can later be fused with other sources of odometry.
 
-    Proprioceptive Odometry in a simple mobile robot is calculated in two ways. Firstly, the angular position of the wheel measured by wheel joint encoder is mapped to linear distance travelled using the rover's wheel model. This method of using the wheel encoder data and rover model to calculate odometry is called wheel odometry. Secondly, the IMU sensor's linear acceleration data and angular velocity data is integrated to linear and angular position values to get the relative motion of robot from its previous position. This method of using the Inertial measurement to calculate odometry is called Inertial odometry \cite{BOOK-Siegwart2011Introduction}. The process of calculating a robot's current pose relative to its previous pose is called dead-reckoning. Both wheel and inertial odometry are considered as dead-reckoning approaches. Dead-reckoning is computationally less intense and reliable for short distances. 
+    Proprioceptive Odometry in a simple mobile robot is calculated in two ways. Firstly, the angular position of the wheel measured by the wheel joint encoder is mapped to the linear distance travelled using the rover's wheel model. This method, which uses wheel encoder data and the rover model to calculate odometry, is called wheel odometry. Secondly, the \gls{imu} sensor's linear acceleration and angular velocity data are integrated to linear and angular position values to get the relative motion of the robot from its previous position. This method of using inertial measurements to calculate odometry is called Inertial odometry \cite{BOOK-Siegwart2011Introduction}. The process of calculating a robot's current pose relative to its previous pose is called dead-reckoning. Both wheel and inertial odometry are considered dead-reckoning approaches. Dead-reckoning is computationally less intense and more reliable for short distances. 
 
-    Since odometry is calculated as relative motion from the previous pose, any error in the previous pose will propagate to the current pose. Since the inertial odometry is calculated by integrating the IMU data, any sensor bias in the IMU will lead to integration drift over time. Similarly, wheel odometry is susceptible to wheel slip and wheel-ground interaction errors. The error in odometry estimate accumulates over time and distance travelled, which makes it unreliable for long distances. To improve the odometry estimate, sensor fusion techniques are often employed to combine multiple sources of odometry information.
+    Since odometry is calculated as relative motion from the previous pose, any error in the previous pose will propagate to the current pose. Since the inertial odometry is calculated by integrating the \gls{imu} data, any sensor bias in the \gls{imu} will lead to integration drift over time. Similarly, wheel odometry is susceptible to wheel slip and wheel-ground interaction errors. The error in the odometry estimate accumulates over time and distance travelled, which makes it unreliable for long distances. To improve the odometry estimate, sensor fusion techniques are often employed to combine multiple sources of odometry information.
 
-    One of the well-known solutions to deal with the unreliability of single sensor-based pose estimation is to use sensor fusion techniques. These techniques fuse sensor data from different sensors to get a reliable estimate of the rover's pose. The use of sensor fusion techniques is studied in traditional wheeled  \cite{Brossard2019, Das2021,Liu2020, Xiaobo2024} and legged \cite{DeLen2020} based locomotion in the literature. As mentioned in the introduction chapter section, decoupled odometry does not perform true sensor fusion of wheel and inertial odometry. Instead, it simply combines selected components from each odometry. One such fusion technique is Kalman filter, which is a state estimation technique that can be used to fuse multiple sources of sensor information to estimate the filter's state. 
+    One well-known solution to address the unreliability of single-sensor-based pose estimation is to use sensor fusion techniques. These techniques fuse data from multiple sensors to obtain a reliable estimate of the rover's pose. The use of sensor fusion techniques has been studied in traditional wheeled \cite{Brossard2019, Das2021, Liu2020, Xiaobo2024} and legged \cite{DeLen2020} locomotion in the literature. As mentioned in the introduction chapter, decoupled odometry does not perform true sensor fusion between wheel and inertial odometry. Instead, it simply combines selected components from each odometry. One such fusion technique is the Kalman filter, which is a state estimation technique that can be used to fuse multiple sources of sensor information to estimate the filter's state. 
 
     Inertial odometry is reliable in estimating the rover's orientation, but it is susceptible to integration drift over time. Wheel odometry is reliable in estimating the rover's translation, but it is susceptible to wheel slip and wheel-ground interaction errors. Hence, fusing these two sources of odometry information can provide a more reliable estimate of the rover's pose. 
 
@@ -24,7 +23,7 @@ This chapter provides the background information topic that are relevant to unde
 \section{Rimless-Wheeled Locomotion}
 \label{sec:background_rimless_wheeled_locomotion}
 
-    The \gls{rwr} at DFKI is developed with the objective of traversing harsh terrain. The first iteration of \gls{rwr} is called ASGUARD which is described in the paper \cite{Eich2008AsguardFirstPaper}. Since then, many iterations of \gls{rwr} are developed at DFKI. Coyote~3 is one such version, developed to traverse challenging terrain with rubble, sand, and rocks. This system is also capable of traversing a model Crater developed based on a Crater at Lunar South Pole at DFKI Space Exploration Hall designed to mimic Lunar Environment. 
+    The \gls{rwr} at DFKI is developed with the objective of traversing harsh terrain. The first iteration of \gls{rwr} is called ASGUARD, which is described in the paper \cite{Eich2008AsguardFirstPaper}. Since then, many iterations of \gls{rwr} have been developed at DFKI. Coyote~3 is one such version, developed to traverse challenging terrain with rubble, sand, and rocks. This system is also capable of traversing a model Crater developed based on a Crater at the Lunar South Pole at the DFKI Space Exploration Hall designed to mimic the Lunar Environment. 
     
     \begin{figure}[!htbp]
         \centering
@@ -48,23 +47,23 @@ This chapter provides the background information topic that are relevant to unde
         \label{fig:asguard_and_coyote3}
     \end{figure}
 
-    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the \gls{ric} of \gls{dfki} to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure~\ref{fig:coyote3_with_vicon_markers}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can overcome challenging obstacles effectively. 
+    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the \gls{ric} of \gls{dfki} to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure~\ref{fig:coyote3_with_vicon_markers}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can effectively overcome challenging obstacles. 
 \section{Wheel slip and its effect} \label{sec:background_wheelslip}
 
-    A traditional or rimless wheeled mobile rover in motion experiences two types of slippage at the wheels: Longitudinal slippage (slip) and lateral slip (skid). Slip happens in the direction of motion of wheels, and skid happens perpendicular to the motion of the wheel \cite{naveedTutorial2023}. Unlike traditional wheeled systems, slip in \gls{rwr} is more similar to legged robots. Wheeled systems have continuous contact with the surface, making the slip continuous, but in the \gls{rw} system, slip happens only during contact phases when the spokes touch the terrain.
+    A traditional or rimless wheeled mobile rover in motion experiences two types of slippage at the wheels: Longitudinal slippage (slip) and lateral slip (skid). Slip happens in the direction of motion of the wheels, and skid happens perpendicular to the motion of the wheel \cite{naveedTutorial2023}. Unlike traditional wheeled systems, slip in \gls{rwr} is more similar to legged robots. Wheeled systems have continuous contact with the surface, making slip continuous, whereas in the \gls{rw} system, slip occurs only during contact phases when the spokes touch the terrain.
 
-    Slip can happen due to various reasons. Firstly, when the friction coefficient of the surface is low, the contact points/contact surface of the spokes lose grip. Secondly, when the surface is deformable under stress, like sand terrain, and the wheel contact points exert stress exceeding the terrain's maximum shear strength, deformation occurs, resulting in slip \cite{Ojeda2006}. Finally, when the angular velocity of the wheels is high, causing a higher tangential force at the contact points, it exceeds static friction, leading to slip. 
+    Wheel slip can happen due to various reasons. Firstly, when the friction coefficient of the surface is low, the contact points/contact surface of the spokes lose grip. Secondly, when the surface is deformable under stress, like sand terrain, and the wheel contact points exert stresses exceeding the terrain's maximum shear strength, deformation occurs, resulting in slip \cite{Ojeda2006}. Finally, when the angular velocity of the wheels is high, causing a higher tangential force at the contact points, it exceeds static friction, leading to slip. 
 
-    Slip can be computed as the ratio of the difference between the wheel’s linear velocity $v_\text{wheel}$ (calculated as the product of angular velocity $\omega$ and wheel radius $r$) and the body’s linear velocity $v_\text{body}$, to the wheel’s linear velocity \cite{Xiaobo2024}.
+    Slip can be computed as the ratio of the difference between the wheel’s linear velocity $v_\text{wheel}$ (calculated as the product of angular velocity $\omega$ and wheel radius $r$) and the body’s linear velocity $v_\text{body}$ to the wheel’s linear velocity \cite{Xiaobo2024}.
 
     $$
     \text{Slip} = \frac{v_{\text{wheel}} - v_{\text{body}}}{v_{\text{wheel}}} \text{ , }  
     \text{where } v_{\text{wheel}} = \omega \cdot r
     $$
 
-    The amount of slip is a unit less quantity which can be expressed as percentage slip when multiplied by 100. The value of percentage slip can vary based on several factors such as shape and material of the contact surface, angular velocity of the wheels, mass of the rover, gravity and inclination of the terrain. The slippage in autonomous rovers can lead to various issues such as unintentional rover motion, improper control, and in severe case, tipping over of the rover and collision with the environment.
+    The amount of slip is a unitless quantity which can be expressed as a percentage slip when multiplied by 100. The value of the percentage slip can vary based on several factors, such as the shape and material of the contact surface, the angular velocity of the wheels, the mass of the rover, and the gravity and inclination of the terrain. The slippage in autonomous rovers can lead to various issues such as unintentional rover motion, improper control, and in severe cases, tipping over of the rover and collision with the environment.
 
-    One of the systems whose performance is directly affected by slippage is the wheel odometry. Since the wheel odometry does not have the knowledge that slip has happened, it calculates the slippage as the rover's motion. This makes the wheel odometry unreliable in slippery conditions \cite{Brossard2019}. The survey paper \cite{Gonzalez2018} by Gonzalez and Lagnemma provide a comprehensive analysis of significant slip-related incidents in planetary exploration. This paper also presents some common slippage estimation approaches, such as Exteroceptive-based solutions, Proprioceptive-based solutions, Model-based solutions and Kalman filter-based solutions. 
+    One of the systems whose performance is directly affected by slippage is the wheel odometry. Since the wheel odometry does not have the knowledge that slip has happened, it calculates the slippage as the rover's motion. This makes the wheel odometry unreliable in slippery conditions \cite{Brossard2019}. The survey paper \cite{Gonzalez2018} by Gonzalez and Lagnemma provide a comprehensive analysis of significant slip-related incidents in planetary exploration. This paper also presents some common slippage estimation approaches, such as exteroceptive-based, proprioceptive-based, model-based, and Kalman filter-based solutions. 
 
 % -------------------------------------------------------------------------
 \section{Coordinate Frames and Notation Conventions}
@@ -79,13 +78,13 @@ This chapter provides the background information topic that are relevant to unde
     % odometry/world frame, body frame, IMU frame, rotating wheel frame,
     % fixed wheel frame, and potential-contact frame.
 
-    In this work, we use the following coordinate frames for implementation purposes: the odometry frame, the body frame, the \gls{imu} frame, the rotating wheel frames, the fixed wheel frames, and the potential contact frames. The odometry frame is fixed at the starting pose of the rover and the calculated odometry is represented in this frame. The body frame is fixed at the center of the rover at the same position as 
-    the \gls{imu} sensor. The body frame is fixed to the rover and the \texttt{x}-axis of the body frame points in the forward direction of the rover. The \gls{imu} frame is fixed at the \gls{imu} sensor and rotated $180^{\circ}$ about the \texttt{z}-axis of the body frame. The rotating wheel frames are fixed at the center of the wheel and rotate with the wheels. The fixed wheel frames are fixed at the center of the wheels and do not rotate with the wheels. The potential contact frames are fixed at the feet of each wheel and fixed relative to the rotating wheel frames. 
+    In this work, we use the following coordinate frames for implementation: the odometry frame, the body frame, the \gls{imu} frame, the rotating-wheel frames, the fixed-wheel frames, and the potential-contact frames. The odometry frame is fixed at the starting pose of the rover and the calculated odometry is represented in this frame. The body frame is fixed at the center of the rover at the same position as 
+    the \gls{imu} sensor. The body frame is fixed to the rover, and the \texttt{x}-axis of the body frame points in the forward direction of the rover. The \gls{imu} frame is fixed at the \gls{imu} sensor and rotated $180^{\circ}$ about the \texttt{z}-axis of the body frame. The rotating wheel frames are fixed at the wheel's centre and rotate with the wheel. The fixed wheel frames are at the centres of the wheels and do not rotate with them. The potential contact frames are fixed at the feet of each wheel and relative to the rotating wheel frames. 
 
 \subsection{Rotation and Transformation Notation}
 \label{subsec:background_transformation_notation}
 
-    These following notations follow the widely accepted representation mentioned and used in \cite{BOOK-ModernRobotics} and \cite{BOOK-RigidBodyDynamicsAlgorithms}. This method of representation keep the source frame of the variable at the bottom and the target frame or reference frame at the top of the variable. We will follow the same notation convention throughout this thesis implementation and report. This subsection will present some examples on how this notation will be used and interpreted. 
+    The following notations follow the widely accepted representation mentioned and used in \cite{BOOK-ModernRobotics} and \cite{BOOK-RigidBodyDynamicsAlgorithms}. This method of representation keeps the source frame of the variable at the bottom and the target frame or reference frame at the top of the variable. We will follow the same notation convention throughout this thesis implementation and the report. This subsection presents examples of how this notation is used and interpreted. 
         
         \begin{flushleft}
             
@@ -102,7 +101,7 @@ This chapter provides the background information topic that are relevant to unde
                     
         \end{flushleft}
         
-    Here, A is source(frame or point) and F is expressed in (frame). $T_{body}^{world}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame". $\boldsymbol{V}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame". The subscript for the twist is in motion and the superscript is the reference frame in which the twist is represented. Here, the twist of body frame is represented in the world frame. In some cases, for example, the rotational velocity of the wheel frame represented in its own frame, the subscript and superscript will be the same. The rotational velocity of the wheel frame represented in its own frame will be represented as $\boldsymbol{\omega}_{wheel}^{wheel}$. 
+    Here, A is the source (frame or point), and F is expressed in (frame). $T_{body}^{world}$ should be read as "The Pose of body frame represented in the world frame" or "The transformation matrix that converts a vector from the body frame to the world frame". $\boldsymbol{V}_{body}^{world}$ should be read as "The twist of the body frame represented in the world frame". The subscript for the twist is in motion, and the superscript is the reference frame in which the twist is represented. Here, the twist of the body frame is represented in the world frame. In some cases, for example, when the rotational velocity of the wheel frame is represented in its own frame, the subscripts and superscripts will be the same. The rotational velocity of the wheel frame represented in its own frame will be represented as $\boldsymbol{\omega}_{wheel}^{wheel}$. 
 \subsection{Spatial Velocity and Twists}
 \label{subsec:background_twists}
 
@@ -116,9 +115,8 @@ This chapter provides the background information topic that are relevant to unde
     \boldsymbol{V} = \begin{bmatrix} \boldsymbol{\omega} \\ \mathbf{v} \end{bmatrix} \in \mathbb{R}^6
     \label{eq:MRTwistRepresentation}
     \end{equation}
-
         
-    The "Rigid Body Dynamics" book \cite{BOOK-RigidBodyDynamicsAlgorithms} by Roy Featherstone uses the spatial velocity which orders the linear velocity first and then the angular velocity \ref{eq:RBDTwistRepresentation}. This convention is also followed in the Kinematics and Dynamics Library (KDL) \cite{REPO-orocos-KDL-github}. 
+    The "Rigid Body Dynamics" book \cite{BOOK-RigidBodyDynamicsAlgorithms} by Roy Featherstone uses the spatial velocity, which orders the linear velocity first and then the angular velocity \ref{eq:RBDTwistRepresentation}. This convention is also followed in the Kinematics and Dynamics Library (KDL) \cite{REPO-orocos-KDL-github}. 
 
     \begin{equation}
     \boldsymbol{V} = \begin{bmatrix} \mathbf{v} \\ \boldsymbol{\omega} \end{bmatrix} \in \mathbb{R}^6
@@ -131,11 +129,11 @@ This chapter provides the background information topic that are relevant to unde
         $\mathbf{v}$ is Linear velocity
     \end{flushleft}
 
-    Since, the proposed approach, we plan to use the \gls{kdl} library to transformation of Twists, we will follow the spatial velocity \ref{eq:RBDTwistRepresentation} convention by ordering the linear velocity first and then the angular velocity in the Twist vector. 
+    Since the proposed approach involves using the \gls{kdl} library for the transformation of Twists, we will follow the spatial velocity \ref{eq:RBDTwistRepresentation} convention by ordering the linear velocity first and then the angular velocity in the Twist vector. 
 
-    Twist can be represented in two ways based on the reference frame: Body twist and spatial twist. The body twist is represented in the body frame attached to the moving rigid body and the spatial twist is represented in the fixed world reference frame. Both twists represent the same physical quantity i.e., the Instantaneous motion of the rigid body. 
+    Twist can be represented in two ways based on the reference frame: Body twist and spatial twist. The body twist is represented in the body frame attached to the moving rigid body, and the spatial twist is represented in the fixed world reference frame. Both twists represent the same physical quantity, i.e., the Instantaneous motion of the rigid body. 
 
-    Let's assume, we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will the velocity experienced by a point of the rigid body at the origin of body frame by the motion of the rigid body. The spatial twist or twist of world frame will be the velocity experienced by a point of the rigid body at the origin of world frame by the motion of the rigid body. For more clear understanding, we take the example of a plane flying above a person/observer. The plane is the Rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer sees?" The twist transformation is done using Adjoint transformation. This Adjoint operation expressed as below, this adjoint representation of the transformation matrix handles the rotation and the lever arm effect of the translation when transforming the twist from one frame to another frame.
+    Let's assume we have a world frame and a body frame attached to an infinitely large rigid body. The body twist will be the velocity experienced by a point of the rigid body at the origin of the body frame by the motion of the rigid body. The spatial twist or twist of the world frame will be the velocity experienced by a point of the rigid body at the origin of the world frame by the motion of the rigid body. For a clearer understanding, we take the example of a plane flying above a person/observer. The plane is a rigid body. The body twist answers "What does the pilot feel?" and the spatial twist answers "What does a stationary observer see?" The twist transformation is done using the adjoint transformation. This adjoint operation is expressed below; this adjoint representation of the transformation matrix handles the rotation and the lever-arm effect of the translation when transforming the twist from one frame to another.
 
     For a transformation matrix $T_{body}^{world}$ and a twist $\boldsymbol{V}_{body}^{body}$ represented in the body frame,  
 
@@ -144,17 +142,16 @@ This chapter provides the background information topic that are relevant to unde
     \label{eq:TransformationOfBodyToWorld}
     \end{equation}
 
-    The Adjoint transformation for the transformation matrix \ref{eq:TransformationOfBodyToWorld} is given by the equation \ref{eq:AdjointTransformationEquation}
+    The adjoint transformation for the transformation matrix \ref{eq:TransformationOfBodyToWorld} is given by the equation \ref{eq:AdjointTransformationEquation}
 
     \begin{equation}
     \text{Ad}_{T_{body}^{world}} = \begin{bmatrix} R_{body}^{world} & 0 \\ [p_{body}^{world}]_\times R_{body}^{world} & R_{body}^{world} \end{bmatrix}
     \label{eq:AdjointTransformationEquation}
     \end{equation}
 
-    If we need to transform a twist of the body frame represented in the body frame $\boldsymbol{V}_{body}^{body}$ to the twist of body frame represented in the world frame $\boldsymbol{V}_{body}^{world}$, we can use the following equation \ref{eq:TwistTransformationEquation}. 
-    If we want to change the frame of representation then, the rotation between frame need to be included in the transformation matrix, but if only the reference point of twist need to be changed only the position vector need to be changed. The proof of this adjoint transformation can be found in the book "Modern Robotics" by Lynch and Park \cite{BOOK-ModernRobotics}.
-        
-
+    If we need to transform a twist of the body frame represented in the body frame $\boldsymbol{V}_{body}^{body}$ to the twist of the body frame represented in the world frame $\boldsymbol{V}_{body}^{world}$, we can use the following equation \ref{eq:TwistTransformationEquation}. 
+    If we want to change the frame of representation, then the rotation between frames needs to be included in the transformation matrix, but if only the reference point of twist needs to be changed, only the position vector needs to be changed. The proof of this adjoint transformation can be found in the book "Modern Robotics" by Lynch and Park \cite{BOOK-ModernRobotics}.
+    
     \begin{equation}
         \boldsymbol{V}_{body}^{world} = \text{Ad}_{T_{body}^{world}} \boldsymbol{V}_{body}^{body}
     \label{eq:TwistTransformationEquation}
@@ -162,8 +159,8 @@ This chapter provides the background information topic that are relevant to unde
 
 \subsection{IMU biases and Units}
 
-The \gls{imu} sensor is composed of an accelerometer and a gyroscope. The accelerometer provides the linear acceleration data including the gravity component in $\mathrm{m/s^2}$ and the gyroscope measures the angular velocity data in $\mathrm{rad/s}$. 
-Both sensors are affected by measurement noise and bias. The accelerometer bias is expressed in $\mathrm{m/s^2}$, while the gyroscope bias is expressed in $\mathrm{rad/s}$. These biases are subtracted from the corresponding measurements before they are used in the propagation step of the \gls{inekf}. The initial bias values are estimated during the initialization process. During this process, the rover is kept stationary for a few seconds, and the average of the IMU measurements is calculated. The average values are then used as the initial bias values for the gyroscope. The accelerometer bias is not estimated in this work and are set to zero during initialization. 
+The \gls{imu} sensor is composed of an accelerometer and a gyroscope. The accelerometer provides the linear acceleration data, including the gravity component in $\mathrm{m/s^2}$, and the gyroscope measures the angular velocity data in $\mathrm{rad/s}$. 
+Both sensors are affected by measurement noise and bias. The accelerometer bias is expressed in $\mathrm{m/s^2}$, while the gyroscope bias is expressed in $\mathrm{rad/s}$. These biases are subtracted from the corresponding measurements before they are used in the propagation step of the \gls{inekf}. The initial bias values are estimated during the initialization process. During this process, the rover is kept stationary for a few seconds, and the average of the \gls{imu} measurements is calculated. The average values are then used as the initial bias values for the gyroscope. The accelerometer bias is not estimated in this work and is set to zero during initialization. 
 
 % -------------------------------------------------------------------------
 
@@ -179,16 +176,16 @@ This section provides a brief overview of the Lie group, Lie algebra, and the In
     % Explain why three-dimensional orientation belongs to SO(3)
     % rather than an unrestricted Euclidean vector space.
 
-    The rotation matrices are a special type of matrices that are used to represent the rotation of a rigid body in 3D space. A rotation matrix must satisfy the following properties: it must be orthogonal($R^T R = \textit{I}_3$) and its determinant must be equal to 1 ($\det(R) = 1$). When a matrix satisfies these two properties, it is said to belong to the special orthogonal group $SO(3)$. 
+    The rotation matrices are a special type of matrix that is used to represent the rotation of a rigid body in 3D space. A rotation matrix must satisfy the following properties: it must be orthogonal($R^T R = \textit{I}_3$) and its determinant must be equal to 1 ($\det(R) = 1$). When a matrix satisfies these two properties, it is said to belong to the special orthogonal group $SO(3)$. 
 
-    The Special Orthogonal group $SO(3)$ is a Lie group that represents a rotation in three-dimensional space. Firstly, $SO(3)$ is a group under matrix multiplication, meaning it satisfies group properties such as closure, associativity, identity, and invertibility. Secondly, it is also a smooth manifold. Manifold is a smooth geometric objects that locally resembles Euclidean space. Spheres are an example of smooth manifold. 
+    The Special Orthogonal group $SO(3)$ is a Lie group that represents a rotation in three-dimensional space. Firstly, $SO(3)$ is a group under matrix multiplication, meaning it satisfies the group properties of closure, associativity, identity, and invertibility. Secondly, it is also a smooth manifold. A manifold is a smooth geometric object that locally resembles Euclidean space. Spheres are an example of a smooth manifold. 
 
-    When using Kalman filter for sensor fusion, updating the state with a rotation matrix is not straightforward. Since, rotation matrices are not normal vectors, the change in rotation cannot be added to the rotation matrix directly. The change in rotation can be represented as a vector in the tangent space of the rotation matrix. This tangent space is called Lie algebra and is denoted as $so(3)$. A vector in the Lie algebra $so(3)$ can be mapped to a rotation matrix in $SO(3)$ using the exponential map. Similarly, a rotation matrix in $SO(3)$ can be mapped to a vector in the Lie algebra $so(3)$ using the logarithmic map. 
+    When using a Kalman filter for sensor fusion, updating the state with a rotation matrix is not straightforward. Since rotation matrices are not normal vectors, the change in rotation cannot be added directly to the rotation matrix. The change in rotation can be represented as a vector in the tangent space of the rotation matrix. This tangent space is called Lie algebra and is denoted as $so(3)$. A vector in the Lie algebra $so(3)$ can be mapped to a rotation matrix in $SO(3)$ using the exponential map. Similarly, a rotation matrix in $SO(3)$ can be mapped to a vector in the Lie algebra $so(3)$ using the logarithmic map. 
         
 \subsection{Left and Right Invariant Errors}
 \label{subsec:background_invariant_errors}
 
-    In a Kalman filter, the estimation error is commonly defined using vector subtraction. However, subtraction is not generally suitable for states that evolve on a Lie group. Let $\boldsymbol{X}\in G$ denote the true state and $\hat{\boldsymbol{X}}\in G$ denote its estimate, where $G$ is a matrix Lie group. The left and right invariant errors are defined as follows \cite{barrauInvariantExtendedKalman2017}. The left and right invariant errors are shown in equation \ref{eq:left_invariant_error}.
+    In a Kalman filter, the estimation error is commonly defined using vector subtraction. However, subtraction is not generally suitable for states that evolve on a Lie group. Let $\boldsymbol{X}\in G$ denote the true state and $\hat{\boldsymbol{X}}\in G$ denote its estimate, where $G$ is a matrix Lie group. The left and right invariant errors are defined as shown in equation \ref{eq:left_invariant_error} \cite{barrauInvariantExtendedKalman2017}.
 
     \begin{equation}
         \boldsymbol{\eta}^{L}
@@ -201,17 +198,17 @@ This section provides a brief overview of the Lie group, Lie algebra, and the In
         \label{eq:left_invariant_error}
     \end{equation}
 
-    The term \emph{invariant} indicates that the error remains unchanged when the true and estimated states undergo the same group transformation. The left invariant error is invariant under left multiplication, while the right-invariant error is invariant under right multiplication. In this thesis, left invariant errors are used for the filter update.
+    The term \emph{invariant} indicates that the error remains unchanged when the true and estimated states undergo the same group transformation. The left-invariant error is invariant under left multiplication, while the right-invariant error is invariant under right multiplication. In this thesis, left-invariant errors are used for the filter update.
 
 \subsection{Invariant Error Representation in the InEKF}
 \label{subsec:background_inekf}
 
-The \gls{inekf} extends the Extended Kalman Filter by representing suitable parts of the state on a Lie group. In this formulation, the rotation, velocity, and position are embedded in a matrix Lie group, while the IMU biases remain Euclidean variables. This representation preserves the underlying geometry of the state during estimation. The invariant error is expressed locally in vector coordinates associated with the corresponding Lie algebra, which enables the error dynamics to be linearized and the Kalman correction to be carried out using standard matrix operations.
+The \gls{inekf} extends the Extended Kalman Filter by representing suitable parts of the state on a Lie group. In this formulation, the rotation, velocity, and position are embedded in a matrix Lie group, while the \gls{imu} biases remain Euclidean variables. This representation preserves the underlying geometry of the state during estimation. The invariant error is expressed locally in vector coordinates associated with the corresponding Lie algebra, which enables the error dynamics to be linearized and the Kalman correction to be carried out using standard matrix operations.
 
 \subsection{Invariant Extended Kalman Filter Algorithm}
 \label{subsec:background_inekf_algorithm}
 
-The \gls{inekf} algorithm consists of two steps, the propagation step and the update step. The propagation step uses the IMU measurements to predict the state at the next time step and the update step uses measurements from sensors to correct the predicted state. The state estimated by the \gls{inekf} is represented as a combination of the Lie group state and the \gls{imu} biases. The Lie group state includes the rotation, velocity, and position components and the IMU biases includes the gyroscope bias and accelerometer bias. The complete state representation is given below
+The \gls{inekf} algorithm consists of two steps, the propagation step and the update step. The propagation step uses the \gls{imu} measurements to predict the state at the next time step, and the update step uses sensor measurements to correct the predicted state. The state estimated by the \gls{inekf} is represented as a combination of the Lie group state and the \gls{imu} biases. The Lie group state includes the rotation, velocity, and position components, and the \gls{imu} biases include the gyroscope bias and accelerometer bias. The complete state representation is given below
 
 \begin{equation}
     \hat{\boldsymbol{x}}_{k}
@@ -230,7 +227,7 @@ The \gls{inekf} algorithm consists of two steps, the propagation step and the up
     \label{eq:inekfCompleteStateBackground}
 \end{equation}
 
-The propagation step of the \gls{inekf} uses the IMU measurements to predict the state at time step $k+1$ based on the corrected state at time step $k$. The state propagation function can be expressed as
+The $\hat{\boldsymbol{x}}_{k}$ represents the estimated state at time $k$, the $\hat{\boldsymbol{b}}_{k}$ represents the estimated biases at time $k$. The propagation step of the \gls{inekf} uses the \gls{imu} measurements to predict the state at time step $k+1$ based on the corrected state at time step $k$. The state propagation function can be expressed as
 
 \begin{equation}
     \hat{\boldsymbol{x}}^{-}_{k+1}
@@ -260,7 +257,7 @@ The covariance propagation step of the \gls{inekf} is given by,
 
 Where, $\boldsymbol{P}^{-}_{k+1}$ is the predicted covariance at time step $k+1$, $\boldsymbol{P}^{+}_{k}$ is the corrected covariance at time step $k$, $\boldsymbol{\Phi}_{k}$ is the discrete state-transition matrix, and $\boldsymbol{Q}_{d,k}$ is the discrete process-noise covariance.
 
-The residual is calculated as the difference $\boldsymbol{z}_{k+1}$, the actual measurement, and the $\hat{\boldsymbol{x}}^{-}_{k+1}$, the predicted measurement based on the propagated state $\hat{\boldsymbol{x}}^{-}_{k+1}$. This is expressed as:
+The residual $\boldsymbol{z}_{k+1}$ is calculated as the difference between the actual measurement and the predicted measurement based on the propagated state $\hat{\boldsymbol{x}}^{-}_{k+1}$. This is expressed as:
 
 \begin{equation}
     \boldsymbol{\nu}_{k+1}
@@ -276,14 +273,14 @@ The residual is calculated as the difference $\boldsymbol{z}_{k+1}$, the actual 
 where, $h(\hat{\boldsymbol{x}}^{-}_{k+1})$ is the measurement function that maps the state $\hat{\boldsymbol{x}}^{-}_{k+1}$ to the measurement space. The perturbation of the state is defined as the difference between the true state $\boldsymbol{x}_{k}$ and the estimated state $\hat{\boldsymbol{x}}_{k}$. The perturbation or error vector $\boldsymbol{e}$ is expressed as:
 
 \begin{equation}
-    \boldsymbol{e}
+    \boldsymbol{\xi}
     =
     \begin{bmatrix}
-        \boldsymbol{\xi} \\
-        \boldsymbol{\zeta}
+        \boldsymbol{\xi^{X}} \\
+        \boldsymbol{\xi^{b}}
     \end{bmatrix},
     \qquad
-    \boldsymbol{\xi}
+    \boldsymbol{\xi^{X}}
     =
     \begin{bmatrix}
         \boldsymbol{\xi}^{R} \\
@@ -291,7 +288,7 @@ where, $h(\hat{\boldsymbol{x}}^{-}_{k+1})$ is the measurement function that maps
         \boldsymbol{\xi}^{p}
     \end{bmatrix},
     \qquad
-    \boldsymbol{\zeta}
+    \boldsymbol{\xi^{b}}
     =
     \begin{bmatrix}
         \boldsymbol{\zeta}^{b_g} \\
@@ -300,9 +297,9 @@ where, $h(\hat{\boldsymbol{x}}^{-}_{k+1})$ is the measurement function that maps
     \label{eq:inekfLocalErrorCoordinatesBackground}
 \end{equation}
 
-where, $\boldsymbol{\xi}$ represents the Lie group part of the error, which includes the rotation error $\boldsymbol{\xi}^{R}$, velocity error $\boldsymbol{\xi}^{v}$, and position error $\boldsymbol{\xi}^{p}$. The vector $\boldsymbol{\zeta}$ represents the Euclidean part of the error, which includes the gyroscope bias error $\boldsymbol{\zeta}^{b_g}$ and accelerometer bias error $\boldsymbol{\zeta}^{b_a}$.
+where $\boldsymbol{\xi^{X}}$ represents the Lie group part of the error, which includes the rotation error $\boldsymbol{\xi}^{R}$, velocity error $\boldsymbol{\xi}^{v}$, and position error $\boldsymbol{\xi}^{p}$. The vector $\boldsymbol{\xi^{b}}$ represents the Euclidean part of the error, which includes the gyroscope bias error $\boldsymbol{\zeta}^{b_g}$ and accelerometer bias error $\boldsymbol{\zeta}^{b_a}$.
 
-Using the calculated perturbation vector $\boldsymbol{e}$, the measurement Jacobian $\boldsymbol{H}_{k+1}$ can be computed as the partial derivative of the measurement function $h(\cdot)$ with respect to the perturbation vector $\boldsymbol{e}$, evaluated at the zero perturbation. This is expressed as:
+Using the calculated perturbation vector $\boldsymbol{\xi}$, the measurement Jacobian $\boldsymbol{H}_{k+1}$ can be computed as the partial derivative of the measurement function $h(\cdot)$ with respect to the perturbation vector $\boldsymbol{\xi}$, evaluated at the zero perturbation. This is expressed as:
 
 \begin{equation}
     \boldsymbol{H}_{k+1}
@@ -311,12 +308,12 @@ Using the calculated perturbation vector $\boldsymbol{e}$, the measurement Jacob
     \frac{
         \partial
         h\left(
-            \boldsymbol{x}_{\mathrm{pert}}(\boldsymbol{e})
+            \boldsymbol{x}_{\mathrm{pert}}(\boldsymbol{\xi})
         \right)
     }{
-        \partial\boldsymbol{e}
+        \partial\boldsymbol{\xi}
     }
-    \right|_{\boldsymbol{e}=\boldsymbol{0}}
+    \right|_{\boldsymbol{\xi}=\boldsymbol{0}}
     \label{eq:inekfMeasurementJacobianBackground}
 \end{equation}
 
@@ -344,14 +341,14 @@ where, $\boldsymbol{N}_{k+1}$ is the measurement-noise covariance. The Kalman ga
     \label{eq:inekfKalmanGainBackground}
 \end{equation}
 
-Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correction vector $\boldsymbol{\hat e}_{k+1}$ is computed by multiplying the Kalman gain with the measurement residual $\boldsymbol{r}_{k+1}$. This correction vector is expressed as:
+Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correction vector $\boldsymbol{\hat \xi}_{k+1}$ is computed by multiplying the Kalman gain with the measurement residual $\boldsymbol{r}_{k+1}$. This correction vector is expressed as:
 
 \begin{equation} 
-    \boldsymbol{\hat e}_{k+1}
+    \boldsymbol{\hat \xi}_{k+1}
     =
     \begin{bmatrix}
-        \boldsymbol{\hat \xi}_{k+1} \\
-        \boldsymbol{\hat \zeta}_{k+1}
+        \boldsymbol{\hat \xi^{X}}_{k+1} \\
+        \boldsymbol{\hat \xi^{b}}_{k+1}
     \end{bmatrix}
     =
     \boldsymbol{K}_{k+1}
@@ -359,7 +356,7 @@ Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correct
     \label{eq:inekfCorrectionVectorBackground}
 \end{equation}
 
-Where, the vector $\boldsymbol{\hat \xi}_{k+1}$ represents the Lie group part of the estimated error based on the measurement residual, and the vector $\boldsymbol{\hat \zeta}_{k+1}$ represents the Euclidean biases part of the estimated error based on the measurement residual. With the calculated correction vector $\boldsymbol{\hat e}_{k+1}$, the state is updated using the exponential map to ensure that the updated state remains on the Lie group. The state update equation is given by:
+Where the vector $\boldsymbol{\hat \xi^{X}}_{k+1}$ represents the Lie group part of the estimated error based on the measurement residual, and the vector $\boldsymbol{\hat \xi^{b}}_{k+1}$ represents the Euclidean biases part of the estimated error based on the measurement residual. With the calculated correction vector $\boldsymbol{\hat \xi}_{k+1}$, the state is updated using the exponential map to ensure that the updated state remains on the Lie group. The state update equation is given by:
 
 \begin{equation}
     \hat{\boldsymbol{X}}^{+}_{k+1}
@@ -367,23 +364,23 @@ Where, the vector $\boldsymbol{\hat \xi}_{k+1}$ represents the Lie group part of
     \hat{\boldsymbol{X}}^{-}_{k+1}
     \operatorname{Exp}
     \left(
-        \boldsymbol{\hat \xi}_{k+1}
+        \boldsymbol{\hat \xi^{X}}_{k+1}
     \right).
     \label{eq:inekfStateCorrectionBackground}
 \end{equation}
 
-where, $\operatorname{Exp}(\cdot)$ is the exponential map that maps the Lie algebra element $\boldsymbol{\hat \xi}_{k+1}$ to the Lie group. The Euclidean biases are updated using vector addition as follows:
+where, $\operatorname{Exp}(\cdot)$ is the exponential map that maps the Lie algebra element $\boldsymbol{\hat \xi^{X}}_{k+1}$ to the Lie group. The Euclidean biases are updated using vector addition as follows:
 
 \begin{equation}
     \hat{\boldsymbol{b}}^{+}_{k+1}
     =
     \hat{\boldsymbol{b}}^{-}_{k+1}
     +
-    \boldsymbol{\hat \zeta}_{k+1}.
+    \boldsymbol{\hat \xi^{b}}_{k+1}.
     \label{eq:inekfBiasCorrectionBackground}
 \end{equation}
 
-Once, both the Lie group state and the Euclidean biases are updated, the complete corrected state at time step $k+1$ is represented as:
+Once both the Lie group state and the Euclidean biases are updated, the complete corrected state at time step $k+1$ is represented as:
 
 \begin{equation}
     \hat{\boldsymbol{x}}^{+}_{k+1}
@@ -421,6 +418,5 @@ The corresponding state covariance is corrected using the calculated Kalman gain
 \end{equation}
 
 The corrected estimate $\hat{\boldsymbol{X}}^{+}_{k+1}$ is used as the starting state for the next propagation step. Therefore, the filter repeatedly propagates the state using the motion model and corrects the accumulated error whenever a suitable measurement is available. The specific propagation model and measurement update used for the proposed odometry approach are presented in Chapter~\ref{chap:methodology}.
-
 
 \end{document}
