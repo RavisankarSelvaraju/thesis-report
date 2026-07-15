@@ -23,7 +23,7 @@ This chapter provides background information on topics relevant to understanding
 \section{Rimless-Wheeled Locomotion}
 \label{sec:background_rimless_wheeled_locomotion}
 
-    The \gls{rwr} at DFKI is developed with the objective of traversing harsh terrain. The first iteration of \gls{rwr} is called ASGUARD, which is described in the paper \cite{Eich2008AsguardFirstPaper}. Since then, many iterations of \gls{rwr} have been developed at DFKI. Coyote~3 is one such version, developed to traverse challenging terrain with rubble, sand, and rocks. This system is also capable of traversing a model Crater developed based on a Crater at the Lunar South Pole at the DFKI Space Exploration Hall designed to mimic the Lunar Environment. 
+    The \gls{rwr} at DFKI is developed with the objective of traversing harsh terrain. The first iteration of \gls{rwr} is called ASGUARD, which is described in the paper \cite{Eich2008AsguardFirstPaper}. Since then, many iterations of \gls{rwr} have been developed at DFKI. Coyote~3 is one such version, developed to traverse challenging terrain with rubble, sand, and rocks. This system is also capable of traversing a model Crater developed based on a Crater at the Lunar South Pole at the DFKI Space Exploration Hall designed to mimic the Lunar Environment \cite{SITE-dfki-relab}. 
     
     \begin{figure}[!htbp]
         \centering
@@ -47,7 +47,8 @@ This chapter provides background information on topics relevant to understanding
         \label{fig:asguard_and_coyote3}
     \end{figure}
 
-    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the \gls{ric} of \gls{dfki} to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure~\ref{fig:coyote3_with_vicon_markers}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can effectively overcome challenging obstacles. 
+    Mobile robots use various types of locomotion. Some common mechanisms include legged, wheeled, track-wheel hybrid and whegs (leg-wheel hybrid). Among these, rimless wheeled systems offer a unique alternative that combines the simplicity of wheels with the terrain adaptability of legs. A Rimless Wheel is a special type of wheel-like structure formed by evenly spaced spokes connected to the centre of the wheel. Depending on the terrain and wheel orientation, one or more spokes may contact the terrain. The discontinuous nature of the surface of the wheel mimics a legged motion. These types of rimless wheels have been used in the \gls{ric} of \gls{dfki} to construct four-wheeled rimless wheeled rovers such as Asguard and Coyote in Figure~\ref{fig:asguard_and_coyote3}. These rovers, due to their spoked wheels, can traverse diverse terrains like soft sand, coarse sand, rocky terrain and inclined terrain. Unlike traditional wheeled rovers, rimless wheeled rovers can effectively overcome challenging obstacles. 
+    
 \section{Wheel slip and its effect} \label{sec:background_wheelslip}
 
     A traditional or rimless wheeled mobile rover in motion experiences two types of slippage at the wheels: Longitudinal slippage (slip) and lateral slip (skid). Slip happens in the direction of motion of the wheels, and skid happens perpendicular to the motion of the wheel \cite{naveedTutorial2023}. Unlike traditional wheeled systems, slip in \gls{rwr} is more similar to legged robots. Wheeled systems have continuous contact with the surface, making slip continuous, whereas in the \gls{rw} system, slip occurs only during contact phases when the spokes touch the terrain.
@@ -63,7 +64,7 @@ This chapter provides background information on topics relevant to understanding
 
     The amount of slip is a unitless quantity which can be expressed as a percentage slip when multiplied by 100. The value of the percentage slip can vary based on several factors, such as the shape and material of the contact surface, the angular velocity of the wheels, the mass of the rover, and the gravity and inclination of the terrain. The slippage in autonomous rovers can lead to various issues such as unintentional rover motion, improper control, and in severe cases, tipping over of the rover and collision with the environment.
 
-    One of the systems whose performance is directly affected by slippage is the wheel odometry. Since the wheel odometry does not have the knowledge that slip has happened, it calculates the slippage as the rover's motion. This makes the wheel odometry unreliable in slippery conditions \cite{Brossard2019}. The survey paper \cite{Gonzalez2018} by Gonzalez and Lagnemma provide a comprehensive analysis of significant slip-related incidents in planetary exploration. This paper also presents some common slippage estimation approaches, such as exteroceptive-based, proprioceptive-based, model-based, and Kalman filter-based solutions. 
+    One of the systems whose performance is directly affected by slippage is the wheel odometry. Since the wheel odometry does not have the knowledge that slip has happened, it calculates the slippage as the rover's motion. This makes the wheel odometry unreliable in slippery conditions \cite{Brossard2019}. The survey paper by Gonzalez and Iagnemma provide a comprehensive analysis of significant slip-related incidents in planetary exploration \cite{Gonzalez2018}. This paper also presents some common slippage estimation approaches, such as exteroceptive-based, proprioceptive-based, model-based, and Kalman filter-based solutions. 
 
 % -------------------------------------------------------------------------
 \section{Coordinate Frames and Notation Conventions}
@@ -257,7 +258,7 @@ The covariance propagation step of the \gls{inekf} is given by,
 
 Where, $\boldsymbol{P}^{-}_{k+1}$ is the predicted covariance at time step $k+1$, $\boldsymbol{P}^{+}_{k}$ is the corrected covariance at time step $k$, $\boldsymbol{\Phi}_{k}$ is the discrete state-transition matrix, and $\boldsymbol{Q}_{d,k}$ is the discrete process-noise covariance.
 
-The residual $\boldsymbol{z}_{k+1}$ is calculated as the difference between the actual measurement and the predicted measurement based on the propagated state $\hat{\boldsymbol{x}}^{-}_{k+1}$. This is expressed as:
+The residual $\boldsymbol{\nu}_{k+1}$ is calculated as the difference between the actual measurement and the predicted measurement based on the propagated state $\hat{\boldsymbol{x}}^{-}_{k+1}$. This is expressed as:
 
 \begin{equation}
     \boldsymbol{\nu}_{k+1}
@@ -341,7 +342,7 @@ where, $\boldsymbol{N}_{k+1}$ is the measurement-noise covariance. The Kalman ga
     \label{eq:inekfKalmanGainBackground}
 \end{equation}
 
-Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correction vector $\boldsymbol{\hat \xi}_{k+1}$ is computed by multiplying the Kalman gain with the measurement residual $\boldsymbol{r}_{k+1}$. This correction vector is expressed as:
+Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correction vector $\boldsymbol{\hat \xi}_{k+1}$ is computed by multiplying the Kalman gain with the measurement residual $\boldsymbol{\nu}_{k+1}$. This correction vector is expressed as:
 
 \begin{equation} 
     \boldsymbol{\hat \xi}_{k+1}
@@ -352,7 +353,7 @@ Using the Kalman gain $\boldsymbol{K}_{k+1}$ from the previous step, the correct
     \end{bmatrix}
     =
     \boldsymbol{K}_{k+1}
-    \boldsymbol{r}_{k+1}.
+    \boldsymbol{\nu}_{k+1}.
     \label{eq:inekfCorrectionVectorBackground}
 \end{equation}
 

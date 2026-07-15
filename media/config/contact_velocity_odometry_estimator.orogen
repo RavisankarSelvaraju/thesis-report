@@ -25,7 +25,7 @@ task_context "Task" do
     property('measurement_noise', '/double').
         doc 'Measurement noise for the wheel angular velocity measurements used in the contact velocity estimation.'
     property('chi_squared_threshold', '/double').
-        doc 'confidence threshold for the Mahalanois distance for slip elimination.'
+        doc 'confidence threshold for the Mahalanobis distance for slip elimination.'
     property('contact_md2_threshold', '/double', 2.0).
         doc 'threshold to determine if multiple spokes are in contact based on their MD squared distance difference.'
     property('estimate_contacts', 'bool', false).

@@ -34,7 +34,7 @@ contact_frame_names: [
   "coyote3_link_wheel_rear_left_01",  "coyote3_link_wheel_rear_left_02",  "coyote3_link_wheel_rear_left_03",  "coyote3_link_wheel_rear_left_04",  "coyote3_link_wheel_rear_left_05",
   "coyote3_link_wheel_rear_right_01",  "coyote3_link_wheel_rear_right_02",  "coyote3_link_wheel_rear_right_03",  "coyote3_link_wheel_rear_right_04",  "coyote3_link_wheel_rear_right_05",
   "coyote3_link_wheel_front_right_01",  "coyote3_link_wheel_front_right_02",  "coyote3_link_wheel_front_right_03",  "coyote3_link_wheel_front_right_04",  "coyote3_link_wheel_front_right_05"]
-# The inital pose of base link in odometry frame(usually the z axis is the only value that have any value)
+# The initial pose of base link in odometry frame(usually the z axis is the only value that have any value)
 initial_pose:
   position:
     data:
